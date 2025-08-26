@@ -156,6 +156,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Function to update the patient header
+function updatePatientHeader(patientData) {
+    // Update patient name
+    const patientNameSpan = document.getElementById('patient-name');
+    if (patientNameSpan) {
+        patientNameSpan.textContent = patientData.name;
+    }
+    
+    // Update patient ID
+    const patientIdSpan = document.getElementById('patient-id');
+    if (patientIdSpan) {
+        patientIdSpan.textContent = patientData.id;
+    }
+    
+    // Update patient phone
+    const patientPhoneSpan = document.getElementById('patient-phone');
+    if (patientPhoneSpan) {
+        patientPhoneSpan.textContent = patientData.phone;
+    }
+    
+    // Update report date
+    const reportDateSpan = document.getElementById('report-date');
+    if (reportDateSpan) {
+        reportDateSpan.textContent = new Date().toLocaleDateString();
+    }
+}
+
 // Function to fetch patient data from API
 async function fetchPatientDataFromAPI(patientId) {
     try {
@@ -228,36 +255,12 @@ async function fetchPatientDataFromAPI(patientId) {
     }
 }
 
-// Function to update the patient header
-function updatePatientHeader(patientData) {
-    // Update patient name
-    const patientNameSpan = document.getElementById('patient-name');
-    if (patientNameSpan) {
-        patientNameSpan.textContent = patientData.name;
-    }
-    
-    // Update patient ID
-    const patientIdSpan = document.getElementById('patient-id');
-    if (patientIdSpan) {
-        patientIdSpan.textContent = patientData.id;
-    }
-    
-    // Update patient phone
-    const patientPhoneSpan = document.getElementById('patient-phone');
-    if (patientPhoneSpan) {
-        patientPhoneSpan.textContent = patientData.phone;
-    }
-    
-    // Update report date
-    const reportDateSpan = document.getElementById('report-date');
-    if (reportDateSpan) {
-        reportDateSpan.textContent = new Date().toLocaleDateString();
-    }
-}
-
 // Function to process patient test results
 function processPatientResults(resultsData) {
     try {
+        console.log('Processing patient results:', resultsData);
+        console.log('Full results data structure:', JSON.stringify(resultsData, null, 2));
+        
         // Handle different possible API response structures
         let testsArray = null;
         
@@ -269,12 +272,16 @@ function processPatientResults(resultsData) {
             testsArray = resultsData;
         }
         
+        console.log('Tests array:', testsArray);
+        
         if (!testsArray || testsArray.length === 0) {
+            console.log('No test results found');
             return;
         }
         
         // Process each test and update the corresponding parameter lists
         testsArray.forEach((test, index) => {
+            console.log(`Processing test ${index}:`, test);
             const testType = extractTestType(test);
             const results = extractResults(test);
             
@@ -886,7 +893,7 @@ function downloadPatientResults(patientData) {
         let yPosition = 120;
         
         // Process each test type
-        const testTypes = ['Wellness', 'Traits', 'Monogenic', 'Complex', 'Pharma'];
+        const testTypes = ['Wellness', 'Traits', 'Familial Genetic Conditions', 'Genetic Susceptibility to Health Disorders', 'Pharma'];
         
         testTypes.forEach(testType => {
             const listId = testType.toLowerCase() + '-list';

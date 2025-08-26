@@ -2,7 +2,7 @@ console.log('=== main_user_page.js LOADED ===');
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== DOMContentLoaded FIRED ===');
-
+    
     // --- Splash Screen Logic ---
     const splashScreen = document.getElementById('splash-screen');
     const mainContent = document.getElementById('main-content');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             panels.forEach(panel => {
                 panel.id === targetPanelId ? panel.classList.remove('hidden') : panel.classList.add('hidden');
             });
-
+            
             // Re-initialize mobile content for the newly active tab
             const isMobile = window.innerWidth <= 768;
             if (isMobile) {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }, 100);
             }
-
+            
             // Update risk indicators when complex diseases tab is selected
             if (tab.dataset.tab === 'complex') {
                 console.log('Complex diseases tab selected, updating risk indicators...');
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateComplexRiskIndicators();
                 }, 500);
             }
-
+            
             // Auto-generate recommendations when comprehensive tab is selected
             if (tab.dataset.tab === 'comprehensive') {
                 console.log('Comprehensive tab selected, auto-generating recommendations...');
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
+    
     // Handle window resize for mobile/desktop switching
     let resizeTimeout;
     window.addEventListener('resize', () => {
@@ -81,12 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
         resizeTimeout = setTimeout(() => {
             const isMobile = window.innerWidth <= 768;
             console.log(`Window resized to ${window.innerWidth}px, Mobile: ${isMobile}`);
-
+            
             // Refresh parameter lists if needed when switching between mobile/desktop
             if (isMobile !== window.wasMobile) {
                 window.wasMobile = isMobile;
                 console.log('Mobile/Desktop mode changed, refreshing parameter lists...');
-
+                
                 // Hide/show details containers based on mobile state
                 const detailsContainers = ['traits-details', 'wellness-details', 'monogenic-details', 'complex-details', 'pharma-details'];
                 detailsContainers.forEach(containerId => {
@@ -95,13 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         container.style.display = isMobile ? 'none' : 'block';
                     }
                 });
-
+                
                 // Refresh current tab's parameter list
                 const activeTab = document.querySelector('.tab-active');
                 if (activeTab) {
                     const tabName = activeTab.dataset.tab;
                     console.log(`Refreshing ${tabName} parameter list...`);
-
+                    
                     // Trigger a refresh of the current tab
                     setTimeout(() => {
                         if (tabName === 'wellness' && typeof wellnessData !== 'undefined') {
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 250);
     });
-
+    
     // Initialize mobile/desktop state
     window.wasMobile = window.innerWidth <= 768;
 
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayDetails(containerId, item, resultValue = 'N/A', action = null) {
         // Don't display details on mobile - mobile uses dropdown system
         if (window.innerWidth <= 768) return;
-
+        
         const container = document.getElementById(containerId);
         if (!container) return;
 
@@ -293,27 +293,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (item.bibliography && item.bibliography.length > 0) {
             contentHTML += `<div class="pt-4 mt-4 border-t border-gray-200"><h4 class="font-semibold text-gray-600 flex items-center mb-2 text-sm"><i data-lucide="book-open" class="w-4 h-4 mr-2"></i>Bibliography</h4>`;
-
+            
             // Show first 1 bibliography item by default
             const initialCount = Math.min(1, item.bibliography.length);
             const remainingCount = item.bibliography.length - initialCount;
-
+            
             contentHTML += `<ul class="list-disc list-inside space-y-1" id="bibliography-${item.name.replace(/\s+/g, '-')}">`;
-
+            
             // Show initial items
             for (let i = 0; i < initialCount; i++) {
                 contentHTML += `<li class="text-xs text-gray-500">${item.bibliography[i]}</li>`;
             }
-
+            
             // Show remaining items (hidden initially)
             if (remainingCount > 0) {
                 for (let i = initialCount; i < item.bibliography.length; i++) {
                     contentHTML += `<li class="text-xs text-gray-500 hidden" id="bib-item-${item.name.replace(/\s+/g, '-')}-${i}">${item.bibliography[i]}</li>`;
                 }
             }
-
+            
             contentHTML += `</ul>`;
-
+            
             // Add Read More/Less button if there are more than 1 item
             if (remainingCount > 0) {
                 contentHTML += `
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         Read More (${remainingCount} more)
                     </button>`;
             }
-
+            
             contentHTML += `</div>`;
         }
 
@@ -371,24 +371,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         items.forEach((item, index) => {
             const itemDiv = document.createElement('div');
-
+            
             if (isMobile) {
                 // Mobile: Create dropdown-style parameter items with enhanced design
                 itemDiv.className = 'parameter-item-mobile p-4 rounded-xl border-l-4 border-transparent cursor-pointer hover:bg-green-50 transition-all duration-300 shadow-sm hover:shadow-lg';
-
+                
                 // Add colored risk indicator for complex diseases
                 let riskIndicator = '';
                 if (listContainerId === 'complex-list') {
                     riskIndicator = '<span class="inline-block w-4 h-4 rounded-full bg-gray-400 mr-3" data-risk-indicator></span>';
                 }
-
+                
                 // Add type indicator for pharmacogenomics
                 let typeIndicator = '';
                 if (listContainerId === 'pharma-list') {
                     const type = getPharmaType(item.name);
                     typeIndicator = `<span class="inline-block w-6 h-6 mr-3 text-lg" title="${type}" style="vertical-align: middle;">${getPharmaIcon(type)}</span>`;
                 }
-
+                
                 // Create mobile parameter header with dropdown arrow
                 itemDiv.innerHTML = `
                     <div class="flex items-center justify-between">
@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 `;
-
+                
                 // Create mobile content container separately and ensure it's completely hidden
                 const mobileContentContainer = document.createElement('div');
                 mobileContentContainer.className = 'parameter-content-mobile hidden';
@@ -412,22 +412,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 mobileContentContainer.style.padding = '0';
                 mobileContentContainer.style.border = 'none';
                 itemDiv.appendChild(mobileContentContainer);
-
+                
                 // Store the original item data for later use
                 itemDiv.dataset.itemIndex = index;
                 itemDiv.dataset.originalName = item.name;
                 itemDiv.dataset.isExpanded = 'false';
-
+                
                 itemDiv.addEventListener('click', () => {
                     const isExpanded = itemDiv.dataset.isExpanded === 'true';
-
-                    // Close all other expanded items
-                    listContainer.querySelectorAll('.parameter-item-mobile').forEach(el => {
-                        if (el !== itemDiv) {
-                            el.dataset.isExpanded = 'false';
-                            el.classList.remove('bg-gradient-to-r', 'from-green-50', 'to-emerald-50', 'border-green-300', 'shadow-lg');
-                            el.classList.add('border-transparent', 'shadow-sm');
-
+                    
+                                            // Close all other expanded items
+                        listContainer.querySelectorAll('.parameter-item-mobile').forEach(el => {
+                            if (el !== itemDiv) {
+                                el.dataset.isExpanded = 'false';
+                                el.classList.remove('bg-gradient-to-r', 'from-green-50', 'to-emerald-50', 'border-green-300', 'shadow-lg');
+                                el.classList.add('border-transparent', 'shadow-sm');
+                            
                             const content = el.querySelector('.parameter-content-mobile');
                             if (content) {
                                 content.classList.add('hidden');
@@ -438,30 +438,30 @@ document.addEventListener('DOMContentLoaded', () => {
                                 content.style.padding = '0';
                                 content.style.border = 'none';
                             }
-
+                            
                             const chevron = el.querySelector('[data-lucide="chevron-down"]');
                             if (chevron) {
                                 chevron.style.transform = 'rotate(0deg)';
                             }
-
+                            
 
                         }
                     });
-
+                    
                     // Toggle current item
                     if (!isExpanded) {
                         // Expand current item
                         itemDiv.dataset.isExpanded = 'true';
                         itemDiv.classList.add('bg-gradient-to-r', 'from-green-50', 'to-emerald-50', 'border-green-300', 'shadow-lg');
                         itemDiv.classList.remove('border-transparent', 'shadow-sm');
-
+                        
                         const content = itemDiv.querySelector('.parameter-content-mobile');
                         if (content) {
                             // Get the original item data
                             const originalItem = items[index];
                             let resultValue = 'N/A';
                             let action = null;
-
+                            
                             // Check for patient results
                             if (window.patientResultsMap) {
                                 const parameterName = originalItem.name;
@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     action = patientResult.action;
                                 }
                             }
-
+                            
                             // Populate content with mobile-optimized layout
                             content.innerHTML = createMobileParameterContent(originalItem, resultValue, action, detailsContainerId);
                             content.classList.remove('hidden');
@@ -481,34 +481,50 @@ document.addEventListener('DOMContentLoaded', () => {
                             content.style.margin = '1rem 0 0 0';
                             content.style.padding = '1rem 0 0 0';
                             content.style.borderTop = '1px solid #e5e7eb';
-
+                            
                             // Generate recommendations if needed (for wellness and traits)
                             if (detailsContainerId.includes('wellness') || detailsContainerId.includes('traits')) {
                                 setTimeout(() => {
                                     generateRecommendations(originalItem.name, resultValue, detailsContainerId);
                                 }, 100);
                             }
-
+                            
                             // Initialize Lucide icons for the mobile content
                             setTimeout(() => {
                                 lucide.createIcons();
                             }, 50);
-
+                            
+                            // Add event listeners for toggle buttons
+                            setTimeout(() => {
+                                addMobileToggleEventListeners(content);
+                            }, 100);
+                            
+                            // Smooth scroll to center the expanded content on mobile
+                            setTimeout(() => {
+                                if (window.innerWidth <= 768) { // Mobile only
+                                    content.scrollIntoView({ 
+                                        behavior: 'smooth', 
+                                        block: 'center',
+                                        inline: 'nearest'
+                                    });
+                                }
+                            }, 150);
+                            
 
                         }
-
+                        
                         const chevron = itemDiv.querySelector('[data-lucide="chevron-down"]');
                         if (chevron) {
                             chevron.style.transform = 'rotate(180deg)';
                         }
-
+                        
 
                     } else {
                         // Collapse current item
                         itemDiv.dataset.isExpanded = 'false';
                         itemDiv.classList.remove('bg-gradient-to-r', 'from-green-50', 'to-emerald-50', 'border-green-300', 'shadow-lg');
                         itemDiv.classList.add('border-transparent', 'shadow-sm');
-
+                        
                         const content = itemDiv.querySelector('.parameter-content-mobile');
                         if (content) {
                             content.classList.add('hidden');
@@ -519,12 +535,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             content.style.padding = '0';
                             content.style.border = 'none';
                         }
-
+                        
                         const chevron = itemDiv.querySelector('[data-lucide="chevron-down"]');
                         if (chevron) {
                             chevron.style.transform = 'rotate(0deg)';
                         }
-
+                        
                         // Reset the "Tap to expand" text
                         const tapText = itemDiv.querySelector('.text-xs');
                         if (tapText) {
@@ -533,54 +549,54 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 });
-
+                
             } else {
                 // Desktop: Keep existing behavior unchanged
-                itemDiv.className = 'parameter-item p-3 rounded-lg border-l-4 border-transparent';
-
+            itemDiv.className = 'parameter-item p-3 rounded-lg border-l-4 border-transparent';
+                
                 // Add colored risk indicator for complex diseases
                 let riskIndicator = '';
                 if (listContainerId === 'complex-list') {
                     riskIndicator = '<span class="inline-block w-4 h-4 rounded-full bg-gray-400 mr-2" data-risk-indicator></span>';
                     console.log(`Added risk indicator for complex disease: ${item.name}`);
                 }
-
+                
                 // Add type indicator for pharmacogenomics
                 let typeIndicator = '';
                 if (listContainerId === 'pharma-list') {
                     const type = getPharmaType(item.name);
                     typeIndicator = `<span class="inline-block w-6 h-6 mr-2 text-lg" title="${type}" style="vertical-align: middle;">${getPharmaIcon(type)}</span>`;
                 }
-
+                
                 itemDiv.innerHTML = `${riskIndicator}${typeIndicator}${item.name}`;
-
-                // Store the original item data for later use
-                itemDiv.dataset.itemIndex = index;
+            
+            // Store the original item data for later use
+            itemDiv.dataset.itemIndex = index;
                 itemDiv.dataset.originalName = item.name; // Store original name
-
-                itemDiv.addEventListener('click', () => {
-                    // Get the original item data
-                    const originalItem = items[index];
-                    // Check if this DOM element has patient results
-                    const hasResults = itemDiv.dataset && itemDiv.dataset.resultValue;
-                    let resultValue = hasResults ? itemDiv.dataset.resultValue : 'N/A';
-                    let action = hasResults && itemDiv.dataset.action ? itemDiv.dataset.action : null;
-
-                    // If no results in dataset, check the global patient results map
-                    if (resultValue === 'N/A' && window.patientResultsMap) {
-                        const parameterName = originalItem.name;
-                        const patientResult = window.patientResultsMap.get(parameterName);
-                        if (patientResult) {
-                            resultValue = patientResult.result;
-                            action = patientResult.action;
-                            console.log(`Found patient result for "${parameterName}":`, patientResult);
-                        }
+            
+            itemDiv.addEventListener('click', () => {
+                // Get the original item data
+                const originalItem = items[index];
+                // Check if this DOM element has patient results
+                const hasResults = itemDiv.dataset && itemDiv.dataset.resultValue;
+                let resultValue = hasResults ? itemDiv.dataset.resultValue : 'N/A';
+                let action = hasResults && itemDiv.dataset.action ? itemDiv.dataset.action : null;
+                
+                // If no results in dataset, check the global patient results map
+                if (resultValue === 'N/A' && window.patientResultsMap) {
+                    const parameterName = originalItem.name;
+                    const patientResult = window.patientResultsMap.get(parameterName);
+                    if (patientResult) {
+                        resultValue = patientResult.result;
+                        action = patientResult.action;
+                        console.log(`Found patient result for "${parameterName}":`, patientResult);
                     }
-
-                    displayDetails(detailsContainerId, originalItem, resultValue, action);
-                    listContainer.querySelectorAll('.parameter-item').forEach(el => el.classList.remove('selected'));
-                    itemDiv.classList.add('selected');
-
+                }
+                
+                displayDetails(detailsContainerId, originalItem, resultValue, action);
+                listContainer.querySelectorAll('.parameter-item').forEach(el => el.classList.remove('selected'));
+                itemDiv.classList.add('selected');
+                    
                     // Generate recommendations after displaying details (only for wellness and traits)
                     if (detailsContainerId.includes('wellness') || detailsContainerId.includes('traits')) {
                         setTimeout(() => {
@@ -588,11 +604,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         }, 100);
                     }
                 });
-
-                if (index === 0 && !isMobile) {
-                    itemDiv.classList.add('selected');
-                    displayDetails(detailsContainerId, item, 'N/A', null);
-
+            
+            if (index === 0 && !isMobile) {
+                itemDiv.classList.add('selected');
+                displayDetails(detailsContainerId, item, 'N/A', null);
+                    
                     // Generate recommendations for the first item (only for wellness and traits)
                     if (detailsContainerId.includes('wellness') || detailsContainerId.includes('traits')) {
                         setTimeout(() => {
@@ -601,12 +617,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-
+            
             listContainer.appendChild(itemDiv);
         });
-
+        
         console.log(`Finished creating parameter list for ${listContainerId}`);
-
+        
         // Update risk indicators for complex diseases if we have patient results
         if (listContainerId === 'complex-list') {
             console.log('Complex list created, checking for patient results...');
@@ -617,17 +633,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('No patient results map found yet');
             }
         }
-
+        
         // Initialize Lucide icons for pharmacogenomics if needed
         if (listContainerId === 'pharma-list') {
             lucide.createIcons();
         }
     }
-
+    
     // Function to create mobile-optimized parameter content
     function createMobileParameterContent(item, resultValue, action, detailsContainerId) {
         let contentHTML = '';
-
+        
         // Results Section - MOST PROMINENT (Compact mobile design)
         contentHTML += `
             <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-3 mb-3 shadow-sm">
@@ -644,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${getMobilePictureVisual(detailsContainerId, resultValue)}
             </div>
         `;
-
+        
         // Recommendations Section - SECOND MOST PROMINENT (for Wellness and Traits)
         if (detailsContainerId.includes('wellness') || detailsContainerId.includes('traits')) {
             contentHTML += `
@@ -664,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }
-
+        
         // Action Section (for pharma) - THIRD PRIORITY
         if (action && detailsContainerId.includes('pharma')) {
             contentHTML += `
@@ -679,13 +695,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }
-
+        
         // Definition Section - LESS PROMINENT (with Read More to show less initially)
         if (item.definition) {
-            const shortDefinition = item.definition.length > 120 ?
-                item.definition.substring(0, 120) + '...' :
+            const shortDefinition = item.definition.length > 120 ? 
+                item.definition.substring(0, 120) + '...' : 
                 item.definition;
-
+                
             contentHTML += `
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-4 shadow-md">
                     <h4 class="font-bold text-blue-800 flex items-center mb-3 text-base">
@@ -695,8 +711,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-blue-700 text-sm leading-relaxed">
                         <span class="definition-preview-mobile">${shortDefinition}</span>
                         ${item.definition.length > 120 ? `
-                            <button class="text-blue-600 font-semibold ml-2 underline hover:text-blue-800 transition-colors" 
-                                    onclick="toggleMobileDefinition(this, '${item.name.replace(/\s+/g, '-').toLowerCase()}')">
+                            <button class="text-blue-600 font-semibold ml-2 underline hover:text-blue-800 transition-colors definition-toggle-btn" 
+                                    data-item-id="${item.name.replace(/\s+/g, '-').toLowerCase()}">
                                 Read More
                             </button>
                             <span class="definition-full-mobile hidden">${item.definition}</span>
@@ -705,17 +721,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }
-
+        
         // Metrics Section - LEAST PROMINENT (compact, at the bottom)
         // For pharma, only show genes with Read More functionality
         if (detailsContainerId.includes('pharma')) {
             // Show only first gene initially for pharma
             const genesText = item.genes || 'Multiple genes';
-            const firstGene = typeof genesText === 'string' && genesText.includes(',') ?
-                genesText.split(',')[0].trim() :
+            const firstGene = typeof genesText === 'string' && genesText.includes(',') ? 
+                genesText.split(',')[0].trim() : 
                 genesText;
             const hasMultipleGenes = typeof genesText === 'string' && genesText.includes(',');
-
+            
             contentHTML += `
                 <div class="bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-lg p-3 mb-3 shadow-sm">
                     <h4 class="font-bold text-gray-800 flex items-center mb-2 text-sm">
@@ -725,8 +741,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-sm">
                         <span class="genes-preview-mobile text-gray-800 font-medium">${firstGene}</span>
                         ${hasMultipleGenes ? `
-                            <button class="text-blue-600 font-semibold ml-2 underline hover:text-blue-800 transition-colors" 
-                                    onclick="toggleMobileGenes(this, '${item.name.replace(/\s+/g, '-').toLowerCase()}')">
+                            <button class="text-blue-600 font-semibold ml-2 underline hover:text-blue-800 transition-colors genes-toggle-btn" 
+                                    data-item-id="${item.name.replace(/\s+/g, '-').toLowerCase()}">
                                 Read More
                             </button>
                             <span class="genes-full-mobile hidden text-gray-800 font-medium">${genesText}</span>
@@ -739,7 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const genesText = item.genes || 'Multiple genes';
             const hasMultipleGenes = typeof genesText === 'string' && genesText.includes(',');
             const firstGene = hasMultipleGenes ? genesText.split(',')[0].trim() : genesText;
-
+            
             contentHTML += `
                 <div class="bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-lg p-3 mb-3 shadow-sm">
                     <h4 class="font-bold text-gray-800 flex items-center mb-2 text-sm">
@@ -760,10 +776,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="text-right">
                                 <span class="genes-preview-mobile text-gray-800 font-semibold">${firstGene}</span>
                                 ${hasMultipleGenes ? `
-                                    <button class="text-blue-600 font-semibold ml-2 underline hover:text-blue-800 transition-colors text-xs" 
-                                            onclick="toggleMobileGenes(this, '${item.name.replace(/\s+/g, '-').toLowerCase()}')">
-                                        Read More
-                                    </button>
+                                                                    <button class="text-blue-600 font-semibold ml-2 underline hover:text-blue-800 transition-colors text-xs genes-toggle-btn" 
+                                        data-item-id="${item.name.replace(/\s+/g, '-').toLowerCase()}">
+                                    Read More
+                                </button>
                                     <span class="genes-full-mobile hidden text-gray-800 font-semibold">${genesText}</span>
                                 ` : ''}
                             </div>
@@ -772,15 +788,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }
-
+        
         return contentHTML;
     }
-
+    
     // Function to toggle mobile definition expansion
     function toggleMobileDefinition(button, itemId) {
         const definitionPreview = button.parentNode.querySelector('.definition-preview-mobile');
         const definitionFull = button.parentNode.querySelector('.definition-full-mobile');
-
+        
         if (definitionFull.classList.contains('hidden')) {
             // Show full definition
             definitionPreview.classList.add('hidden');
@@ -795,12 +811,12 @@ document.addEventListener('DOMContentLoaded', () => {
             button.className = 'text-blue-600 font-semibold ml-1 underline hover:text-blue-800 transition-colors';
         }
     }
-
+    
     // Function to toggle mobile genes expansion
     function toggleMobileGenes(button, itemId) {
         const genesPreview = button.parentNode.querySelector('.genes-preview-mobile');
         const genesFull = button.parentNode.querySelector('.genes-full-mobile');
-
+        
         if (genesFull.classList.contains('hidden')) {
             // Show all genes
             genesPreview.classList.add('hidden');
@@ -815,7 +831,32 @@ document.addEventListener('DOMContentLoaded', () => {
             button.className = 'text-blue-600 font-semibold ml-1 underline hover:text-blue-800 transition-colors';
         }
     }
-
+    
+    // Function to add event listeners for mobile toggle buttons
+    function addMobileToggleEventListeners(contentContainer) {
+        // Add event listeners for definition toggle buttons
+        const definitionButtons = contentContainer.querySelectorAll('.definition-toggle-btn');
+        definitionButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const itemId = button.dataset.itemId;
+                toggleMobileDefinition(button, itemId);
+            });
+        });
+        
+        // Add event listeners for genes toggle buttons
+        const genesButtons = contentContainer.querySelectorAll('.genes-toggle-btn');
+        genesButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const itemId = button.dataset.itemId;
+                toggleMobileGenes(button, itemId);
+            });
+        });
+    }
+    
     // Function to update risk indicators with proper colors
     function updateComplexRiskIndicators() {
         const complexList = document.getElementById('complex-list');
@@ -823,10 +864,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Complex list container not found!');
             return;
         }
-
+        
         console.log('=== UPDATING COMPLEX RISK INDICATORS ===');
         console.log('Patient results map exists:', !!window.patientResultsMap);
-
+        
         if (window.patientResultsMap) {
             console.log('Patient results map size:', window.patientResultsMap.size);
             console.log('All patient results:');
@@ -834,31 +875,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`  "${key}":`, value);
             }
         }
-
+        
         const parameterItems = complexList.querySelectorAll('.parameter-item');
         console.log(`Found ${parameterItems.length} parameter items in complex list`);
-
+        
         if (parameterItems.length === 0) {
             console.error('No parameter items found in complex list!');
             return;
         }
-
+        
         parameterItems.forEach((item, index) => {
             const riskIndicator = item.querySelector('[data-risk-indicator]');
             if (!riskIndicator) {
                 console.error(`No risk indicator found for item ${index}:`, item);
                 return;
             }
-
+            
             // Get parameter name from the dataset or text content
             let parameterName = item.dataset.originalName || item.textContent.replace(/●/, '').trim();
             console.log(`Processing parameter ${index + 1}: "${parameterName}"`);
-
+            
             // Check if we have patient results
             if (window.patientResultsMap && window.patientResultsMap.size > 0) {
                 // Try to find the result by exact name match first
                 let patientResult = window.patientResultsMap.get(parameterName);
-
+                
                 // If not found, try to find by partial match
                 if (!patientResult) {
                     for (let [key, value] of window.patientResultsMap.entries()) {
@@ -869,14 +910,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }
-
+                
                 console.log(`Patient result for "${parameterName}":`, patientResult);
-
+                
                 if (patientResult && patientResult.result) {
                     const riskLevel = getRiskLevelFromResult(patientResult.result);
                     const riskColor = getRiskColorForIndicator(riskLevel);
                     console.log(`Risk level: ${riskLevel}, Color: ${riskColor}`);
-
+                    
                     // Update the risk indicator with proper color
                     riskIndicator.className = `inline-block w-4 h-4 rounded-full mr-2 ${riskColor}`;
                     console.log(`✓ Updated risk indicator color to: ${riskColor}`);
@@ -891,10 +932,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`No patient results map, using default gray`);
             }
         });
-
+        
         console.log('=== FINISHED UPDATING COMPLEX RISK INDICATORS ===');
     }
-
+    
     // Helper function to determine risk level from result text
     function getRiskLevelFromResult(resultText) {
         const lowerResult = resultText.toLowerCase();
@@ -908,7 +949,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'medium'; // Default to medium for unknown results
         }
     }
-
+    
     // Helper function to get CSS classes for risk colors
     function getRiskColorForIndicator(riskLevel) {
         switch (riskLevel) {
@@ -918,11 +959,11 @@ document.addEventListener('DOMContentLoaded', () => {
             default: return 'bg-orange-500';
         }
     }
-
+    
     function setupSearch(inputId, listContainerId) {
         const searchInput = document.getElementById(inputId);
         const listContainer = document.getElementById(listContainerId);
-
+        
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             const items = listContainer.querySelectorAll('.parameter-item');
@@ -944,14 +985,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to populate all parameter lists
     function populateAllParameterLists() {
         console.log('Populating parameter lists...');
-
+        
         // Check if data files are loaded
         console.log('wellnessData available:', typeof wellnessData !== 'undefined');
         console.log('traitsData available:', typeof traitsData !== 'undefined');
         console.log('monogenicData available:', typeof monogenicData !== 'undefined');
         console.log('complexData available:', typeof complexData !== 'undefined');
         console.log('pharmaData available:', typeof pharmaData !== 'undefined');
-
+        
         // Populate Wellness list
         if (typeof wellnessData !== 'undefined') {
             createParameterList('wellness-list', 'wellness-details', wellnessData);
@@ -959,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.error('wellnessData is not defined!');
         }
-
+        
         // Populate Traits list
         if (typeof traitsData !== 'undefined') {
             createParameterList('traits-list', 'traits-details', traitsData);
@@ -967,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.error('traitsData is not defined!');
         }
-
+        
         // Populate Monogenic list
         if (typeof monogenicData !== 'undefined') {
             createParameterList('monogenic-list', 'monogenic-details', monogenicData);
@@ -975,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.error('monogenicData is not defined!');
         }
-
+        
         // Populate Complex list
         if (typeof complexData !== 'undefined') {
             createParameterList('complex-list', 'complex-details', complexData);
@@ -983,7 +1024,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.error('complexData is not defined!');
         }
-
+        
         // Populate Pharma list
         if (typeof pharmaData !== 'undefined') {
             createParameterList('pharma-list', 'pharma-details', pharmaData);
@@ -991,7 +1032,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.error('pharmaData is not defined!');
         }
-
+        
         // Hide details containers on mobile
         if (window.innerWidth <= 768) {
             const detailsContainers = ['traits-details', 'wellness-details', 'monogenic-details', 'complex-details', 'pharma-details'];
@@ -1005,10 +1046,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- INVOCATION ---
-
+    
     // Populate all parameter lists with static data
     populateAllParameterLists();
-
+    
     // Initialize search bars for all tabs
     setupSearch('traits-search', 'traits-list');
     setupSearch('wellness-search', 'wellness-list');
@@ -1020,12 +1061,12 @@ document.addEventListener('DOMContentLoaded', () => {
     disableCopyPaste();
 
     lucide.createIcons();
-
+    
     // Make updateComplexRiskIndicators available globally for testing
     window.updateComplexRiskIndicators = updateComplexRiskIndicators;
-
+    
     // Add a debug function to check patient results
-    window.debugPatientResults = function () {
+    window.debugPatientResults = function() {
         console.log('=== DEBUGGING PATIENT RESULTS ===');
         console.log('Patient results map exists:', !!window.patientResultsMap);
         if (window.patientResultsMap) {
@@ -1040,26 +1081,26 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Complex risk indicators:', document.querySelectorAll('#complex-list [data-risk-indicator]').length);
         console.log('================================');
     };
-
+    
     // Add a function to manually test risk indicators
-    window.testRiskIndicators = function () {
+    window.testRiskIndicators = function() {
         console.log('=== TESTING RISK INDICATORS ===');
-
+        
         // Check if complex list exists
         const complexList = document.getElementById('complex-list');
         if (!complexList) {
             console.error('Complex list not found!');
             return;
         }
-
+        
         // Check parameter items
         const parameterItems = complexList.querySelectorAll('.parameter-item');
         console.log(`Found ${parameterItems.length} parameter items`);
-
+        
         // Check risk indicators
         const riskIndicators = complexList.querySelectorAll('[data-risk-indicator]');
         console.log(`Found ${riskIndicators.length} risk indicators`);
-
+        
         // Show first few items
         parameterItems.forEach((item, index) => {
             if (index < 5) {
@@ -1068,12 +1109,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`Item ${index + 1}: "${name}" - Risk indicator: ${riskIndicator ? 'Present' : 'Missing'}`);
             }
         });
-
+        
         console.log('=== END TEST ===');
     };
-
+    
     // Add a function to force update risk indicators
-    window.forceUpdateRiskIndicators = function () {
+    window.forceUpdateRiskIndicators = function() {
         console.log('=== FORCE UPDATING RISK INDICATORS ===');
         updateComplexRiskIndicators();
         console.log('=== FORCE UPDATE COMPLETE ===');
@@ -1084,13 +1125,13 @@ document.addEventListener('DOMContentLoaded', () => {
 function toggleDefinition(definitionId) {
     const definitionContent = document.getElementById(`definition-${definitionId}`);
     if (!definitionContent) return;
-
+    
     const preview = definitionContent.querySelector('.definition-preview');
     const full = definitionContent.querySelector('.definition-full');
     const button = definitionContent.parentElement.querySelector('button');
     const readMoreText = button.querySelector('.read-more-text');
     const readMoreIcon = button.querySelector('.read-more-icon');
-
+    
     if (full.classList.contains('hidden')) {
         // Show full definition
         preview.classList.add('hidden');
@@ -1112,13 +1153,13 @@ function toggleDefinition(definitionId) {
 function toggleGenes(genesId) {
     const genesContent = document.getElementById(`genes-${genesId}`);
     if (!genesContent) return;
-
+    
     const preview = genesContent.querySelector('.genes-preview');
     const full = genesContent.querySelector('.genes-full');
     const button = genesContent.parentElement.querySelector('button');
     const readMoreText = button.querySelector('.genes-read-more-text');
     const readMoreIcon = button.querySelector('.genes-read-more-icon');
-
+    
     if (full.classList.contains('hidden')) {
         // Show full genes
         preview.classList.add('hidden');
@@ -1140,9 +1181,9 @@ function toggleGenes(genesId) {
 function toggleBibliography(parameterName, remainingCount) {
     const button = document.getElementById(`bib-toggle-${parameterName}`);
     if (!button) return;
-
+    
     const isExpanded = button.textContent.includes('Read Less');
-
+    
     if (isExpanded) {
         // Collapse - hide remaining items
         for (let i = 1; i < 1 + remainingCount; i++) {
@@ -1166,20 +1207,20 @@ function toggleBibliography(parameterName, remainingCount) {
 
 function getPictureVisual(containerId, resultValue) {
     let visualHTML = '';
-
+    
     // Determine test type based on container ID
     let testType = '';
     if (containerId === 'complex-details') testType = 'Complex';
     else if (containerId === 'wellness-details') testType = 'Wellness';
     else if (containerId === 'traits-details') testType = 'Traits';
     else if (containerId === 'monogenic-details') testType = 'Monogenic';
-
+    
     if (testType === 'Complex' || testType === 'Wellness' || testType === 'Traits') {
         // Bell curve images for Complex, Wellness, and Traits
         const lowerResult = resultValue.toLowerCase();
         let imagePath = '';
         let altText = '';
-
+        
         if (lowerResult.includes('low') || lowerResult.includes('decreased') || lowerResult.includes('reduced')) {
             imagePath = '../curves&pics/Low 2.png';
             altText = 'Low/Favorable Result';
@@ -1193,7 +1234,7 @@ function getPictureVisual(containerId, resultValue) {
             imagePath = '../curves&pics/Not found 2.png';
             altText = 'Result Not Found';
         }
-
+        
         visualHTML = `
             <div class="mt-4">
                 <h5 class="font-semibold text-gray-700 mb-2 text-sm flex items-center">
@@ -1210,7 +1251,7 @@ function getPictureVisual(containerId, resultValue) {
         const lowerResult = resultValue.toLowerCase();
         let imagePath = '';
         let altText = '';
-
+        
         if (lowerResult.includes('variant present') || lowerResult.includes('positive') || lowerResult.includes('detected')) {
             imagePath = '../curves&pics/red chromosome.png';
             altText = 'Variant Present - Red Chromosome';
@@ -1218,7 +1259,7 @@ function getPictureVisual(containerId, resultValue) {
             imagePath = '../curves&pics/green chromosome.png';
             altText = 'Variant Absent - Green Chromosome';
         }
-
+        
         visualHTML = `
             <div class="mt-4">
                 <h5 class="font-semibold text-gray-700 mb-2 text-sm flex items-center">
@@ -1231,42 +1272,42 @@ function getPictureVisual(containerId, resultValue) {
             </div>
         `;
     }
-
+    
     return visualHTML;
 }
 
-// Function to get mobile-optimized picture visual
-function getMobilePictureVisual(containerId, resultValue) {
-    let visualHTML = '';
-
-    // Determine test type based on container ID
-    let testType = '';
-    if (containerId === 'complex-details') testType = 'Complex';
-    else if (containerId === 'wellness-details') testType = 'Wellness';
-    else if (containerId === 'traits-details') testType = 'Traits';
-    else if (containerId === 'monogenic-details') testType = 'Monogenic';
-
-    if (testType === 'Complex' || testType === 'Wellness' || testType === 'Traits') {
-        // Bell curve images for Complex, Wellness, and Traits
-        const lowerResult = resultValue.toLowerCase();
-        let imagePath = '';
-        let altText = '';
-
-        if (lowerResult.includes('low') || lowerResult.includes('decreased') || lowerResult.includes('reduced')) {
-            imagePath = '../curves&pics/Low 2.png';
-            altText = 'Low/Favorable Result';
-        } else if (lowerResult.includes('average') || lowerResult.includes('medium') || lowerResult.includes('normal')) {
-            imagePath = '../curves&pics/Average 2.png';
-            altText = 'Average/Medium Result';
-        } else if (lowerResult.includes('high') || lowerResult.includes('elevated') || lowerResult.includes('increased')) {
-            imagePath = '../curves&pics/High 2.png';
-            altText = 'High/Unfavorable Result';
-        } else {
-            imagePath = '../curves&pics/Not found 2.png';
-            altText = 'Result Not Found';
-        }
-
-        visualHTML = `
+    // Function to get mobile-optimized picture visual
+    function getMobilePictureVisual(containerId, resultValue) {
+        let visualHTML = '';
+        
+        // Determine test type based on container ID
+        let testType = '';
+        if (containerId === 'complex-details') testType = 'Complex';
+        else if (containerId === 'wellness-details') testType = 'Wellness';
+        else if (containerId === 'traits-details') testType = 'Traits';
+        else if (containerId === 'monogenic-details') testType = 'Monogenic';
+        
+        if (testType === 'Complex' || testType === 'Wellness' || testType === 'Traits') {
+            // Bell curve images for Complex, Wellness, and Traits
+            const lowerResult = resultValue.toLowerCase();
+            let imagePath = '';
+            let altText = '';
+            
+            if (lowerResult.includes('low') || lowerResult.includes('decreased') || lowerResult.includes('reduced')) {
+                imagePath = '../curves&pics/Low 2.png';
+                altText = 'Low/Favorable Result';
+            } else if (lowerResult.includes('average') || lowerResult.includes('medium') || lowerResult.includes('normal')) {
+                imagePath = '../curves&pics/Average 2.png';
+                altText = 'Average/Medium Result';
+            } else if (lowerResult.includes('high') || lowerResult.includes('elevated') || lowerResult.includes('increased')) {
+                imagePath = '../curves&pics/High 2.png';
+                altText = 'High/Unfavorable Result';
+            } else {
+                imagePath = '../curves&pics/Not found 2.png';
+                altText = 'Result Not Found';
+            }
+            
+            visualHTML = `
                 <div class="mt-3">
                     <h5 class="font-semibold text-gray-700 mb-2 text-sm flex items-center justify-center">
                         <i data-lucide="bar-chart-3" class="w-4 h-4 mr-2"></i>
@@ -1277,21 +1318,21 @@ function getMobilePictureVisual(containerId, resultValue) {
                     </div>
                 </div>
             `;
-    } else if (testType === 'Monogenic') {
-        // Chromosome images for Monogenic
-        const lowerResult = resultValue.toLowerCase();
-        let imagePath = '';
-        let altText = '';
-
-        if (lowerResult.includes('variant present') || lowerResult.includes('positive') || lowerResult.includes('detected')) {
-            imagePath = '../curves&pics/red chromosome.png';
-            altText = 'Variant Present - Red Chromosome';
-        } else {
-            imagePath = '../curves&pics/green chromosome.png';
-            altText = 'Variant Absent - Green Chromosome';
-        }
-
-        visualHTML = `
+        } else if (testType === 'Monogenic') {
+            // Chromosome images for Monogenic
+            const lowerResult = resultValue.toLowerCase();
+            let imagePath = '';
+            let altText = '';
+            
+            if (lowerResult.includes('variant present') || lowerResult.includes('positive') || lowerResult.includes('detected')) {
+                imagePath = '../curves&pics/red chromosome.png';
+                altText = 'Variant Present - Red Chromosome';
+            } else {
+                imagePath = '../curves&pics/green chromosome.png';
+                altText = 'Variant Absent - Green Chromosome';
+            }
+            
+            visualHTML = `
                 <div class="mt-3">
                     <h5 class="font-semibold text-gray-700 mb-2 text-sm flex items-center justify-center">
                         <i data-lucide="dna" class="w-4 h-4 mr-2"></i>
@@ -1302,183 +1343,183 @@ function getMobilePictureVisual(containerId, resultValue) {
                     </div>
                 </div>
             `;
+        }
+        
+        return visualHTML;
     }
 
-    return visualHTML;
-}
+    // Function to generate and display recommendations
+    async function generateRecommendations(parameterName, resultValue, containerId) {
+        const recommendationDiv = document.getElementById(`recommendation-${parameterName.replace(/\s+/g, '-').toLowerCase()}`);
+        if (!recommendationDiv) return;
 
-// Function to generate and display recommendations
-async function generateRecommendations(parameterName, resultValue, containerId) {
-    const recommendationDiv = document.getElementById(`recommendation-${parameterName.replace(/\s+/g, '-').toLowerCase()}`);
-    if (!recommendationDiv) return;
+        try {
+            let recommendation = '';
+            
+            // Only show recommendations for wellness and traits
+            if (containerId.includes('wellness')) {
+                // Use fallback wellness recommendations
+                recommendation = window.wellnessRecommendations[parameterName] || 
+                    "Focus on maintaining a balanced diet and regular exercise routine based on your genetic profile.";
+            } else if (containerId.includes('traits')) {
+                // Use fallback traits recommendations
+                recommendation = window.traitsRecommendations[parameterName] || 
+                    "Use your genetic insights to make informed lifestyle choices that align with your personal characteristics.";
+            } else {
+                // Hide recommendations for other test types
+                recommendationDiv.style.display = 'none';
+                return;
+            }
 
-    try {
-        let recommendation = '';
-
-        // Only show recommendations for wellness and traits
-        if (containerId.includes('wellness')) {
-            // Use fallback wellness recommendations
-            recommendation = window.wellnessRecommendations[parameterName] ||
-                "Focus on maintaining a balanced diet and regular exercise routine based on your genetic profile.";
-        } else if (containerId.includes('traits')) {
-            // Use fallback traits recommendations
-            recommendation = window.traitsRecommendations[parameterName] ||
-                "Use your genetic insights to make informed lifestyle choices that align with your personal characteristics.";
-        } else {
-            // Hide recommendations for other test types
-            recommendationDiv.style.display = 'none';
-            return;
-        }
-
-        // Display the recommendation
-        recommendationDiv.innerHTML = `
+            // Display the recommendation
+            recommendationDiv.innerHTML = `
                 <div class="recommendation-text">
                     <p class="mb-2">${recommendation}</p>
                 </div>
             `;
-
-        lucide.createIcons();
-
-    } catch (error) {
-        console.error('Error generating recommendation:', error);
-        recommendationDiv.innerHTML = `
+        
+            lucide.createIcons();
+            
+        } catch (error) {
+            console.error('Error generating recommendation:', error);
+            recommendationDiv.innerHTML = `
                 <div class="text-red-600">
                     <p>Unable to generate recommendation. Please try again later.</p>
                 </div>
             `;
+        }
     }
-}
 
-// Function to regenerate recommendation using AI
-async function regenerateRecommendation(parameterName, resultValue, containerId) {
-    const recommendationDiv = document.getElementById(`recommendation-${parameterName.replace(/\s+/g, '-').toLowerCase()}`);
-    if (!recommendationDiv) return;
+    // Function to regenerate recommendation using AI
+    async function regenerateRecommendation(parameterName, resultValue, containerId) {
+        const recommendationDiv = document.getElementById(`recommendation-${parameterName.replace(/\s+/g, '-').toLowerCase()}`);
+        if (!recommendationDiv) return;
 
-    // Show loading state
-    recommendationDiv.innerHTML = `
+        // Show loading state
+        recommendationDiv.innerHTML = `
             <div class="loading-recommendation">
                 <i data-lucide="loader-2" class="w-4 h-4 animate-spin mr-2"></i>
                 Generating AI-powered recommendation...
             </div>
         `;
-    lucide.createIcons();
+        lucide.createIcons();
 
-    try {
-        if (window.RecommendationEngine) {
-            const engine = new window.RecommendationEngine();
-            let recommendation = '';
+        try {
+            if (window.RecommendationEngine) {
+                const engine = new window.RecommendationEngine();
+                let recommendation = '';
 
-            if (containerId.includes('wellness')) {
-                recommendation = await engine.generateWellnessRecommendations(parameterName, resultValue);
-            } else if (containerId.includes('traits')) {
-                recommendation = await engine.generateTraitsRecommendations(parameterName, resultValue);
-            } else {
-                recommendation = await engine.generateRecommendation(
-                    `Generate a brief, actionable recommendation for ${parameterName} with result ${resultValue}`
-                );
-            }
+                if (containerId.includes('wellness')) {
+                    recommendation = await engine.generateWellnessRecommendations(parameterName, resultValue);
+                } else if (containerId.includes('traits')) {
+                    recommendation = await engine.generateTraitsRecommendations(parameterName, resultValue);
+                } else {
+                    recommendation = await engine.generateRecommendation(
+                        `Generate a brief, actionable recommendation for ${parameterName} with result ${resultValue}`
+                    );
+                }
 
-            // Display the AI-generated recommendation
-            recommendationDiv.innerHTML = `
+                // Display the AI-generated recommendation
+                recommendationDiv.innerHTML = `
                     <div class="recommendation-text">
                         <p class="mb-2">${recommendation}</p>
                     </div>
                 `;
-        } else {
-            throw new Error('Recommendation engine not available');
-        }
-    } catch (error) {
-        console.error('Error regenerating recommendation:', error);
-        recommendationDiv.innerHTML = `
+            } else {
+                throw new Error('Recommendation engine not available');
+            }
+        } catch (error) {
+            console.error('Error regenerating recommendation:', error);
+            recommendationDiv.innerHTML = `
                 <div class="text-red-600">
                     <p>Unable to generate AI recommendation. Using fallback recommendation.</p>
                 </div>
             `;
+        }
+        
+        lucide.createIcons();
     }
 
-    lucide.createIcons();
-}
+        // Function to generate comprehensive lifestyle recommendations
+    async function generateComprehensiveLifestyleRecommendations() {
+        const comprehensivePanel = document.getElementById('comprehensive-recommendations');
+        if (!comprehensivePanel) return;
 
-// Function to generate comprehensive lifestyle recommendations
-async function generateComprehensiveLifestyleRecommendations() {
-    const comprehensivePanel = document.getElementById('comprehensive-recommendations');
-    if (!comprehensivePanel) return;
-
-    // Show loading state
-    comprehensivePanel.innerHTML = `
+        // Show loading state
+        comprehensivePanel.innerHTML = `
             <div class="text-center py-8">
                 <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600"></i>
                 <p class="text-gray-600">Generating comprehensive lifestyle recommendations...</p>
             </div>
         `;
-    lucide.createIcons();
+        lucide.createIcons();
 
-    try {
-        if (window.RecommendationEngine) {
-            const engine = new window.RecommendationEngine();
+        try {
+            if (window.RecommendationEngine) {
+                const engine = new window.RecommendationEngine();
+                
+                // Determine which test types have been taken
+                const testTypes = [];
+                if (document.getElementById('wellness-list').children.length > 0) testTypes.push('Wellness');
+                if (document.getElementById('traits-list').children.length > 0) testTypes.push('Traits');
+                        if (document.getElementById('complex-list').children.length > 0) testTypes.push('Genetic Susceptibility to Health Disorders');
+        if (document.getElementById('monogenic-list').children.length > 0) testTypes.push('Familial Genetic Conditions');
+                if (document.getElementById('pharma-list').children.length > 0) testTypes.push('Pharmacogenomics');
 
-            // Determine which test types have been taken
-            const testTypes = [];
-            if (document.getElementById('wellness-list').children.length > 0) testTypes.push('Wellness');
-            if (document.getElementById('traits-list').children.length > 0) testTypes.push('Traits');
-            if (document.getElementById('complex-list').children.length > 0) testTypes.push('GENETIC SUSCEPTIBILITY TO HEALTH DISORDERS');
-            if (document.getElementById('monogenic-list').children.length > 0) testTypes.push('FAMILIAL GENETIC CONDITIONS');
-            if (document.getElementById('pharma-list').children.length > 0) testTypes.push('Pharmacogenomics');
+                // Collect actual user results for analysis
+                const userResults = {};
+                
+                // Collect wellness data
+                if (typeof wellnessData !== 'undefined' && wellnessData.length > 0) {
+                    userResults.wellness = wellnessData.map(item => ({
+                        name: item.name,
+                        result: getParameterResult(item.name) || 'Analysis needed'
+                    }));
+                }
+                
+                // Collect traits data
+                if (typeof traitsData !== 'undefined' && traitsData.length > 0) {
+                    userResults.traits = traitsData.map(item => ({
+                        name: item.name,
+                        result: getParameterResult(item.name) || 'Analysis needed'
+                    }));
+                }
+                
+                // Collect complex disease data
+                if (typeof complexData !== 'undefined' && complexData.length > 0) {
+                    userResults.complex = complexData.map(item => ({
+                        name: item.name,
+                        result: getParameterResult(item.name) || 'Analysis needed'
+                    }));
+                }
+                
+                // Collect monogenic data
+                if (typeof monogenicData !== 'undefined' && monogenicData.length > 0) {
+                    userResults.monogenic = monogenicData.map(item => ({
+                        name: item.name,
+                        result: getParameterResult(item.name) || 'Analysis needed'
+                    }));
+                }
+                
+                // Collect pharma data
+                if (typeof pharmaData !== 'undefined' && pharmaData.length > 0) {
+                    userResults.pharma = pharmaData.map(item => ({
+                        name: item.name,
+                        result: getParameterResult(item.name) || 'Analysis needed'
+                    }));
+                }
 
-            // Collect actual user results for analysis
-            const userResults = {};
-
-            // Collect wellness data
-            if (typeof wellnessData !== 'undefined' && wellnessData.length > 0) {
-                userResults.wellness = wellnessData.map(item => ({
-                    name: item.name,
-                    result: getParameterResult(item.name) || 'Analysis needed'
-                }));
-            }
-
-            // Collect traits data
-            if (typeof traitsData !== 'undefined' && traitsData.length > 0) {
-                userResults.traits = traitsData.map(item => ({
-                    name: item.name,
-                    result: getParameterResult(item.name) || 'Analysis needed'
-                }));
-            }
-
-            // Collect complex disease data
-            if (typeof complexData !== 'undefined' && complexData.length > 0) {
-                userResults.complex = complexData.map(item => ({
-                    name: item.name,
-                    result: getParameterResult(item.name) || 'Analysis needed'
-                }));
-            }
-
-            // Collect monogenic data
-            if (typeof monogenicData !== 'undefined' && monogenicData.length > 0) {
-                userResults.monogenic = monogenicData.map(item => ({
-                    name: item.name,
-                    result: getParameterResult(item.name) || 'Analysis needed'
-                }));
-            }
-
-            // Collect pharma data
-            if (typeof pharmaData !== 'undefined' && pharmaData.length > 0) {
-                userResults.pharma = pharmaData.map(item => ({
-                    name: item.name,
-                    result: getParameterResult(item.name) || 'Analysis needed'
-                }));
-            }
-
-            // Analyze user results and generate personalized recommendations
-            const personalizedRecommendations = await analyzeUserResultsAndGenerateRecommendations(testTypes, userResults);
-
-            // Populate personalized food recommendations
-            setTimeout(() => populatePersonalizedFoodRecommendations(userResults), 100);
-
-            // Populate personalized daily routine
-            setTimeout(() => populatePersonalizedRoutine(userResults), 100);
-
-            // Display the recommendations
-            comprehensivePanel.innerHTML = `
+                // Analyze user results and generate personalized recommendations
+                const personalizedRecommendations = await analyzeUserResultsAndGenerateRecommendations(testTypes, userResults);
+                
+                // Populate personalized food recommendations
+                setTimeout(() => populatePersonalizedFoodRecommendations(userResults), 100);
+                
+                // Populate personalized daily routine
+                setTimeout(() => populatePersonalizedRoutine(userResults), 100);
+                
+                // Display the recommendations
+                comprehensivePanel.innerHTML = `
                     <div class="space-y-8">
                         <!-- Header Section -->
                         <div class="text-center mb-6">
@@ -1777,12 +1818,12 @@ async function generateComprehensiveLifestyleRecommendations() {
                         </div>
                     </div>
                 `;
-        } else {
-            throw new Error('Recommendation engine not available');
-        }
-    } catch (error) {
-        console.error('Error generating comprehensive recommendations:', error);
-        comprehensivePanel.innerHTML = `
+            } else {
+                throw new Error('Recommendation engine not available');
+            }
+        } catch (error) {
+            console.error('Error generating comprehensive recommendations:', error);
+            comprehensivePanel.innerHTML = `
                 <div class="text-center py-8">
                     <div class="text-red-600 mb-4">
                         <i data-lucide="alert-circle" class="w-12 h-12 mx-auto mb-2"></i>
@@ -1790,326 +1831,328 @@ async function generateComprehensiveLifestyleRecommendations() {
                     </div>
                 </div>
             `;
+        }
+        
+        lucide.createIcons();
     }
 
-    lucide.createIcons();
-}
-
-// Function to save recommendations as a clean, formatted PDF
-async function saveRecommendationsAsPDF() {
-    try {
-        // Check if jsPDF is available
-        if (typeof window.jspdf === 'undefined') {
-            await loadJSPDF();
-        }
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        // Set document properties
-        doc.setProperties({
-            title: 'Codex Personalized Lifestyle Recommendations',
-            subject: 'Genetic-Based Health and Lifestyle Recommendations',
-            author: 'Codex Genetic Analysis System',
-            creator: 'Codex System'
-        });
-
-        // Get patient information
-        const patientNameElement = document.getElementById('patient-name');
-        const patientIdElement = document.getElementById('patient-id');
-        const patientName = patientNameElement ? patientNameElement.textContent.trim() : 'Patient Name';
-        const patientId = patientIdElement ? patientIdElement.textContent.trim() : 'Patient ID';
-
-        // Professional header
-        doc.setFillColor(34, 139, 34);
-        doc.rect(0, 0, 210, 40, 'F');
-
-        doc.setFontSize(24);
-        doc.setTextColor(255, 255, 255);
-        doc.text('Codex Personalized Recommendations', 105, 20, { align: 'center' });
-
-        doc.setFontSize(12);
-        doc.text('Genetic-Based Lifestyle & Health Guide', 105, 30, { align: 'center' });
-
-        // Patient information box
-        doc.setFillColor(248, 250, 252);
-        doc.rect(20, 50, 170, 20, 'F');
-        doc.setDrawColor(34, 139, 34);
-        doc.rect(20, 50, 170, 20, 'S');
-
-        doc.setFontSize(12);
-        doc.setTextColor(34, 139, 34);
-        doc.text('Patient Information', 25, 62);
-
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        doc.text(`Name: ${patientName}`, 25, 67);
-        doc.text(`ID: ${patientId}`, 120, 67);
-
-        let yPosition = 85;
-
-        // Collect recommendation data from the page
-        const recommendationData = collectRecommendationData();
-
-        // Add personalized insights section
-        if (recommendationData.insights && recommendationData.insights.length > 0) {
-            yPosition = addSection(doc, 'Personalized Genetic Insights', recommendationData.insights, yPosition);
-        }
-
-        // Add food recommendations
-        if (recommendationData.foodInclude && recommendationData.foodInclude.length > 0) {
-            yPosition = addSection(doc, 'Recommended Foods', recommendationData.foodInclude, yPosition);
-        }
-
-        if (recommendationData.foodLimit && recommendationData.foodLimit.length > 0) {
-            yPosition = addSection(doc, 'Foods to Limit', recommendationData.foodLimit, yPosition);
-        }
-
-        // Add daily routine recommendations
-        if (recommendationData.routine && recommendationData.routine.length > 0) {
-            yPosition = addSection(doc, 'Daily Routine Recommendations', recommendationData.routine, yPosition);
-        }
-
-        // Add wellness recommendations (parameter by parameter)
-        if (recommendationData.wellness && recommendationData.wellness.length > 0) {
-            yPosition = addSection(doc, 'Wellness Parameter Recommendations', recommendationData.wellness, yPosition);
-        }
-
-        // Add traits recommendations (parameter by parameter)
-        if (recommendationData.traits && recommendationData.traits.length > 0) {
-            yPosition = addSection(doc, 'Personal Traits Recommendations', recommendationData.traits, yPosition);
-        }
-
-        // Professional footer on all pages
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-
-            doc.setDrawColor(200, 200, 200);
-            doc.line(20, 280, 190, 280);
-
-            doc.setFontSize(8);
-            doc.setTextColor(128, 128, 128);
-            doc.text(`Page ${i} of ${pageCount}`, 20, 285);
-            doc.text('Generated by Codex Genetic Analysis System', 105, 285, { align: 'center' });
-            doc.text(new Date().toLocaleString(), 190, 285, { align: 'right' });
-        }
-
-        // Save the PDF
-        const fileName = `Codex_Personalized_Recommendations_${new Date().toISOString().split('T')[0]}.pdf`;
-        doc.save(fileName);
-
-        showSuccessMessage('Recommendations saved successfully as PDF!');
-
-    } catch (error) {
-        console.error('Error generating recommendations PDF:', error);
-        alert('Error generating PDF. Please try again.');
-    }
-}
-
-// Helper function to collect recommendation data from the page
-function collectRecommendationData() {
-    const data = {
-        insights: [],
-        foodInclude: [],
-        foodLimit: [],
-        routine: [],
-        wellness: [],
-        traits: []
-    };
-
-    // Collect insights from the main analysis section
-    const insightsSection = document.querySelector('.bg-white.bg-opacity-70 .text-blue-800');
-    if (insightsSection) {
-        const insightPoints = insightsSection.querySelectorAll('p');
-        insightPoints.forEach(point => {
-            const text = point.textContent.trim();
-            if (text && text.length > 20) {
-                data.insights.push(text);
+        // Function to save recommendations as a clean, formatted PDF
+    async function saveRecommendationsAsPDF() {
+        try {
+            // Check if jsPDF is available
+            if (typeof window.jspdf === 'undefined') {
+                await loadJSPDF();
             }
-        });
-    }
 
-    // Collect food recommendations
-    const foodIncludeContainer = document.getElementById('personalized-foods-include');
-    if (foodIncludeContainer) {
-        const foodItems = foodIncludeContainer.querySelectorAll('.font-semibold');
-        foodItems.forEach(item => {
-            const name = item.textContent.trim();
-            const description = item.nextElementSibling ? item.nextElementSibling.textContent.trim() : '';
-            if (name) {
-                data.foodInclude.push(`${name}: ${description}`);
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Set document properties
+            doc.setProperties({
+                title: 'Codex Personalized Lifestyle Recommendations',
+                subject: 'Genetic-Based Health and Lifestyle Recommendations',
+                author: 'Codex Genetic Analysis System',
+                creator: 'Codex System'
+            });
+
+            // Get patient information
+            const patientNameElement = document.getElementById('patient-name');
+            const patientIdElement = document.getElementById('patient-id');
+            const patientName = patientNameElement ? patientNameElement.textContent.trim() : 'Patient Name';
+            const patientId = patientIdElement ? patientIdElement.textContent.trim() : 'Patient ID';
+
+            // Professional header
+            doc.setFillColor(34, 139, 34);
+            doc.rect(0, 0, 210, 40, 'F');
+            
+            doc.setFontSize(24);
+            doc.setTextColor(255, 255, 255);
+            doc.text('Codex Personalized Recommendations', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.text('Genetic-Based Lifestyle & Health Guide', 105, 30, { align: 'center' });
+
+            // Patient information box
+            doc.setFillColor(248, 250, 252);
+            doc.rect(20, 50, 170, 20, 'F');
+            doc.setDrawColor(34, 139, 34);
+            doc.rect(20, 50, 170, 20, 'S');
+            
+            doc.setFontSize(12);
+            doc.setTextColor(34, 139, 34);
+            doc.text('Patient Information', 25, 62);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Name: ${patientName}`, 25, 67);
+            doc.text(`ID: ${patientId}`, 120, 67);
+
+            let yPosition = 85;
+
+            // Collect recommendation data from the page
+            const recommendationData = collectRecommendationData();
+
+            // Add personalized insights section
+            if (recommendationData.insights && recommendationData.insights.length > 0) {
+                yPosition = addSection(doc, 'Personalized Genetic Insights', recommendationData.insights, yPosition);
             }
-        });
-    }
 
-    const foodLimitContainer = document.getElementById('personalized-foods-limit');
-    if (foodLimitContainer) {
-        const foodItems = foodLimitContainer.querySelectorAll('.font-semibold');
-        foodItems.forEach(item => {
-            const name = item.textContent.trim();
-            const description = item.nextElementSibling ? item.nextElementSibling.textContent.trim() : '';
-            if (name) {
-                data.foodLimit.push(`${name}: ${description}`);
+            // Add food recommendations
+            if (recommendationData.foodInclude && recommendationData.foodInclude.length > 0) {
+                yPosition = addSection(doc, 'Recommended Foods', recommendationData.foodInclude, yPosition);
             }
-        });
-    }
 
-    // Collect routine recommendations
-    const routineContainer = document.getElementById('personalized-routine');
-    if (routineContainer) {
-        const routineItems = routineContainer.querySelectorAll('.text-center');
-        routineItems.forEach(item => {
-            const time = item.querySelector('.font-bold')?.textContent.trim() || '';
-            const title = item.querySelector('.font-semibold')?.textContent.trim() || '';
-            const description = item.querySelector('.text-sm')?.textContent.trim() || '';
-            if (time && title) {
-                data.routine.push(`${time} - ${title}: ${description}`);
+            if (recommendationData.foodLimit && recommendationData.foodLimit.length > 0) {
+                yPosition = addSection(doc, 'Foods to Limit', recommendationData.foodLimit, yPosition);
             }
-        });
-    }
 
-    // Collect parameter-specific recommendations for wellness and traits
-    if (typeof wellnessData !== 'undefined' && wellnessData.length > 0) {
-        wellnessData.forEach(item => {
-            const result = getParameterResult(item.name);
-            if (result && result !== 'Analysis needed') {
-                data.wellness.push(`${item.name}: ${result}`);
+            // Add daily routine recommendations
+            if (recommendationData.routine && recommendationData.routine.length > 0) {
+                yPosition = addSection(doc, 'Daily Routine Recommendations', recommendationData.routine, yPosition);
             }
-        });
-    }
 
-    if (typeof traitsData !== 'undefined' && traitsData.length > 0) {
-        traitsData.forEach(item => {
-            const result = getParameterResult(item.name);
-            if (result && result !== 'Analysis needed') {
-                data.traits.push(`${item.name}: ${result}`);
+            // Add wellness recommendations (parameter by parameter)
+            if (recommendationData.wellness && recommendationData.wellness.length > 0) {
+                yPosition = addSection(doc, 'Wellness Parameter Recommendations', recommendationData.wellness, yPosition);
             }
-        });
+
+            // Add traits recommendations (parameter by parameter)
+            if (recommendationData.traits && recommendationData.traits.length > 0) {
+                yPosition = addSection(doc, 'Personal Traits Recommendations', recommendationData.traits, yPosition);
+            }
+
+            // Professional footer on all pages
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                
+                doc.setDrawColor(200, 200, 200);
+                doc.line(20, 280, 190, 280);
+                
+                doc.setFontSize(8);
+                doc.setTextColor(128, 128, 128);
+                doc.text(`Page ${i} of ${pageCount}`, 20, 285);
+                doc.text('Generated by Codex Genetic Analysis System', 105, 285, { align: 'center' });
+                doc.text(new Date().toLocaleString(), 190, 285, { align: 'right' });
+            }
+
+            // Save the PDF
+            const fileName = `Codex_Personalized_Recommendations_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+
+            showSuccessMessage('Recommendations saved successfully as PDF!');
+
+        } catch (error) {
+            console.error('Error generating recommendations PDF:', error);
+            alert('Error generating PDF. Please try again.');
+        }
     }
 
-    return data;
-}
+    // Helper function to collect recommendation data from the page
+    function collectRecommendationData() {
+        const data = {
+            insights: [],
+            foodInclude: [],
+            foodLimit: [],
+            routine: [],
+            wellness: [],
+            traits: []
+        };
 
-// Helper function to add a section to the PDF
-function addSection(doc, title, items, startY) {
-    let yPosition = startY;
-    const pageWidth = 170;
-    const leftMargin = 20;
-    const lineHeight = 6;
+        // Collect insights from the main analysis section
+        const insightsSection = document.querySelector('.bg-white.bg-opacity-70 .text-blue-800');
+        if (insightsSection) {
+            const insightPoints = insightsSection.querySelectorAll('p');
+            insightPoints.forEach(point => {
+                const text = point.textContent.trim();
+                if (text && text.length > 20) {
+                    data.insights.push(text);
+                }
+            });
+        }
 
-    // Check if we need a new page
-    if (yPosition > 250) {
-        doc.addPage();
-        yPosition = 30;
+        // Collect food recommendations
+        const foodIncludeContainer = document.getElementById('personalized-foods-include');
+        if (foodIncludeContainer) {
+            const foodItems = foodIncludeContainer.querySelectorAll('.font-semibold');
+            foodItems.forEach(item => {
+                const name = item.textContent.trim();
+                const description = item.nextElementSibling ? item.nextElementSibling.textContent.trim() : '';
+                if (name) {
+                    data.foodInclude.push(`${name}: ${description}`);
+                }
+            });
+        }
+
+        const foodLimitContainer = document.getElementById('personalized-foods-limit');
+        if (foodLimitContainer) {
+            const foodItems = foodLimitContainer.querySelectorAll('.font-semibold');
+            foodItems.forEach(item => {
+                const name = item.textContent.trim();
+                const description = item.nextElementSibling ? item.nextElementSibling.textContent.trim() : '';
+                if (name) {
+                    data.foodLimit.push(`${name}: ${description}`);
+                }
+            });
+        }
+
+        // Collect routine recommendations
+        const routineContainer = document.getElementById('personalized-routine');
+        if (routineContainer) {
+            const routineItems = routineContainer.querySelectorAll('.text-center');
+            routineItems.forEach(item => {
+                const time = item.querySelector('.font-bold')?.textContent.trim() || '';
+                const title = item.querySelector('.font-semibold')?.textContent.trim() || '';
+                const description = item.querySelector('.text-sm')?.textContent.trim() || '';
+                if (time && title) {
+                    data.routine.push(`${time} - ${title}: ${description}`);
+                }
+            });
+        }
+
+        // Collect parameter-specific recommendations for wellness and traits
+        if (typeof wellnessData !== 'undefined' && wellnessData.length > 0) {
+            wellnessData.forEach(item => {
+                const result = getParameterResult(item.name);
+                if (result && result !== 'Analysis needed') {
+                    data.wellness.push(`${item.name}: ${result}`);
+                }
+            });
+        }
+
+        if (typeof traitsData !== 'undefined' && traitsData.length > 0) {
+            traitsData.forEach(item => {
+                const result = getParameterResult(item.name);
+                if (result && result !== 'Analysis needed') {
+                    data.traits.push(`${item.name}: ${result}`);
+                }
+            });
+        }
+
+        return data;
     }
 
-    // Section header
-    doc.setFillColor(34, 139, 34);
-    doc.rect(leftMargin, yPosition - 3, pageWidth, 12, 'F');
+    // Helper function to add a section to the PDF
+    function addSection(doc, title, items, startY) {
+        let yPosition = startY;
+        const pageWidth = 170;
+        const leftMargin = 20;
+        const lineHeight = 6;
 
-    doc.setFontSize(14);
-    doc.setTextColor(255, 255, 255);
-    doc.text(title, leftMargin + 5, yPosition + 5);
-    yPosition += 20;
-
-    // Section content
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-
-    items.forEach((item, index) => {
         // Check if we need a new page
-        if (yPosition > 260) {
+        if (yPosition > 250) {
             doc.addPage();
             yPosition = 30;
         }
 
-        // Add alternating background for readability
-        if (index % 2 === 0) {
-            doc.setFillColor(248, 250, 252);
-            doc.rect(leftMargin, yPosition - 2, pageWidth, lineHeight + 2, 'F');
-        }
+        // Section header
+        doc.setFillColor(34, 139, 34);
+        doc.rect(leftMargin, yPosition - 3, pageWidth, 12, 'F');
+        
+        doc.setFontSize(14);
+        doc.setTextColor(255, 255, 255);
+        doc.text(title, leftMargin + 5, yPosition + 5);
+        yPosition += 20;
 
-        // Clean and wrap text
-        let cleanText = item.replace(/•/g, '').trim();
-        const textLines = doc.splitTextToSize(cleanText, pageWidth - 10);
-
-        // Add bullet point
-        doc.setTextColor(34, 139, 34);
-        doc.text('•', leftMargin + 5, yPosition + 4);
-
-        // Add text content
+        // Section content
+        doc.setFontSize(10);
         doc.setTextColor(0, 0, 0);
-        doc.text(textLines, leftMargin + 15, yPosition + 4);
 
-        yPosition += Math.max(lineHeight, textLines.length * 5);
-    });
+        items.forEach((item, index) => {
+            // Check if we need a new page
+            if (yPosition > 260) {
+                doc.addPage();
+                yPosition = 30;
+            }
 
-    return yPosition + 15;
-}
+            // Add alternating background for readability
+            if (index % 2 === 0) {
+                doc.setFillColor(248, 250, 252);
+                doc.rect(leftMargin, yPosition - 2, pageWidth, lineHeight + 2, 'F');
+            }
 
-// Helper function to get parameter result from patient data
-function getParameterResult(parameterName) {
-    if (window.patientResultsMap && window.patientResultsMap.has(parameterName)) {
-        return window.patientResultsMap.get(parameterName).result;
+            // Clean and wrap text
+            let cleanText = item.replace(/•/g, '').trim();
+            const textLines = doc.splitTextToSize(cleanText, pageWidth - 10);
+            
+            // Add bullet point
+            doc.setTextColor(34, 139, 34);
+            doc.text('•', leftMargin + 5, yPosition + 4);
+            
+            // Add text content
+            doc.setTextColor(0, 0, 0);
+            doc.text(textLines, leftMargin + 15, yPosition + 4);
+            
+            yPosition += Math.max(lineHeight, textLines.length * 5);
+        });
+
+        return yPosition + 15;
     }
 
-    // Try partial match if exact match not found
-    if (window.patientResultsMap) {
-        for (let [key, value] of window.patientResultsMap.entries()) {
-            if (key.includes(parameterName) || parameterName.includes(key)) {
-                return value.result;
+
+
+    // Helper function to get parameter result from patient data
+    function getParameterResult(parameterName) {
+        if (window.patientResultsMap && window.patientResultsMap.has(parameterName)) {
+            return window.patientResultsMap.get(parameterName).result;
+        }
+        
+        // Try partial match if exact match not found
+        if (window.patientResultsMap) {
+            for (let [key, value] of window.patientResultsMap.entries()) {
+                if (key.includes(parameterName) || parameterName.includes(key)) {
+                    return value.result;
+                }
             }
         }
+        
+        return null;
     }
 
-    return null;
-}
+    // Auto-generate recommendations when comprehensive tab is opened
+    function autoGenerateRecommendations() {
+        // Wait a bit for the page to fully load
+        setTimeout(() => {
+            const comprehensivePanel = document.getElementById('comprehensive-recommendations');
+            if (comprehensivePanel && comprehensivePanel.querySelector('.animate-spin')) {
+                // Only generate if we're still in loading state
+                generateComprehensiveLifestyleRecommendations();
+            }
+        }, 1000);
+    }
 
-// Auto-generate recommendations when comprehensive tab is opened
-function autoGenerateRecommendations() {
-    // Wait a bit for the page to fully load
-    setTimeout(() => {
-        const comprehensivePanel = document.getElementById('comprehensive-recommendations');
-        if (comprehensivePanel && comprehensivePanel.querySelector('.animate-spin')) {
-            // Only generate if we're still in loading state
-            generateComprehensiveLifestyleRecommendations();
-        }
-    }, 1000);
-}
-
-// Initialize auto-generation when page loads
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', autoGenerateRecommendations);
-} else {
-    autoGenerateRecommendations();
-}
+    // Initialize auto-generation when page loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', autoGenerateRecommendations);
+    } else {
+        autoGenerateRecommendations();
+    }
 
 
-// Function to load jsPDF dynamically
-async function loadJSPDF() {
-    return new Promise((resolve, reject) => {
-        if (window.jspdf) {
-            resolve();
-            return;
-        }
+    // Function to load jsPDF dynamically
+    async function loadJSPDF() {
+        return new Promise((resolve, reject) => {
+            if (window.jspdf) {
+                resolve();
+                return;
+            }
 
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-        script.onload = () => {
-            window.jspdf = window.jspdf || window.jspdf.jsPDF;
-            resolve();
-        };
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-}
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script.onload = () => {
+                window.jspdf = window.jspdf || window.jspdf.jsPDF;
+                resolve();
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
 
-// Helper function to show success messages
-function showSuccessMessage(message) {
-    const successMessage = document.createElement('div');
-    successMessage.className = 'success-message';
-    successMessage.style.cssText = `
+    // Helper function to show success messages
+    function showSuccessMessage(message) {
+        const successMessage = document.createElement('div');
+        successMessage.className = 'success-message';
+        successMessage.style.cssText = `
             background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
             color: white;
             padding: 15px;
@@ -2123,649 +2166,816 @@ function showSuccessMessage(message) {
             z-index: 1000;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         `;
-    successMessage.innerHTML = message;
-    document.body.appendChild(successMessage);
+        successMessage.innerHTML = message;
+        document.body.appendChild(successMessage);
+        
+        setTimeout(() => {
+            if (successMessage.parentNode) {
+                successMessage.parentNode.removeChild(successMessage);
+            }
+        }, 3000);
+    }
 
-    setTimeout(() => {
-        if (successMessage.parentNode) {
-            successMessage.parentNode.removeChild(successMessage);
-        }
-    }, 3000);
-}
+    // Old image-based function - removed for better approach
+    /* async function createPDFFromImages(images) {
+        try {
+            // Check if jsPDF is available
+            if (typeof window.jspdf === 'undefined') {
+                await loadJSPDF();
+            }
 
-// Professional PDF generation function for test results
-async function saveTestResultsAsPDF() {
-    try {
-        // Check if jsPDF is available
-        if (typeof window.jspdf === 'undefined') {
-            await loadJSPDF();
-        }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Set document properties
+            doc.setProperties({
+                title: 'Codex Lifestyle Recommendations',
+                subject: 'Personalized Health Recommendations',
+                author: 'Codex Genetic Analysis System',
+                creator: 'Codex System'
+            });
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+            // Professional header
+            doc.setFillColor(34, 139, 34);
+            doc.rect(0, 0, 210, 35, 'F');
+            
+            doc.setFontSize(22);
+            doc.setTextColor(255, 255, 255);
+            doc.text('Codex Genetic Analysis', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(14);
+            doc.text('Lifestyle Recommendations Report', 105, 30, { align: 'center' });
 
-        // Set document properties
-        doc.setProperties({
-            title: 'Codex Genetic Test Results',
-            subject: 'Comprehensive Genetic Analysis Report',
-            author: 'Codex Genetic Analysis System',
-            creator: 'Codex System'
-        });
+            // Patient information
+            const patientNameElement = document.getElementById('patient-name');
+            const patientIdElement = document.getElementById('patient-id');
+            
+            const patientName = patientNameElement ? patientNameElement.textContent.trim() : 'Patient Name';
+            const patientId = patientIdElement ? patientIdElement.textContent.trim() : 'Patient ID';
 
-        // Professional header
-        doc.setFillColor(34, 139, 34);
-        doc.rect(0, 0, 210, 35, 'F');
+            doc.setFillColor(248, 250, 252);
+            doc.rect(20, 45, 170, 25, 'F');
+            doc.setDrawColor(34, 139, 34);
+            doc.rect(20, 45, 170, 25, 'S');
+            
+            doc.setFontSize(12);
+            doc.setTextColor(34, 139, 34);
+            doc.text('Patient Information', 25, 57);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Name: ${patientName}`, 25, 67);
+            doc.text(`ID: ${patientId}`, 120, 67);
 
-        doc.setFontSize(22);
-        doc.setTextColor(255, 255, 255);
-        doc.text('Codex Genetic Analysis', 105, 20, { align: 'center' });
+            let currentPage = 1;
+            let yPosition = 85;
 
-        doc.setFontSize(14);
-        doc.text('Test Results Report', 105, 30, { align: 'center' });
+            // Add each image to the PDF
+            for (let i = 0; i < images.length; i++) {
+                const image = images[i];
+                
+                // Check if we need a new page
+                if (yPosition > 200) {
+                    doc.addPage();
+                    currentPage++;
+                    yPosition = 30;
+                }
 
-        // Patient information
-        doc.setFillColor(248, 250, 252);
-        doc.rect(20, 45, 170, 25, 'F');
-        doc.setDrawColor(34, 139, 34);
-        doc.rect(20, 45, 170, 25, 'S');
+                // Section header
+                doc.setFillColor(34, 139, 34);
+                doc.rect(20, yPosition - 5, 170, 8, 'F');
+                
+                doc.setFontSize(12);
+                doc.setTextColor(255, 255, 255);
+                doc.text(image.name, 25, yPosition);
+                yPosition += 15;
 
-        doc.setFontSize(12);
-        doc.setTextColor(34, 139, 34);
-        doc.text('Patient Information', 25, 57);
+                // Section description
+                doc.setFontSize(9);
+                doc.setTextColor(100, 100, 100);
+                doc.text(image.description, 25, yPosition);
+                yPosition += 10;
 
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-
-        // Get patient data from the page
-        const patientNameElement = document.getElementById('patient-name');
-        const patientIdElement = document.getElementById('patient-id');
-
-        const patientName = patientNameElement ? patientNameElement.textContent.trim() : 'Patient Name';
-        const patientId = patientIdElement ? patientIdElement.textContent.trim() : 'Patient ID';
-
-        doc.text(`Name: ${patientName}`, 25, 67);
-        doc.text(`ID: ${patientId}`, 120, 67);
-
-        let yPosition = 85;
-        const pageWidth = 170;
-        const leftMargin = 20;
-
-        // Process each test type
-        const testTypes = ['Wellness', 'Traits', 'Monogenic', 'Complex', 'Pharma'];
-
-        testTypes.forEach(testType => {
-            const listId = testType.toLowerCase() + '-list';
-            const listContainer = document.getElementById(listId);
-
-            if (listContainer) {
-                const parameterItems = listContainer.querySelectorAll('.parameter-item');
-                const itemsWithResults = Array.from(parameterItems).filter(item =>
-                    item.classList.contains('has-results')
-                );
-
-                if (itemsWithResults.length > 0) {
-                    // Check if we need a new page
-                    if (yPosition > 250) {
-                        doc.addPage();
-                        yPosition = 30;
+                try {
+                    // Convert canvas to base64
+                    const imageData = image.canvas.toDataURL('image/png');
+                    
+                    // Calculate image dimensions to fit page
+                    const pageWidth = 170;
+                    const pageHeight = 150;
+                    const imgAspectRatio = image.canvas.width / image.canvas.height;
+                    
+                    let imgWidth, imgHeight;
+                    if (imgAspectRatio > 1) {
+                        // Landscape image
+                        imgWidth = pageWidth;
+                        imgHeight = pageWidth / imgAspectRatio;
+                    } else {
+                        // Portrait image
+                        imgHeight = pageHeight;
+                        imgWidth = pageHeight * imgAspectRatio;
                     }
 
-                    // Test type header
-                    doc.setFillColor(34, 139, 34);
-                    doc.rect(leftMargin, yPosition - 5, pageWidth, 8, 'F');
+                    // Center the image
+                    const imgX = 20 + (pageWidth - imgWidth) / 2;
+                    const imgY = yPosition;
 
-                    doc.setFontSize(12);
-                    doc.setTextColor(255, 255, 255);
-                    doc.text(`${testType} Tests`, leftMargin + 5, yPosition);
-                    yPosition += 15;
+                    // Add image to PDF
+                    doc.addImage(imageData, 'image/png', imgX, imgY, imgWidth, imgHeight);
+                    
+                    yPosition += imgHeight + 20;
 
-                    // Table header
-                    doc.setFillColor(34, 139, 34);
-                    doc.rect(leftMargin, yPosition - 2, pageWidth, 8, 'F');
-                    doc.setFontSize(10);
-                    doc.setTextColor(255, 255, 255);
-                    doc.text('Parameter', leftMargin + 5, yPosition + 3);
-                    doc.text('Result', leftMargin + 100, yPosition + 3);
-                    yPosition += 12;
+                } catch (error) {
+                    console.error(`Error adding image ${image.name} to PDF:`, error);
+                    // Add text fallback
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(`[Image: ${image.name}]`, 25, yPosition);
+                    yPosition += 10;
+                }
+            }
 
-                    // Draw header border
-                    doc.setDrawColor(34, 139, 34);
-                    doc.line(leftMargin, yPosition - 2, leftMargin + pageWidth, yPosition - 2);
-                    doc.line(leftMargin, yPosition - 2, leftMargin, yPosition + 6);
-                    doc.line(leftMargin + pageWidth, yPosition - 2, leftMargin + pageWidth, yPosition + 6);
-                    doc.line(leftMargin + 95, yPosition - 2, leftMargin + 95, yPosition + 6);
+            // Professional footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                
+                doc.setDrawColor(200, 200, 200);
+                doc.line(20, 280, 190, 280);
+                
+                doc.setFontSize(8);
+                doc.setTextColor(128, 128, 128);
+                doc.text(`Page ${i} of ${pageCount}`, 20, 285);
+                doc.text('Generated by Codex Genetic Analysis System', 105, 285, { align: 'center' });
+                doc.text(new Date().toLocaleString(), 190, 285, { align: 'right' });
+            }
 
-                    itemsWithResults.forEach((item, index) => {
-                        try {
-                            // Check if we need a new page
-                            if (yPosition > 250) {
-                                doc.addPage();
-                                yPosition = 30;
-                            }
+            // Save the PDF
+            const fileName = `Codex_Lifestyle_Recommendations_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
 
-                            const parameterName = item.dataset.originalName ||
-                                item.textContent.replace(/Result Available[\s\S]*/i, '').trim();
-                            const resultValue = item.dataset.resultValue || 'N/A';
+            showSuccessMessage('Recommendations PDF created successfully!');
 
-                            // Clean result value
-                            let cleanResult = resultValue;
-                            if (typeof resultValue === 'string') {
-                                cleanResult = resultValue
-                                    .replace(/Result Available/gi, '')
-                                    .replace(/Result:\s*/gi, '')
-                                    .replace(/\s+/g, ' ')
-                                    .trim();
-                            }
+        } catch (error) {
+            console.error('Error creating PDF:', error);
+            throw error;
+        }
+    } */
 
-                            // Add alternating row background
-                            if (index % 2 === 0) {
-                                doc.setFillColor(250, 250, 250);
-                                doc.rect(leftMargin, yPosition - 2, pageWidth, 12, 'F');
-                            }
+    // Old image-based functions - removed for better text-based approach
+    /* function downloadIndividualImages(images) {
+        images.forEach((image, index) => {
+            const url = URL.createObjectURL(image.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `recommendation_${image.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
 
-                            // Parameter name
-                            doc.setFontSize(8);
-                            doc.setTextColor(0, 0, 0);
-                            const paramLines = doc.splitTextToSize(parameterName, 80);
-                            doc.text(paramLines, leftMargin + 5, yPosition + 4);
+        showSuccessMessage(`${images.length} images downloaded successfully!`);
+    } */
 
-                            // Result
-                            doc.setTextColor(100, 100, 100);
-                            const resultLines = doc.splitTextToSize(cleanResult, 65);
-                            doc.text(resultLines, leftMargin + 100, yPosition + 4);
+    // Professional PDF generation function for test results
+    async function saveTestResultsAsPDF() {
+        try {
+            // Check if jsPDF is available
+            if (typeof window.jspdf === 'undefined') {
+                await loadJSPDF();
+            }
 
-                            // Row border
-                            doc.setDrawColor(220, 220, 220);
-                            doc.line(leftMargin, yPosition + 10, leftMargin + pageWidth, yPosition + 10);
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Set document properties
+            doc.setProperties({
+                title: 'Codex Genetic Test Results',
+                subject: 'Comprehensive Genetic Analysis Report',
+                author: 'Codex Genetic Analysis System',
+                creator: 'Codex System'
+            });
 
-                            yPosition += 12;
+            // Professional header
+            doc.setFillColor(34, 139, 34);
+            doc.rect(0, 0, 210, 35, 'F');
+            
+            doc.setFontSize(22);
+            doc.setTextColor(255, 255, 255);
+            doc.text('Codex Genetic Analysis', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(14);
+            doc.text('Test Results Report', 105, 30, { align: 'center' });
 
-                        } catch (error) {
-                            console.error('Error processing item:', error);
+            // Patient information
+            doc.setFillColor(248, 250, 252);
+            doc.rect(20, 45, 170, 25, 'F');
+            doc.setDrawColor(34, 139, 34);
+            doc.rect(20, 45, 170, 25, 'S');
+            
+            doc.setFontSize(12);
+            doc.setTextColor(34, 139, 34);
+            doc.text('Patient Information', 25, 57);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            
+            // Get patient data from the page
+            const patientNameElement = document.getElementById('patient-name');
+            const patientIdElement = document.getElementById('patient-id');
+            
+            const patientName = patientNameElement ? patientNameElement.textContent.trim() : 'Patient Name';
+            const patientId = patientIdElement ? patientIdElement.textContent.trim() : 'Patient ID';
+            
+            doc.text(`Name: ${patientName}`, 25, 67);
+            doc.text(`ID: ${patientId}`, 120, 67);
+
+            let yPosition = 85;
+            const pageWidth = 170;
+            const leftMargin = 20;
+
+            // Process each test type with mapping to actual list IDs
+            const testTypeMapping = [
+                { displayName: 'Wellness', listId: 'wellness-list' },
+                { displayName: 'Traits', listId: 'traits-list' },
+                { displayName: 'Familial Genetic Conditions', listId: 'monogenic-list' },
+                { displayName: 'Genetic Susceptibility to Health Disorders', listId: 'complex-list' },
+                { displayName: 'Pharma', listId: 'pharma-list' }
+            ];
+            
+            testTypeMapping.forEach(({ displayName, listId }) => {
+                const listContainer = document.getElementById(listId);
+                
+                if (listContainer) {
+                    const parameterItems = listContainer.querySelectorAll('.parameter-item');
+                    const itemsWithResults = Array.from(parameterItems).filter(item => 
+                        item.classList.contains('has-results')
+                    );
+                    
+                    if (itemsWithResults.length > 0) {
+                        // Check if we need a new page
+                        if (yPosition > 250) {
+                            doc.addPage();
+                            yPosition = 30;
                         }
-                    });
-
-                    yPosition += 15;
-                }
-            }
-        });
-
-        // Professional footer
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-
-            doc.setDrawColor(200, 200, 200);
-            doc.line(20, 280, 190, 280);
-
-            doc.setFontSize(8);
-            doc.setTextColor(128, 128, 128);
-            doc.text(`Page ${i} of ${pageCount}`, 20, 285);
-            doc.text('Generated by Codex Genetic Analysis System', 105, 285, { align: 'center' });
-            doc.text(new Date().toLocaleString(), 190, 285, { align: 'right' });
-        }
-
-        // Save the PDF
-        const fileName = `Codex_Test_Results_${new Date().toISOString().split('T')[0]}.pdf`;
-        doc.save(fileName);
-
-        showSuccessMessage('Test Results PDF saved successfully!');
-
-    } catch (error) {
-        console.error('Error generating test results PDF:', error);
-        alert('Error generating PDF. Please try again.');
-    }
-}
-
-// Function to analyze user results and generate personalized recommendations - ENHANCED for specificity
-async function analyzeUserResultsAndGenerateRecommendations(testTypes, userResults) {
-    let recommendations = [];
-
-    // Analyze wellness results and provide specific recommendations
-    if (userResults.wellness && userResults.wellness.length > 0) {
-        recommendations.push("WELLNESS MARKERS ANALYSIS - Your Personalized Health Recommendations:");
-
-        userResults.wellness.forEach(item => {
-            const result = item.result.toLowerCase();
-            const name = item.name.toLowerCase();
-
-            // Vitamin D Analysis
-            if (name.includes('vitamin d')) {
-                if (result.includes('low') || result.includes('deficient')) {
-                    recommendations.push("• VITAMIN D DEFICIENCY DETECTED: Your levels are critically low. IMMEDIATE ACTION: Take 2000-4000 IU daily, get 15-20 minutes sun exposure between 10 AM-3 PM, consume fatty fish (salmon, mackerel) 3x/week, add fortified dairy/plant milk. Monitor levels every 3 months.");
-                } else if (result.includes('normal')) {
-                    recommendations.push("• VITAMIN D STATUS: Optimal levels maintained. CONTINUE: 15 minutes daily sun exposure, fatty fish 2x/week, fortified foods. Recheck annually.");
-                }
-            }
-
-            // Caffeine Sensitivity Analysis
-            if (name.includes('caffeine')) {
-                if (result.includes('anxiety') || result.includes('sensitive')) {
-                    recommendations.push("• CAFFEINE SENSITIVITY: You metabolize caffeine slowly. STRICT LIMITS: Maximum 1 cup coffee (100mg) before 10 AM, avoid energy drinks completely, choose decaf alternatives. Monitor heart rate and anxiety levels.");
-                } else if (result.includes('performance') || result.includes('enhanced')) {
-                    recommendations.push("• CAFFEINE PERFORMANCE: You're a fast metabolizer. OPTIMIZE: Take 200-400mg 30 minutes before exercise, consume 2-3 cups coffee daily for maximum performance benefits.");
-                }
-            }
-
-            // Lactose Intolerance Analysis
-            if (name.includes('lactose')) {
-                if (result.includes('intolerance')) {
-                    recommendations.push("• LACTOSE INTOLERANCE CONFIRMED: Your body cannot digest lactose. COMPLETE AVOIDANCE: Choose lactose-free dairy, almond/coconut milk, take lactase enzyme (9000 units) with any dairy. Monitor for hidden lactose in processed foods.");
-                }
-            }
-
-            // Celiac Disease Analysis
-            if (name.includes('gluten') || name.includes('celiac')) {
-                if (result.includes('predisposition') || result.includes('risk')) {
-                    recommendations.push("• CELIAC DISEASE RISK: High genetic predisposition detected. CRITICAL: Eliminate ALL gluten (wheat, barley, rye), choose certified gluten-free products, consult gastroenterologist for testing. Monitor for symptoms: bloating, diarrhea, fatigue.");
-                }
-            }
-
-            // Blood Pressure Analysis
-            if (name.includes('blood pressure')) {
-                if (result.includes('high') || result.includes('elevated') || result.includes('systolic') || result.includes('diastolic')) {
-                    recommendations.push("• BLOOD PRESSURE ELEVATED: Your cardiovascular risk is increased. IMMEDIATE CHANGES: Reduce sodium to <1500mg/day, increase potassium (bananas, spinach, sweet potatoes), daily cardio exercise (30-45 min), stress management (meditation, yoga). Monitor BP weekly.");
-                }
-            }
-
-            // Cholesterol Analysis
-            if (name.includes('cholesterol') || name.includes('hdl') || name.includes('ldl')) {
-                if (result.includes('high') || result.includes('elevated') || result.includes('ldl')) {
-                    recommendations.push("• CHOLESTEROL ELEVATED: High cardiovascular risk. SPECIFIC DIET: Increase soluble fiber (oats 1 cup daily, beans 1/2 cup 3x/week), omega-3 (fatty fish 3x/week, walnuts 1/4 cup daily), limit saturated fats to <7% daily calories. Exercise 5x/week.");
-                }
-            }
-
-            // Blood Glucose Analysis
-            if (name.includes('blood glucose') || name.includes('glucose') || name.includes('glycated')) {
-                if (result.includes('elevated') || result.includes('high') || result.includes('prediabetes')) {
-                    recommendations.push("• BLOOD GLUCOSE ELEVATED: Prediabetes risk detected. CRITICAL DIET: Choose low glycemic foods (quinoa, steel-cut oats, legumes), increase fiber to 30g/day, eat every 3-4 hours, avoid refined carbs completely. Monitor glucose 2x daily.");
-                }
-            }
-
-            // Antioxidant Capacity Analysis
-            if (name.includes('antioxidant') || name.includes('oxidative')) {
-                if (result.includes('low') || result.includes('decreased')) {
-                    recommendations.push("• ANTIOXIDANT CAPACITY LOW: Increased oxidative stress risk. BOOST IMMEDIATELY: Consume colorful fruits/vegetables (aim for 9 servings daily), add berries (1 cup daily), green tea (3 cups daily), dark chocolate 70%+ (1 oz daily).");
-                }
-            }
-
-            // Bone Mineral Density Analysis
-            if (name.includes('bone') || name.includes('mineral') || name.includes('calcium')) {
-                if (result.includes('low') || result.includes('decreased') || result.includes('osteoporosis')) {
-                    recommendations.push("• BONE DENSITY CONCERN: Osteoporosis risk increased. CRITICAL: Calcium 1200mg daily (dairy, leafy greens, fortified foods), Vitamin D 2000 IU daily, weight-bearing exercise (walking, dancing) 30 min daily, avoid smoking/alcohol.");
-                }
-            }
-        });
-    }
-
-    // Analyze traits results and provide specific recommendations - ENHANCED for specificity
-    if (userResults.traits && userResults.traits.length > 0) {
-        recommendations.push("\nPERSONAL TRAITS ANALYSIS - Your Genetic Behavioral Profile:");
-
-        userResults.traits.forEach(item => {
-            const result = item.result.toLowerCase();
-            const name = item.name.toLowerCase();
-
-            // Sleep Chronotype Analysis
-            if (name.includes('sleep') || name.includes('circadian') || name.includes('morning') || name.includes('night')) {
-                if (result.includes('morning') || result.includes('early')) {
-                    recommendations.push("• MORNING CHRONOTYPE CONFIRMED: You're genetically programmed to be most alert early. OPTIMIZE: Schedule critical tasks 6-11 AM, exercise 6-8 AM, avoid late meetings, maintain 9-10 PM bedtime. Your peak performance window is 6 AM-2 PM.");
-                } else if (result.includes('night') || result.includes('evening') || result.includes('owl')) {
-                    recommendations.push("• NIGHT OWL CHRONOTYPE: Your peak performance is evening. OPTIMIZE: Schedule important work 2-8 PM, exercise 6-8 PM, avoid early morning commitments, maintain consistent 12-1 AM bedtime. Your creative peak is 8 PM-12 AM.");
-                }
-            }
-
-            // Taste Sensitivity Analysis
-            if (name.includes('taste') || name.includes('bitter') || name.includes('sweet') || name.includes('preference')) {
-                if (result.includes('bitter') || result.includes('sensitive')) {
-                    recommendations.push("• BITTER TASTE SENSITIVITY: You're genetically sensitive to bitter compounds. STRATEGY: Gradually introduce bitter vegetables (start with 1/4 cup kale, Brussels sprouts) paired with sweet accompaniments (honey, maple syrup). Your taste buds will adapt over 2-3 weeks.");
-                } else if (result.includes('sweet') || result.includes('preference')) {
-                    recommendations.push("• SWEET PREFERENCE GENETIC: You have increased sweet taste receptors. MANAGE: Satisfy cravings with natural sweeteners (fruits, honey, stevia), limit refined sugars to <25g daily, choose dark chocolate 70%+ for antioxidants. Monitor blood glucose if consuming sweet foods.");
-                }
-            }
-
-            // Exercise Response Analysis
-            if (name.includes('exercise') || name.includes('endurance') || name.includes('strength') || name.includes('performance')) {
-                if (result.includes('endurance') || result.includes('aerobic')) {
-                    recommendations.push("• ENDURANCE GENETIC PROFILE: You're built for sustained activity. OPTIMIZE: Incorporate 45-60 minute cardio sessions 4-5x/week, focus on running, cycling, swimming. Your body excels at fat burning during long, moderate-intensity exercise.");
-                } else if (result.includes('strength') || result.includes('power')) {
-                    recommendations.push("• STRENGTH GENETIC PROFILE: You have increased muscle building potential. OPTIMIZE: Progressive resistance training 3-4x/week, compound movements (squats, deadlifts, bench press), 6-8 reps with heavy weights. Your muscles respond well to high-intensity, short-duration training.");
-                }
-            }
-
-            // Stress Response Analysis
-            if (name.includes('stress') || name.includes('anxiety') || name.includes('cortisol')) {
-                if (result.includes('high') || result.includes('sensitive') || result.includes('elevated')) {
-                    recommendations.push("• STRESS SENSITIVITY: You're genetically prone to elevated stress responses. CRITICAL: Practice daily stress management (meditation 20 min, deep breathing 3x/day), prioritize sleep hygiene, avoid caffeine after 2 PM, consider adaptogenic herbs (ashwagandha, rhodiola).");
-                }
-            }
-
-            // Pain Sensitivity Analysis
-            if (name.includes('pain') || name.includes('sensitivity') || name.includes('nociception')) {
-                if (result.includes('high') || result.includes('sensitive')) {
-                    recommendations.push("• PAIN SENSITIVITY: You experience pain more intensely. STRATEGY: Use heat/cold therapy, gentle stretching, low-impact exercise (swimming, yoga), consider natural pain relief (turmeric, ginger, omega-3). Consult healthcare provider for pain management strategies.");
-                }
-            }
-        });
-    }
-
-    // Analyze complex disease risks and provide lifestyle recommendations - ENHANCED for specificity
-    if (userResults.complex && userResults.complex.length > 0) {
-        recommendations.push("\nCOMPLEX DISEASE RISK ANALYSIS - Your Preventive Health Strategy:");
-
-        const highRiskItems = userResults.complex.filter(item =>
-            item.result.toLowerCase().includes('high') ||
-            item.result.toLowerCase().includes('elevated') ||
-            item.result.toLowerCase().includes('increased') ||
-            item.result.toLowerCase().includes('risk') ||
-            item.result.toLowerCase().includes('predisposition')
-        );
-
-        if (highRiskItems.length > 0) {
-            recommendations.push("HIGH-RISK GENETIC PROFILE DETECTED: You have multiple elevated risk factors requiring immediate attention and preventive measures.");
-
-            highRiskItems.forEach(item => {
-                const name = item.name.toLowerCase();
-                const result = item.result.toLowerCase();
-
-                // Diabetes Risk Analysis
-                if (name.includes('diabetes') || name.includes('glucose') || name.includes('insulin') || name.includes('metabolic')) {
-                    if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
-                        recommendations.push("• DIABETES RISK: High genetic predisposition detected. CRITICAL PREVENTION: Monitor blood glucose weekly, maintain HbA1c <5.7%, consume low glycemic foods (quinoa, steel-cut oats), exercise 30 min daily, maintain BMI <25. Consult endocrinologist for baseline testing.");
-                    }
-                }
-
-                // Cardiovascular Risk Analysis
-                if (name.includes('heart') || name.includes('cardiovascular') || name.includes('coronary') || name.includes('stroke')) {
-                    if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
-                        recommendations.push("• CARDIOVASCULAR RISK: Elevated genetic risk for heart disease. IMMEDIATE ACTION: Monitor blood pressure daily, maintain LDL <100 mg/dL, consume omega-3 (2g daily), Mediterranean diet, cardio exercise 45 min 5x/week, stress management (meditation, yoga). Annual cardiac screening required.");
-                    }
-                }
-
-                // Cancer Risk Analysis
-                if (name.includes('cancer') || name.includes('oncogene') || name.includes('tumor') || name.includes('malignancy')) {
-                    if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
-                        recommendations.push("• CANCER RISK: Increased genetic susceptibility detected. PREVENTIVE STRATEGY: Increase cruciferous vegetables (broccoli, kale) 2 cups daily, antioxidants (berries, green tea) 3x daily, maintain healthy weight, avoid processed meats, limit alcohol to <1 drink daily. Annual cancer screening recommended.");
-                    }
-                }
-
-                // Autoimmune Risk Analysis
-                if (name.includes('autoimmune') || name.includes('inflammation') || name.includes('rheumatoid') || name.includes('lupus')) {
-                    if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
-                        recommendations.push("• AUTOIMMUNE RISK: Genetic predisposition to inflammatory conditions. PREVENTION: Anti-inflammatory diet (turmeric, ginger, omega-3), stress reduction, adequate sleep (7-9 hours), avoid environmental triggers, regular exercise. Monitor for early symptoms (fatigue, joint pain, rashes).");
-                    }
-                }
-
-                // Neurological Risk Analysis
-                if (name.includes('alzheimer') || name.includes('dementia') || name.includes('cognitive') || name.includes('brain')) {
-                    if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
-                        recommendations.push("• NEUROLOGICAL RISK: Increased risk for cognitive decline. BRAIN HEALTH: Mental stimulation (puzzles, learning), physical exercise (aerobic 30 min daily), Mediterranean diet, adequate sleep, social engagement, stress management. Consider cognitive baseline testing.");
+                        
+                        // Test type header
+                        doc.setFillColor(34, 139, 34);
+                        doc.rect(leftMargin, yPosition - 5, pageWidth, 8, 'F');
+                        
+                        doc.setFontSize(12);
+                        doc.setTextColor(255, 255, 255);
+                        doc.text(`${displayName} Tests`, leftMargin + 5, yPosition);
+                        yPosition += 15;
+                        
+                        // Table header
+                        doc.setFillColor(34, 139, 34);
+                        doc.rect(leftMargin, yPosition - 2, pageWidth, 8, 'F');
+                        doc.setFontSize(10);
+                        doc.setTextColor(255, 255, 255);
+                        doc.text('Parameter', leftMargin + 5, yPosition + 3);
+                        doc.text('Result', leftMargin + 100, yPosition + 3);
+                        yPosition += 12;
+                        
+                        // Draw header border
+                        doc.setDrawColor(34, 139, 34);
+                        doc.line(leftMargin, yPosition - 2, leftMargin + pageWidth, yPosition - 2);
+                        doc.line(leftMargin, yPosition - 2, leftMargin, yPosition + 6);
+                        doc.line(leftMargin + pageWidth, yPosition - 2, leftMargin + pageWidth, yPosition + 6);
+                        doc.line(leftMargin + 95, yPosition - 2, leftMargin + 95, yPosition + 6);
+                        
+                        itemsWithResults.forEach((item, index) => {
+                            try {
+                                // Check if we need a new page
+                                if (yPosition > 250) {
+                                    doc.addPage();
+                                    yPosition = 30;
+                                }
+                                
+                                const parameterName = item.dataset.originalName || 
+                                    item.textContent.replace(/Result Available[\s\S]*/i, '').trim();
+                                const resultValue = item.dataset.resultValue || 'N/A';
+                                
+                                // Clean result value
+                                let cleanResult = resultValue;
+                                if (typeof resultValue === 'string') {
+                                    cleanResult = resultValue
+                                        .replace(/Result Available/gi, '')
+                                        .replace(/Result:\s*/gi, '')
+                                        .replace(/\s+/g, ' ')
+                                        .trim();
+                                }
+                                
+                                // Add alternating row background
+                                if (index % 2 === 0) {
+                                    doc.setFillColor(250, 250, 250);
+                                    doc.rect(leftMargin, yPosition - 2, pageWidth, 12, 'F');
+                                }
+                                
+                                // Parameter name
+                                doc.setFontSize(8);
+                                doc.setTextColor(0, 0, 0);
+                                const paramLines = doc.splitTextToSize(parameterName, 80);
+                                doc.text(paramLines, leftMargin + 5, yPosition + 4);
+                                
+                                // Result
+                                doc.setTextColor(100, 100, 100);
+                                const resultLines = doc.splitTextToSize(cleanResult, 65);
+                                doc.text(resultLines, leftMargin + 100, yPosition + 4);
+                                
+                                // Row border
+                                doc.setDrawColor(220, 220, 220);
+                                doc.line(leftMargin, yPosition + 10, leftMargin + pageWidth, yPosition + 10);
+                                
+                                yPosition += 12;
+                                
+                            } catch (error) {
+                                console.error('Error processing item:', error);
+                            }
+                        });
+                        
+                        yPosition += 15;
                     }
                 }
             });
-        } else {
-            recommendations.push("LOW-RISK GENETIC PROFILE: Your complex disease risk factors are within normal ranges. MAINTAIN: Continue healthy lifestyle habits, annual health checkups, and preventive screenings as recommended by your healthcare provider.");
+
+            // Professional footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                
+                doc.setDrawColor(200, 200, 200);
+                doc.line(20, 280, 190, 280);
+                
+                doc.setFontSize(8);
+                doc.setTextColor(128, 128, 128);
+                doc.text(`Page ${i} of ${pageCount}`, 20, 285);
+                doc.text('Generated by Codex Genetic Analysis System', 105, 285, { align: 'center' });
+                doc.text(new Date().toLocaleString(), 190, 285, { align: 'right' });
+            }
+
+            // Save the PDF
+            const fileName = `Codex_Test_Results_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+
+            showSuccessMessage('Test Results PDF saved successfully!');
+
+        } catch (error) {
+            console.error('Error generating test results PDF:', error);
+            alert('Error generating PDF. Please try again.');
         }
     }
 
-    // Analyze pharmacogenomics and provide medication guidance
-    if (userResults.pharma && userResults.pharma.length > 0) {
-        recommendations.push("\nBased on your medication response profile, here are your personalized recommendations:");
-
-        userResults.pharma.forEach(item => {
-            const result = item.result.toLowerCase();
-            const name = item.name.toLowerCase();
-
-            if (result.includes('poor metabolizer')) {
-                recommendations.push("• You're a poor metabolizer - medications may stay in your system longer, requiring lower doses and closer monitoring.");
-            } else if (result.includes('ultra-rapid metabolizer')) {
-                recommendations.push("• You're an ultra-rapid metabolizer - medications may be processed too quickly, potentially requiring higher doses.");
-            } else if (result.includes('intermediate')) {
-                recommendations.push("• You have intermediate metabolism - standard dosing is usually appropriate, but monitor for side effects.");
+    // Function to analyze user results and generate personalized recommendations - ENHANCED for specificity
+    async function analyzeUserResultsAndGenerateRecommendations(testTypes, userResults) {
+        let recommendations = [];
+        
+        // Analyze wellness results and provide specific recommendations
+        if (userResults.wellness && userResults.wellness.length > 0) {
+            recommendations.push("WELLNESS MARKERS ANALYSIS - Your Personalized Health Recommendations:");
+            
+            userResults.wellness.forEach(item => {
+                const result = item.result.toLowerCase();
+                const name = item.name.toLowerCase();
+                
+                // Vitamin D Analysis
+                if (name.includes('vitamin d')) {
+                    if (result.includes('low') || result.includes('deficient')) {
+                        recommendations.push("• VITAMIN D DEFICIENCY DETECTED: Your levels are critically low. IMMEDIATE ACTION: Take 2000-4000 IU daily, get 15-20 minutes sun exposure between 10 AM-3 PM, consume fatty fish (salmon, mackerel) 3x/week, add fortified dairy/plant milk. Monitor levels every 3 months.");
+                    } else if (result.includes('normal')) {
+                        recommendations.push("• VITAMIN D STATUS: Optimal levels maintained. CONTINUE: 15 minutes daily sun exposure, fatty fish 2x/week, fortified foods. Recheck annually.");
+                    }
+                }
+                
+                // Caffeine Sensitivity Analysis
+                if (name.includes('caffeine')) {
+                    if (result.includes('anxiety') || result.includes('sensitive')) {
+                        recommendations.push("• CAFFEINE SENSITIVITY: You metabolize caffeine slowly. STRICT LIMITS: Maximum 1 cup coffee (100mg) before 10 AM, avoid energy drinks completely, choose decaf alternatives. Monitor heart rate and anxiety levels.");
+                    } else if (result.includes('performance') || result.includes('enhanced')) {
+                        recommendations.push("• CAFFEINE PERFORMANCE: You're a fast metabolizer. OPTIMIZE: Take 200-400mg 30 minutes before exercise, consume 2-3 cups coffee daily for maximum performance benefits.");
+                    }
+                }
+                
+                // Lactose Intolerance Analysis
+                if (name.includes('lactose')) {
+                    if (result.includes('intolerance')) {
+                        recommendations.push("• LACTOSE INTOLERANCE CONFIRMED: Your body cannot digest lactose. COMPLETE AVOIDANCE: Choose lactose-free dairy, almond/coconut milk, take lactase enzyme (9000 units) with any dairy. Monitor for hidden lactose in processed foods.");
+                    }
+                }
+                
+                // Celiac Disease Analysis
+                if (name.includes('gluten') || name.includes('celiac')) {
+                    if (result.includes('predisposition') || result.includes('risk')) {
+                        recommendations.push("• CELIAC DISEASE RISK: High genetic predisposition detected. CRITICAL: Eliminate ALL gluten (wheat, barley, rye), choose certified gluten-free products, consult gastroenterologist for testing. Monitor for symptoms: bloating, diarrhea, fatigue.");
+                    }
+                }
+                
+                // Blood Pressure Analysis
+                if (name.includes('blood pressure')) {
+                    if (result.includes('high') || result.includes('elevated') || result.includes('systolic') || result.includes('diastolic')) {
+                        recommendations.push("• BLOOD PRESSURE ELEVATED: Your cardiovascular risk is increased. IMMEDIATE CHANGES: Reduce sodium to <1500mg/day, increase potassium (bananas, spinach, sweet potatoes), daily cardio exercise (30-45 min), stress management (meditation, yoga). Monitor BP weekly.");
+                    }
+                }
+                
+                // Cholesterol Analysis
+                if (name.includes('cholesterol') || name.includes('hdl') || name.includes('ldl')) {
+                    if (result.includes('high') || result.includes('elevated') || result.includes('ldl')) {
+                        recommendations.push("• CHOLESTEROL ELEVATED: High cardiovascular risk. SPECIFIC DIET: Increase soluble fiber (oats 1 cup daily, beans 1/2 cup 3x/week), omega-3 (fatty fish 3x/week, walnuts 1/4 cup daily), limit saturated fats to <7% daily calories. Exercise 5x/week.");
+                    }
+                }
+                
+                // Blood Glucose Analysis
+                if (name.includes('blood glucose') || name.includes('glucose') || name.includes('glycated')) {
+                    if (result.includes('elevated') || result.includes('high') || result.includes('prediabetes')) {
+                        recommendations.push("• BLOOD GLUCOSE ELEVATED: Prediabetes risk detected. CRITICAL DIET: Choose low glycemic foods (quinoa, steel-cut oats, legumes), increase fiber to 30g/day, eat every 3-4 hours, avoid refined carbs completely. Monitor glucose 2x daily.");
+                    }
+                }
+                
+                // Antioxidant Capacity Analysis
+                if (name.includes('antioxidant') || name.includes('oxidative')) {
+                    if (result.includes('low') || result.includes('decreased')) {
+                        recommendations.push("• ANTIOXIDANT CAPACITY LOW: Increased oxidative stress risk. BOOST IMMEDIATELY: Consume colorful fruits/vegetables (aim for 9 servings daily), add berries (1 cup daily), green tea (3 cups daily), dark chocolate 70%+ (1 oz daily).");
+                    }
+                }
+                
+                // Bone Mineral Density Analysis
+                if (name.includes('bone') || name.includes('mineral') || name.includes('calcium')) {
+                    if (result.includes('low') || result.includes('decreased') || result.includes('osteoporosis')) {
+                        recommendations.push("• BONE DENSITY CONCERN: Osteoporosis risk increased. CRITICAL: Calcium 1200mg daily (dairy, leafy greens, fortified foods), Vitamin D 2000 IU daily, weight-bearing exercise (walking, dancing) 30 min daily, avoid smoking/alcohol.");
+                    }
+                }
+            });
+        }
+        
+        // Analyze traits results and provide specific recommendations - ENHANCED for specificity
+        if (userResults.traits && userResults.traits.length > 0) {
+            recommendations.push("\nPERSONAL TRAITS ANALYSIS - Your Genetic Behavioral Profile:");
+            
+            userResults.traits.forEach(item => {
+                const result = item.result.toLowerCase();
+                const name = item.name.toLowerCase();
+                
+                // Sleep Chronotype Analysis
+                if (name.includes('sleep') || name.includes('circadian') || name.includes('morning') || name.includes('night')) {
+                    if (result.includes('morning') || result.includes('early')) {
+                        recommendations.push("• MORNING CHRONOTYPE CONFIRMED: You're genetically programmed to be most alert early. OPTIMIZE: Schedule critical tasks 6-11 AM, exercise 6-8 AM, avoid late meetings, maintain 9-10 PM bedtime. Your peak performance window is 6 AM-2 PM.");
+                    } else if (result.includes('night') || result.includes('evening') || result.includes('owl')) {
+                        recommendations.push("• NIGHT OWL CHRONOTYPE: Your peak performance is evening. OPTIMIZE: Schedule important work 2-8 PM, exercise 6-8 PM, avoid early morning commitments, maintain consistent 12-1 AM bedtime. Your creative peak is 8 PM-12 AM.");
+                    }
+                }
+                
+                // Taste Sensitivity Analysis
+                if (name.includes('taste') || name.includes('bitter') || name.includes('sweet') || name.includes('preference')) {
+                    if (result.includes('bitter') || result.includes('sensitive')) {
+                        recommendations.push("• BITTER TASTE SENSITIVITY: You're genetically sensitive to bitter compounds. STRATEGY: Gradually introduce bitter vegetables (start with 1/4 cup kale, Brussels sprouts) paired with sweet accompaniments (honey, maple syrup). Your taste buds will adapt over 2-3 weeks.");
+                    } else if (result.includes('sweet') || result.includes('preference')) {
+                        recommendations.push("• SWEET PREFERENCE GENETIC: You have increased sweet taste receptors. MANAGE: Satisfy cravings with natural sweeteners (fruits, honey, stevia), limit refined sugars to <25g daily, choose dark chocolate 70%+ for antioxidants. Monitor blood glucose if consuming sweet foods.");
+                    }
+                }
+                
+                // Exercise Response Analysis
+                if (name.includes('exercise') || name.includes('endurance') || name.includes('strength') || name.includes('performance')) {
+                    if (result.includes('endurance') || result.includes('aerobic')) {
+                        recommendations.push("• ENDURANCE GENETIC PROFILE: You're built for sustained activity. OPTIMIZE: Incorporate 45-60 minute cardio sessions 4-5x/week, focus on running, cycling, swimming. Your body excels at fat burning during long, moderate-intensity exercise.");
+                    } else if (result.includes('strength') || result.includes('power')) {
+                        recommendations.push("• STRENGTH GENETIC PROFILE: You have increased muscle building potential. OPTIMIZE: Progressive resistance training 3-4x/week, compound movements (squats, deadlifts, bench press), 6-8 reps with heavy weights. Your muscles respond well to high-intensity, short-duration training.");
+                    }
+                }
+                
+                // Stress Response Analysis
+                if (name.includes('stress') || name.includes('anxiety') || name.includes('cortisol')) {
+                    if (result.includes('high') || result.includes('sensitive') || result.includes('elevated')) {
+                        recommendations.push("• STRESS SENSITIVITY: You're genetically prone to elevated stress responses. CRITICAL: Practice daily stress management (meditation 20 min, deep breathing 3x/day), prioritize sleep hygiene, avoid caffeine after 2 PM, consider adaptogenic herbs (ashwagandha, rhodiola).");
+                    }
+                }
+                
+                // Pain Sensitivity Analysis
+                if (name.includes('pain') || name.includes('sensitivity') || name.includes('nociception')) {
+                    if (result.includes('high') || result.includes('sensitive')) {
+                        recommendations.push("• PAIN SENSITIVITY: You experience pain more intensely. STRATEGY: Use heat/cold therapy, gentle stretching, low-impact exercise (swimming, yoga), consider natural pain relief (turmeric, ginger, omega-3). Consult healthcare provider for pain management strategies.");
+                    }
+                }
+            });
+        }
+        
+        // Analyze complex disease risks and provide lifestyle recommendations - ENHANCED for specificity
+        if (userResults.complex && userResults.complex.length > 0) {
+            recommendations.push("\nCOMPLEX DISEASE RISK ANALYSIS - Your Preventive Health Strategy:");
+            
+            const highRiskItems = userResults.complex.filter(item => 
+                item.result.toLowerCase().includes('high') || 
+                item.result.toLowerCase().includes('elevated') ||
+                item.result.toLowerCase().includes('increased') ||
+                item.result.toLowerCase().includes('risk') ||
+                item.result.toLowerCase().includes('predisposition')
+            );
+            
+            if (highRiskItems.length > 0) {
+                recommendations.push("HIGH-RISK GENETIC PROFILE DETECTED: You have multiple elevated risk factors requiring immediate attention and preventive measures.");
+                
+                highRiskItems.forEach(item => {
+                    const name = item.name.toLowerCase();
+                    const result = item.result.toLowerCase();
+                    
+                    // Diabetes Risk Analysis
+                    if (name.includes('diabetes') || name.includes('glucose') || name.includes('insulin') || name.includes('metabolic')) {
+                        if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
+                            recommendations.push("• DIABETES RISK: High genetic predisposition detected. CRITICAL PREVENTION: Monitor blood glucose weekly, maintain HbA1c <5.7%, consume low glycemic foods (quinoa, steel-cut oats), exercise 30 min daily, maintain BMI <25. Consult endocrinologist for baseline testing.");
+                        }
+                    }
+                    
+                    // Cardiovascular Risk Analysis
+                    if (name.includes('heart') || name.includes('cardiovascular') || name.includes('coronary') || name.includes('stroke')) {
+                        if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
+                            recommendations.push("• CARDIOVASCULAR RISK: Elevated genetic risk for heart disease. IMMEDIATE ACTION: Monitor blood pressure daily, maintain LDL <100 mg/dL, consume omega-3 (2g daily), Mediterranean diet, cardio exercise 45 min 5x/week, stress management (meditation, yoga). Annual cardiac screening required.");
+                        }
+                    }
+                    
+                    // Cancer Risk Analysis
+                    if (name.includes('cancer') || name.includes('oncogene') || name.includes('tumor') || name.includes('malignancy')) {
+                        if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
+                            recommendations.push("• CANCER RISK: Increased genetic susceptibility detected. PREVENTIVE STRATEGY: Increase cruciferous vegetables (broccoli, kale) 2 cups daily, antioxidants (berries, green tea) 3x daily, maintain healthy weight, avoid processed meats, limit alcohol to <1 drink daily. Annual cancer screening recommended.");
+                        }
+                    }
+                    
+                    // Autoimmune Risk Analysis
+                    if (name.includes('autoimmune') || name.includes('inflammation') || name.includes('rheumatoid') || name.includes('lupus')) {
+                        if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
+                            recommendations.push("• AUTOIMMUNE RISK: Genetic predisposition to inflammatory conditions. PREVENTION: Anti-inflammatory diet (turmeric, ginger, omega-3), stress reduction, adequate sleep (7-9 hours), avoid environmental triggers, regular exercise. Monitor for early symptoms (fatigue, joint pain, rashes).");
+                        }
+                    }
+                    
+                    // Neurological Risk Analysis
+                    if (name.includes('alzheimer') || name.includes('dementia') || name.includes('cognitive') || name.includes('brain')) {
+                        if (result.includes('high') || result.includes('elevated') || result.includes('risk')) {
+                            recommendations.push("• NEUROLOGICAL RISK: Increased risk for cognitive decline. BRAIN HEALTH: Mental stimulation (puzzles, learning), physical exercise (aerobic 30 min daily), Mediterranean diet, adequate sleep, social engagement, stress management. Consider cognitive baseline testing.");
+                        }
+                    }
+                });
+            } else {
+                recommendations.push("LOW-RISK GENETIC PROFILE: Your complex disease risk factors are within normal ranges. MAINTAIN: Continue healthy lifestyle habits, annual health checkups, and preventive screenings as recommended by your healthcare provider.");
             }
-        });
+        }
+        
+        // Analyze pharmacogenomics and provide medication guidance
+        if (userResults.pharma && userResults.pharma.length > 0) {
+            recommendations.push("\nBased on your medication response profile, here are your personalized recommendations:");
+            
+            userResults.pharma.forEach(item => {
+                const result = item.result.toLowerCase();
+                const name = item.name.toLowerCase();
+                
+                if (result.includes('poor metabolizer')) {
+                    recommendations.push("• You're a poor metabolizer - medications may stay in your system longer, requiring lower doses and closer monitoring.");
+                } else if (result.includes('ultra-rapid metabolizer')) {
+                    recommendations.push("• You're an ultra-rapid metabolizer - medications may be processed too quickly, potentially requiring higher doses.");
+                } else if (result.includes('intermediate')) {
+                    recommendations.push("• You have intermediate metabolism - standard dosing is usually appropriate, but monitor for side effects.");
+                }
+            });
+        }
+        
+        // Add general lifestyle recommendations based on test types
+        if (testTypes.includes('Wellness')) {
+            recommendations.push("\nGeneral Wellness Recommendations:");
+            recommendations.push("• Maintain a balanced diet rich in colorful fruits and vegetables");
+            recommendations.push("• Stay hydrated with 8-10 glasses of water daily");
+            recommendations.push("• Get 7-9 hours of quality sleep each night");
+            recommendations.push("• Exercise for at least 150 minutes per week");
+        }
+        
+        if (testTypes.includes('Personal Traits')) {
+            recommendations.push("\nPersonal Development Recommendations:");
+            recommendations.push("• Work with your natural tendencies rather than against them");
+            recommendations.push("• Create environments that support your genetic predispositions");
+            recommendations.push("• Use your strengths to compensate for areas of challenge");
+        }
+        
+        if (testTypes.includes('Genetic Susceptibility to Health Disorders')) {
+            recommendations.push("\nPreventive Health Recommendations:");
+            recommendations.push("• Schedule regular health check-ups and screenings");
+            recommendations.push("• Maintain a healthy weight and body composition");
+            recommendations.push("• Practice stress management and mental health care");
+            recommendations.push("• Avoid smoking and limit alcohol consumption");
+        }
+        
+        return recommendations.join('\n');
     }
 
-    // Add general lifestyle recommendations based on test types
-    if (testTypes.includes('Wellness')) {
-        recommendations.push("\nGeneral Wellness Recommendations:");
-        recommendations.push("• Maintain a balanced diet rich in colorful fruits and vegetables");
-        recommendations.push("• Stay hydrated with 8-10 glasses of water daily");
-        recommendations.push("• Get 7-9 hours of quality sleep each night");
-        recommendations.push("• Exercise for at least 150 minutes per week");
-    }
-
-    if (testTypes.includes('Personal Traits')) {
-        recommendations.push("\nPersonal Development Recommendations:");
-        recommendations.push("• Work with your natural tendencies rather than against them");
-        recommendations.push("• Create environments that support your genetic predispositions");
-        recommendations.push("• Use your strengths to compensate for areas of challenge");
-    }
-
-    if (testTypes.includes('GENETIC SUSCEPTIBILITY TO HEALTH DISORDERS')) {
-        recommendations.push("\nPreventive Health Recommendations:");
-        recommendations.push("• Schedule regular health check-ups and screenings");
-        recommendations.push("• Maintain a healthy weight and body composition");
-        recommendations.push("• Practice stress management and mental health care");
-        recommendations.push("• Avoid smoking and limit alcohol consumption");
-    }
-
-    return recommendations.join('\n');
-}
-
-// Function to populate personalized food recommendations
-function populatePersonalizedFoodRecommendations(userResults) {
-    const foodsInclude = document.getElementById('personalized-foods-include');
-    const foodsLimit = document.getElementById('personalized-foods-limit');
-
-    if (!foodsInclude || !foodsLimit) return;
-
-    let includeFoods = [];
-    let limitFoods = [];
-
-    // Analyze wellness results for food recommendations
-    if (userResults.wellness) {
-        userResults.wellness.forEach(item => {
-            const result = item.result.toLowerCase();
-            const name = item.name.toLowerCase();
-
-            if (name.includes('vitamin d') && result.includes('low')) {
-                includeFoods.push({
-                    icon: '🌞',
-                    name: 'Vitamin D Rich Foods',
-                    description: 'Fatty fish (salmon, mackerel), egg yolks, fortified dairy, mushrooms'
-                });
-            }
-
-            if (name.includes('vitamin c') && result.includes('low')) {
-                includeFoods.push({
-                    icon: '🍊',
-                    name: 'Vitamin C Rich Foods',
-                    description: 'Citrus fruits, bell peppers, strawberries, broccoli, kiwi'
-                });
-            }
-
-            if (name.includes('vitamin b12') && result.includes('low')) {
-                includeFoods.push({
-                    icon: '🥩',
-                    name: 'Vitamin B12 Sources',
-                    description: 'Lean meats, fish, eggs, fortified cereals, nutritional yeast'
-                });
-            }
-
-            if (name.includes('calcium') && result.includes('low')) {
-                includeFoods.push({
-                    icon: '🥛',
-                    name: 'Calcium Rich Foods',
-                    description: 'Dairy products, leafy greens, almonds, fortified plant milks'
-                });
-            }
-
-            if (name.includes('iron') && result.includes('low')) {
-                includeFoods.push({
-                    icon: '🥩',
-                    name: 'Iron Rich Foods',
-                    description: 'Lean red meat, spinach, lentils, pumpkin seeds, dark chocolate'
-                });
-            }
-
-            if (name.includes('omega') && result.includes('low')) {
-                includeFoods.push({
+    // Function to populate personalized food recommendations
+    function populatePersonalizedFoodRecommendations(userResults) {
+        const foodsInclude = document.getElementById('personalized-foods-include');
+        const foodsLimit = document.getElementById('personalized-foods-limit');
+        
+        if (!foodsInclude || !foodsLimit) return;
+        
+        let includeFoods = [];
+        let limitFoods = [];
+        
+        // Analyze wellness results for food recommendations
+        if (userResults.wellness) {
+            userResults.wellness.forEach(item => {
+                const result = item.result.toLowerCase();
+                const name = item.name.toLowerCase();
+                
+                if (name.includes('vitamin d') && result.includes('low')) {
+                    includeFoods.push({
+                        icon: '🌞',
+                        name: 'Vitamin D Rich Foods',
+                        description: 'Fatty fish (salmon, mackerel), egg yolks, fortified dairy, mushrooms'
+                    });
+                }
+                
+                if (name.includes('vitamin c') && result.includes('low')) {
+                    includeFoods.push({
+                        icon: '🍊',
+                        name: 'Vitamin C Rich Foods',
+                        description: 'Citrus fruits, bell peppers, strawberries, broccoli, kiwi'
+                    });
+                }
+                
+                if (name.includes('vitamin b12') && result.includes('low')) {
+                    includeFoods.push({
+                        icon: '🥩',
+                        name: 'Vitamin B12 Sources',
+                        description: 'Lean meats, fish, eggs, fortified cereals, nutritional yeast'
+                    });
+                }
+                
+                if (name.includes('calcium') && result.includes('low')) {
+                    includeFoods.push({
+                        icon: '🥛',
+                        name: 'Calcium Rich Foods',
+                        description: 'Dairy products, leafy greens, almonds, fortified plant milks'
+                    });
+                }
+                
+                if (name.includes('iron') && result.includes('low')) {
+                    includeFoods.push({
+                        icon: '🥩',
+                        name: 'Iron Rich Foods',
+                        description: 'Lean red meat, spinach, lentils, pumpkin seeds, dark chocolate'
+                    });
+                }
+                
+                if (name.includes('omega') && result.includes('low')) {
+                    includeFoods.push({
+                        icon: '🐟',
+                        name: 'Omega-3 Rich Foods',
+                        description: 'Fatty fish, walnuts, chia seeds, flaxseeds, hemp seeds'
+                    });
+                }
+                
+                if (name.includes('lactose') && result.includes('intolerance')) {
+                    limitFoods.push({
+                        icon: '🥛',
+                        name: 'Lactose Containing Foods',
+                        description: 'Regular milk, ice cream, soft cheeses, yogurt'
+                    });
+                    includeFoods.push({
+                        icon: '🥥',
+                        name: 'Lactose-Free Alternatives',
+                        description: 'Almond milk, coconut milk, lactose-free dairy, hard cheeses'
+                    });
+                }
+                
+                if (name.includes('gluten') || name.includes('celiac')) {
+                    limitFoods.push({
+                        icon: '🍞',
+                        name: 'Gluten Containing Foods',
+                        description: 'Wheat, barley, rye products, most breads, pastas, cereals'
+                    });
+                    includeFoods.push({
+                        icon: '🌾',
+                        name: 'Gluten-Free Alternatives',
+                        description: 'Quinoa, rice, corn, buckwheat, certified gluten-free oats'
+                    });
+                }
+                
+                if (name.includes('blood pressure') && (result.includes('high') || result.includes('elevated'))) {
+                    limitFoods.push({
+                        icon: '🧂',
+                        name: 'High Sodium Foods',
+                        description: 'Processed foods, canned soups, deli meats, salty snacks'
+                    });
+                    includeFoods.push({
+                        icon: '🥑',
+                        name: 'Potassium Rich Foods',
+                        description: 'Bananas, spinach, sweet potatoes, avocados, tomatoes'
+                    });
+                }
+                
+                if (name.includes('cholesterol') && result.includes('high')) {
+                    limitFoods.push({
+                        icon: '🥓',
+                        name: 'High Saturated Fat Foods',
+                        description: 'Fatty meats, full-fat dairy, butter, coconut oil, palm oil'
+                    });
+                    includeFoods.push({
+                        icon: '🌾',
+                        name: 'Soluble Fiber Foods',
+                        description: 'Oats, beans, lentils, apples, pears, psyllium husk'
+                    });
+                }
+                
+                if (name.includes('blood glucose') && result.includes('elevated')) {
+                    limitFoods.push({
+                        icon: '🍰',
+                        name: 'High Glycemic Foods',
+                        description: 'White bread, white rice, sugary drinks, candies, pastries'
+                    });
+                    includeFoods.push({
+                        icon: '🥬',
+                        name: 'Low Glycemic Foods',
+                        description: 'Non-starchy vegetables, whole grains, legumes, nuts, seeds'
+                    });
+                }
+            });
+        }
+        
+        // Analyze traits for food preferences
+        if (userResults.traits) {
+            userResults.traits.forEach(item => {
+                const result = item.result.toLowerCase();
+                const name = item.name.toLowerCase();
+                
+                if (name.includes('taste') && result.includes('bitter')) {
+                    includeFoods.push({
+                        icon: '🥬',
+                        name: 'Gradual Bitter Foods',
+                        description: 'Start with milder greens like spinach, then progress to kale and arugula'
+                    });
+                }
+                
+                if (name.includes('sweet') && result.includes('preference')) {
+                    limitFoods.push({
+                        icon: '🍭',
+                        name: 'Refined Sugars',
+                        description: 'Candies, sodas, white sugar, high-fructose corn syrup'
+                    });
+                    includeFoods.push({
+                        icon: '🍯',
+                        name: 'Natural Sweeteners',
+                        description: 'Fresh fruits, honey, maple syrup, stevia, monk fruit'
+                    });
+                }
+            });
+        }
+        
+        // Add default recommendations if no specific ones found
+        if (includeFoods.length === 0) {
+            includeFoods = [
+                {
+                    icon: '🥬',
+                    name: 'Leafy Greens',
+                    description: 'Spinach, kale, arugula for vitamins and minerals'
+                },
+                {
                     icon: '🐟',
-                    name: 'Omega-3 Rich Foods',
-                    description: 'Fatty fish, walnuts, chia seeds, flaxseeds, hemp seeds'
-                });
-            }
-
-            if (name.includes('lactose') && result.includes('intolerance')) {
-                limitFoods.push({
-                    icon: '🥛',
-                    name: 'Lactose Containing Foods',
-                    description: 'Regular milk, ice cream, soft cheeses, yogurt'
-                });
-                includeFoods.push({
-                    icon: '🥥',
-                    name: 'Lactose-Free Alternatives',
-                    description: 'Almond milk, coconut milk, lactose-free dairy, hard cheeses'
-                });
-            }
-
-            if (name.includes('gluten') || name.includes('celiac')) {
-                limitFoods.push({
-                    icon: '🍞',
-                    name: 'Gluten Containing Foods',
-                    description: 'Wheat, barley, rye products, most breads, pastas, cereals'
-                });
-                includeFoods.push({
-                    icon: '🌾',
-                    name: 'Gluten-Free Alternatives',
-                    description: 'Quinoa, rice, corn, buckwheat, certified gluten-free oats'
-                });
-            }
-
-            if (name.includes('blood pressure') && (result.includes('high') || result.includes('elevated'))) {
-                limitFoods.push({
-                    icon: '🧂',
-                    name: 'High Sodium Foods',
-                    description: 'Processed foods, canned soups, deli meats, salty snacks'
-                });
-                includeFoods.push({
-                    icon: '🥑',
-                    name: 'Potassium Rich Foods',
-                    description: 'Bananas, spinach, sweet potatoes, avocados, tomatoes'
-                });
-            }
-
-            if (name.includes('cholesterol') && result.includes('high')) {
-                limitFoods.push({
-                    icon: '🥓',
-                    name: 'High Saturated Fat Foods',
-                    description: 'Fatty meats, full-fat dairy, butter, coconut oil, palm oil'
-                });
-                includeFoods.push({
-                    icon: '🌾',
-                    name: 'Soluble Fiber Foods',
-                    description: 'Oats, beans, lentils, apples, pears, psyllium husk'
-                });
-            }
-
-            if (name.includes('blood glucose') && result.includes('elevated')) {
-                limitFoods.push({
+                    name: 'Fatty Fish',
+                    description: 'Salmon, mackerel for omega-3 fatty acids'
+                },
+                {
+                    icon: '🥜',
+                    name: 'Nuts & Seeds',
+                    description: 'Almonds, walnuts, chia seeds for healthy fats'
+                },
+                {
+                    icon: '🫐',
+                    name: 'Berries',
+                    description: 'Blueberries, strawberries for antioxidants'
+                }
+            ];
+        }
+        
+        if (limitFoods.length === 0) {
+            limitFoods = [
+                {
                     icon: '🍰',
-                    name: 'High Glycemic Foods',
-                    description: 'White bread, white rice, sugary drinks, candies, pastries'
-                });
-                includeFoods.push({
-                    icon: '🥬',
-                    name: 'Low Glycemic Foods',
-                    description: 'Non-starchy vegetables, whole grains, legumes, nuts, seeds'
-                });
-            }
-        });
-    }
-
-    // Analyze traits for food preferences
-    if (userResults.traits) {
-        userResults.traits.forEach(item => {
-            const result = item.result.toLowerCase();
-            const name = item.name.toLowerCase();
-
-            if (name.includes('taste') && result.includes('bitter')) {
-                includeFoods.push({
-                    icon: '🥬',
-                    name: 'Gradual Bitter Foods',
-                    description: 'Start with milder greens like spinach, then progress to kale and arugula'
-                });
-            }
-
-            if (name.includes('sweet') && result.includes('preference')) {
-                limitFoods.push({
-                    icon: '🍭',
-                    name: 'Refined Sugars',
-                    description: 'Candies, sodas, white sugar, high-fructose corn syrup'
-                });
-                includeFoods.push({
-                    icon: '🍯',
-                    name: 'Natural Sweeteners',
-                    description: 'Fresh fruits, honey, maple syrup, stevia, monk fruit'
-                });
-            }
-        });
-    }
-
-    // Add default recommendations if no specific ones found
-    if (includeFoods.length === 0) {
-        includeFoods = [
-            {
-                icon: '🥬',
-                name: 'Leafy Greens',
-                description: 'Spinach, kale, arugula for vitamins and minerals'
-            },
-            {
-                icon: '🐟',
-                name: 'Fatty Fish',
-                description: 'Salmon, mackerel for omega-3 fatty acids'
-            },
-            {
-                icon: '🥜',
-                name: 'Nuts & Seeds',
-                description: 'Almonds, walnuts, chia seeds for healthy fats'
-            },
-            {
-                icon: '🫐',
-                name: 'Berries',
-                description: 'Blueberries, strawberries for antioxidants'
-            }
-        ];
-    }
-
-    if (limitFoods.length === 0) {
-        limitFoods = [
-            {
-                icon: '🍰',
-                name: 'Processed Sugars',
-                description: 'Candies, sodas, refined carbohydrates'
-            },
-            {
-                icon: '🥓',
-                name: 'Processed Meats',
-                description: 'Bacon, sausages, deli meats'
-            },
-            {
-                icon: '🍟',
-                name: 'Fried Foods',
-                description: 'Deep-fried items, trans fats'
-            },
-            {
-                icon: '🧂',
-                name: 'Excess Sodium',
-                description: 'High-salt processed foods'
-            }
-        ];
-    }
-
-    // Populate the include foods section
-    foodsInclude.innerHTML = includeFoods.map(food => `
+                    name: 'Processed Sugars',
+                    description: 'Candies, sodas, refined carbohydrates'
+                },
+                {
+                    icon: '🥓',
+                    name: 'Processed Meats',
+                    description: 'Bacon, sausages, deli meats'
+                },
+                {
+                    icon: '🍟',
+                    name: 'Fried Foods',
+                    description: 'Deep-fried items, trans fats'
+                },
+                {
+                    icon: '🧂',
+                    name: 'Excess Sodium',
+                    description: 'High-salt processed foods'
+                }
+            ];
+        }
+        
+        // Populate the include foods section
+        foodsInclude.innerHTML = includeFoods.map(food => `
             <div class="flex items-center space-x-3 bg-white bg-opacity-50 rounded-lg p-3">
                 <span class="text-2xl">${food.icon}</span>
                 <div>
@@ -2774,9 +2984,9 @@ function populatePersonalizedFoodRecommendations(userResults) {
                 </div>
             </div>
         `).join('');
-
-    // Populate the limit foods section
-    foodsLimit.innerHTML = limitFoods.map(food => `
+        
+        // Populate the limit foods section
+        foodsLimit.innerHTML = limitFoods.map(food => `
             <div class="flex items-center space-x-3 bg-white bg-opacity-50 rounded-lg p-3">
                 <span class="text-2xl">${food.icon}</span>
                 <div>
@@ -2785,115 +2995,115 @@ function populatePersonalizedFoodRecommendations(userResults) {
                 </div>
             </div>
         `).join('');
-}
-
-// Function to populate personalized daily routine
-function populatePersonalizedRoutine(userResults) {
-    const routineContainer = document.getElementById('personalized-routine');
-    if (!routineContainer) return;
-
-    let routineItems = [];
-
-    // Analyze traits for sleep patterns and preferences
-    let isMorningPerson = false;
-    let isNightOwl = false;
-    let hasExerciseEndurance = false;
-    let hasStrengthPotential = false;
-
-    if (userResults.traits) {
-        userResults.traits.forEach(item => {
-            const result = item.result.toLowerCase();
-            const name = item.name.toLowerCase();
-
-            if (name.includes('sleep') && result.includes('morning')) {
-                isMorningPerson = true;
-            } else if (name.includes('sleep') && result.includes('night')) {
-                isNightOwl = true;
-            }
-
-            if (name.includes('exercise') && result.includes('endurance')) {
-                hasExerciseEndurance = true;
-            } else if (name.includes('exercise') && result.includes('strength')) {
-                hasStrengthPotential = true;
-            }
-        });
     }
 
-    // Generate personalized routine based on traits
-    if (isMorningPerson) {
+    // Function to populate personalized daily routine
+    function populatePersonalizedRoutine(userResults) {
+        const routineContainer = document.getElementById('personalized-routine');
+        if (!routineContainer) return;
+        
+        let routineItems = [];
+        
+        // Analyze traits for sleep patterns and preferences
+        let isMorningPerson = false;
+        let isNightOwl = false;
+        let hasExerciseEndurance = false;
+        let hasStrengthPotential = false;
+        
+        if (userResults.traits) {
+            userResults.traits.forEach(item => {
+                const result = item.result.toLowerCase();
+                const name = item.name.toLowerCase();
+                
+                if (name.includes('sleep') && result.includes('morning')) {
+                    isMorningPerson = true;
+                } else if (name.includes('sleep') && result.includes('night')) {
+                    isNightOwl = true;
+                }
+                
+                if (name.includes('exercise') && result.includes('endurance')) {
+                    hasExerciseEndurance = true;
+                } else if (name.includes('exercise') && result.includes('strength')) {
+                    hasStrengthPotential = true;
+                }
+            });
+        }
+        
+        // Generate personalized routine based on traits
+        if (isMorningPerson) {
+            routineItems.push({
+                icon: '🌅',
+                time: '6-8 AM',
+                title: 'Early Bird Advantage',
+                description: 'Use your natural energy peak for important tasks, exercise, and planning'
+            });
+        } else if (isNightOwl) {
+            routineItems.push({
+                icon: '🌙',
+                time: '10-12 PM',
+                title: 'Night Owl Peak',
+                description: 'Schedule creative work and problem-solving during your energy peak'
+            });
+        } else {
+            routineItems.push({
+                icon: '🌅',
+                time: '7-9 AM',
+                title: 'Morning Routine',
+                description: 'Start with water, protein-rich breakfast, and light stretching'
+            });
+        }
+        
+        // Add midday routine
         routineItems.push({
-            icon: '🌅',
-            time: '6-8 AM',
-            title: 'Early Bird Advantage',
-            description: 'Use your natural energy peak for important tasks, exercise, and planning'
+            icon: '☀️',
+            time: '12-2 PM',
+            title: 'Midday Energy',
+            description: 'Balanced lunch with vegetables, lean protein, and whole grains'
         });
-    } else if (isNightOwl) {
-        routineItems.push({
-            icon: '🌙',
-            time: '10-12 PM',
-            title: 'Night Owl Peak',
-            description: 'Schedule creative work and problem-solving during your energy peak'
-        });
-    } else {
-        routineItems.push({
-            icon: '🌅',
-            time: '7-9 AM',
-            title: 'Morning Routine',
-            description: 'Start with water, protein-rich breakfast, and light stretching'
-        });
-    }
-
-    // Add midday routine
-    routineItems.push({
-        icon: '☀️',
-        time: '12-2 PM',
-        title: 'Midday Energy',
-        description: 'Balanced lunch with vegetables, lean protein, and whole grains'
-    });
-
-    // Add evening routine
-    if (isNightOwl) {
-        routineItems.push({
-            icon: '🌙',
-            time: '8-10 PM',
-            title: 'Evening Productivity',
-            description: 'Use your natural energy for focused work and planning'
-        });
-    } else {
-        routineItems.push({
-            icon: '🌙',
-            time: '6-8 PM',
-            title: 'Evening Wind Down',
-            description: 'Light dinner, hydration, and preparation for rest'
-        });
-    }
-
-    // Add exercise recommendations based on genetic profile
-    if (hasExerciseEndurance) {
-        routineItems.push({
-            icon: '🏃‍♂️',
-            time: '5-7 PM',
-            title: 'Endurance Training',
-            description: 'Long cardio sessions, interval training, and endurance building'
-        });
-    } else if (hasStrengthPotential) {
-        routineItems.push({
-            icon: '💪',
-            time: '5-7 PM',
-            title: 'Strength Training',
-            description: 'Progressive resistance training with compound movements'
-        });
-    } else {
-        routineItems.push({
-            icon: '🏃‍♂️',
-            time: '5-7 PM',
-            title: 'Moderate Exercise',
-            description: '30-45 minutes of cardio or strength training'
-        });
-    }
-
-    // Populate the routine container
-    routineContainer.innerHTML = routineItems.map(item => `
+        
+        // Add evening routine
+        if (isNightOwl) {
+            routineItems.push({
+                icon: '🌙',
+                time: '8-10 PM',
+                title: 'Evening Productivity',
+                description: 'Use your natural energy for focused work and planning'
+            });
+        } else {
+            routineItems.push({
+                icon: '🌙',
+                time: '6-8 PM',
+                title: 'Evening Wind Down',
+                description: 'Light dinner, hydration, and preparation for rest'
+            });
+        }
+        
+        // Add exercise recommendations based on genetic profile
+        if (hasExerciseEndurance) {
+            routineItems.push({
+                icon: '🏃‍♂️',
+                time: '5-7 PM',
+                title: 'Endurance Training',
+                description: 'Long cardio sessions, interval training, and endurance building'
+            });
+        } else if (hasStrengthPotential) {
+            routineItems.push({
+                icon: '💪',
+                time: '5-7 PM',
+                title: 'Strength Training',
+                description: 'Progressive resistance training with compound movements'
+            });
+        } else {
+            routineItems.push({
+                icon: '🏃‍♂️',
+                time: '5-7 PM',
+                title: 'Moderate Exercise',
+                description: '30-45 minutes of cardio or strength training'
+            });
+        }
+        
+        // Populate the routine container
+        routineContainer.innerHTML = routineItems.map(item => `
             <div class="text-center bg-white bg-opacity-50 rounded-xl p-6">
                 <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span class="text-3xl">${item.icon}</span>
@@ -2903,188 +3113,188 @@ function populatePersonalizedRoutine(userResults) {
                 <p class="text-sm text-purple-600">${item.description}</p>
             </div>
         `).join('');
-}
-
-// Function to save recommendations as a formatted text file
-function saveRecommendationsAsText() {
-    try {
-        // Get patient information
-        const patientNameElement = document.getElementById('patient-name');
-        const patientIdElement = document.getElementById('patient-id');
-        const patientName = patientNameElement ? patientNameElement.textContent.trim() : 'Patient Name';
-        const patientId = patientIdElement ? patientIdElement.textContent.trim() : 'Patient ID';
-
-        // Create formatted text content
-        let textContent = '';
-
-        // Header
-        textContent += '='.repeat(80) + '\n';
-        textContent += '                    YOUR PERSONALIZED LIFESTYLE PLAN\n';
-        textContent += '                    Based on your genetic test results\n';
-        textContent += '='.repeat(80) + '\n\n';
-
-        // Patient Information
-        textContent += 'PATIENT INFORMATION\n';
-        textContent += '-'.repeat(40) + '\n';
-        textContent += `Name: ${patientName}\n`;
-        textContent += `ID: ${patientId}\n`;
-        textContent += `Generated: ${new Date().toLocaleString()}\n\n`;
-
-        // Personalized Insights
-        const insightsSection = document.querySelector('.personalized-insights');
-        if (insightsSection) {
-            textContent += 'PERSONALIZED GENETIC INSIGHTS\n';
-            textContent += '-'.repeat(40) + '\n';
-            const insights = insightsSection.querySelectorAll('p, li');
-            insights.forEach(insight => {
-                const text = insight.textContent.trim();
-                if (text && text.length > 10) {
-                    textContent += `• ${text}\n`;
-                }
-            });
-            textContent += '\n';
-        }
-
-        // Food Recommendations
-        const foodIncludeContainer = document.getElementById('personalized-foods-include');
-        if (foodIncludeContainer) {
-            textContent += 'RECOMMENDED FOODS\n';
-            textContent += '-'.repeat(40) + '\n';
-            const foodItems = foodIncludeContainer.querySelectorAll('.font-semibold');
-            foodItems.forEach(item => {
-                const name = item.textContent.trim();
-                const description = item.nextElementSibling ? item.nextElementSibling.textContent.trim() : '';
-                if (name) {
-                    textContent += `• ${name}`;
-                    if (description) textContent += `: ${description}`;
-                    textContent += '\n';
-                }
-            });
-            textContent += '\n';
-        }
-
-        const foodLimitContainer = document.getElementById('personalized-foods-limit');
-        if (foodLimitContainer) {
-            textContent += 'FOODS TO LIMIT\n';
-            textContent += '-'.repeat(40) + '\n';
-            const foodItems = foodLimitContainer.querySelectorAll('.font-semibold');
-            foodItems.forEach(item => {
-                const name = item.textContent.trim();
-                const description = item.nextElementSibling ? item.nextElementSibling.textContent.trim() : '';
-                if (name) {
-                    textContent += `• ${name}`;
-                    if (description) textContent += `: ${description}`;
-                    textContent += '\n';
-                }
-            });
-            textContent += '\n';
-        }
-
-        // Daily Routine
-        const routineContainer = document.getElementById('personalized-routine');
-        if (routineContainer) {
-            textContent += 'DAILY ROUTINE RECOMMENDATIONS\n';
-            textContent += '-'.repeat(40) + '\n';
-            const routineItems = routineContainer.querySelectorAll('.text-center');
-            routineItems.forEach(item => {
-                const time = item.querySelector('h5')?.textContent.trim();
-                const title = item.querySelector('p.font-semibold')?.textContent.trim();
-                const description = item.querySelector('p.text-sm')?.textContent.trim();
-
-                if (time && title) {
-                    textContent += `${time} - ${title}\n`;
-                    if (description) textContent += `  ${description}\n`;
-                    textContent += '\n';
-                }
-            });
-        }
-
-        // Parameter-specific recommendations
-        const wellnessContainer = document.querySelector('.wellness-recommendations');
-        if (wellnessContainer) {
-            textContent += 'WELLNESS PARAMETER RECOMMENDATIONS\n';
-            textContent += '-'.repeat(40) + '\n';
-            const recommendations = wellnessContainer.querySelectorAll('.recommendation-item');
-            recommendations.forEach(rec => {
-                const parameter = rec.querySelector('h4')?.textContent.trim();
-                const recommendation = rec.querySelector('p')?.textContent.trim();
-                if (parameter && recommendation) {
-                    textContent += `${parameter}\n`;
-                    textContent += `  ${recommendation}\n\n`;
-                }
-            });
-        }
-
-        const traitsContainer = document.querySelector('.traits-recommendations');
-        if (traitsContainer) {
-            textContent += 'PERSONAL TRAITS RECOMMENDATIONS\n';
-            textContent += '-'.repeat(40) + '\n';
-            const recommendations = traitsContainer.querySelectorAll('.recommendation-item');
-            recommendations.forEach(rec => {
-                const parameter = rec.querySelector('h4')?.textContent.trim();
-                const recommendation = rec.querySelector('p')?.textContent.trim();
-                if (parameter && recommendation) {
-                    textContent += `${parameter}\n`;
-                    textContent += `  ${recommendation}\n\n`;
-                }
-            });
-        }
-
-        // Footer
-        textContent += '='.repeat(80) + '\n';
-        textContent += 'Generated by Codex Genetic Analysis System\n';
-        textContent += 'For personalized health guidance based on your genetic profile\n';
-        textContent += '='.repeat(80) + '\n';
-
-        // Create and download text file
-        const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Codex_Recommendations_${patientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        showSuccessMessage('Recommendations saved as text file successfully!');
-
-    } catch (error) {
-        console.error('Error saving recommendations as text:', error);
-        alert('Error saving text file. Please try again.');
     }
-}
+    
+    // Function to save recommendations as a formatted text file
+    function saveRecommendationsAsText() {
+        try {
+            // Get patient information
+            const patientNameElement = document.getElementById('patient-name');
+            const patientIdElement = document.getElementById('patient-id');
+            const patientName = patientNameElement ? patientNameElement.textContent.trim() : 'Patient Name';
+            const patientId = patientIdElement ? patientIdElement.textContent.trim() : 'Patient ID';
+            
+            // Create formatted text content
+            let textContent = '';
+            
+            // Header
+            textContent += '='.repeat(80) + '\n';
+            textContent += '                    YOUR PERSONALIZED LIFESTYLE PLAN\n';
+            textContent += '                    Based on your genetic test results\n';
+            textContent += '='.repeat(80) + '\n\n';
+            
+            // Patient Information
+            textContent += 'PATIENT INFORMATION\n';
+            textContent += '-'.repeat(40) + '\n';
+            textContent += `Name: ${patientName}\n`;
+            textContent += `ID: ${patientId}\n`;
+            textContent += `Generated: ${new Date().toLocaleString()}\n\n`;
+            
+            // Personalized Insights
+            const insightsSection = document.querySelector('.personalized-insights');
+            if (insightsSection) {
+                textContent += 'PERSONALIZED GENETIC INSIGHTS\n';
+                textContent += '-'.repeat(40) + '\n';
+                const insights = insightsSection.querySelectorAll('p, li');
+                insights.forEach(insight => {
+                    const text = insight.textContent.trim();
+                    if (text && text.length > 10) {
+                        textContent += `• ${text}\n`;
+                    }
+                });
+                textContent += '\n';
+            }
+            
+            // Food Recommendations
+            const foodIncludeContainer = document.getElementById('personalized-foods-include');
+            if (foodIncludeContainer) {
+                textContent += 'RECOMMENDED FOODS\n';
+                textContent += '-'.repeat(40) + '\n';
+                const foodItems = foodIncludeContainer.querySelectorAll('.font-semibold');
+                foodItems.forEach(item => {
+                    const name = item.textContent.trim();
+                    const description = item.nextElementSibling ? item.nextElementSibling.textContent.trim() : '';
+                    if (name) {
+                        textContent += `• ${name}`;
+                        if (description) textContent += `: ${description}`;
+                        textContent += '\n';
+                    }
+                });
+                textContent += '\n';
+            }
+            
+            const foodLimitContainer = document.getElementById('personalized-foods-limit');
+            if (foodLimitContainer) {
+                textContent += 'FOODS TO LIMIT\n';
+                textContent += '-'.repeat(40) + '\n';
+                const foodItems = foodLimitContainer.querySelectorAll('.font-semibold');
+                foodItems.forEach(item => {
+                    const name = item.textContent.trim();
+                    const description = item.nextElementSibling ? item.nextElementSibling.textContent.trim() : '';
+                    if (name) {
+                        textContent += `• ${name}`;
+                        if (description) textContent += `: ${description}`;
+                        textContent += '\n';
+                    }
+                });
+                textContent += '\n';
+            }
+            
+            // Daily Routine
+            const routineContainer = document.getElementById('personalized-routine');
+            if (routineContainer) {
+                textContent += 'DAILY ROUTINE RECOMMENDATIONS\n';
+                textContent += '-'.repeat(40) + '\n';
+                const routineItems = routineContainer.querySelectorAll('.text-center');
+                routineItems.forEach(item => {
+                    const time = item.querySelector('h5')?.textContent.trim();
+                    const title = item.querySelector('p.font-semibold')?.textContent.trim();
+                    const description = item.querySelector('p.text-sm')?.textContent.trim();
+                    
+                    if (time && title) {
+                        textContent += `${time} - ${title}\n`;
+                        if (description) textContent += `  ${description}\n`;
+                        textContent += '\n';
+                    }
+                });
+            }
+            
+            // Parameter-specific recommendations
+            const wellnessContainer = document.querySelector('.wellness-recommendations');
+            if (wellnessContainer) {
+                textContent += 'WELLNESS PARAMETER RECOMMENDATIONS\n';
+                textContent += '-'.repeat(40) + '\n';
+                const recommendations = wellnessContainer.querySelectorAll('.recommendation-item');
+                recommendations.forEach(rec => {
+                    const parameter = rec.querySelector('h4')?.textContent.trim();
+                    const recommendation = rec.querySelector('p')?.textContent.trim();
+                    if (parameter && recommendation) {
+                        textContent += `${parameter}\n`;
+                        textContent += `  ${recommendation}\n\n`;
+                    }
+                });
+            }
+            
+            const traitsContainer = document.querySelector('.traits-recommendations');
+            if (traitsContainer) {
+                textContent += 'PERSONAL TRAITS RECOMMENDATIONS\n';
+                textContent += '-'.repeat(40) + '\n';
+                const recommendations = traitsContainer.querySelectorAll('.recommendation-item');
+                recommendations.forEach(rec => {
+                    const parameter = rec.querySelector('h4')?.textContent.trim();
+                    const recommendation = rec.querySelector('p')?.textContent.trim();
+                    if (parameter && recommendation) {
+                        textContent += `${parameter}\n`;
+                        textContent += `  ${recommendation}\n\n`;
+                    }
+                });
+            }
+            
+            // Footer
+            textContent += '='.repeat(80) + '\n';
+            textContent += 'Generated by Codex Genetic Analysis System\n';
+            textContent += 'For personalized health guidance based on your genetic profile\n';
+            textContent += '='.repeat(80) + '\n';
+            
+            // Create and download text file
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Codex_Recommendations_${patientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccessMessage('Recommendations saved as text file successfully!');
+            
+        } catch (error) {
+            console.error('Error saving recommendations as text:', error);
+            alert('Error saving text file. Please try again.');
+        }
+    }
 
 // Function to disable copy/paste functionality
 function disableCopyPaste() {
     // Disable context menu (right-click)
-    document.addEventListener('contextmenu', function (e) {
+    document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
         return false;
     });
-
+    
     // Disable copy (Ctrl+C, Cmd+C)
-    document.addEventListener('keydown', function (e) {
+    document.addEventListener('keydown', function(e) {
         if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
             e.preventDefault();
             showCopyProtectionMessage();
             return false;
         }
-
+        
         // Disable cut (Ctrl+X, Cmd+X)
         if ((e.ctrlKey || e.metaKey) && (e.key === 'x' || e.key === 'X')) {
             e.preventDefault();
             showCopyProtectionMessage();
             return false;
         }
-
+        
         // Disable paste (Ctrl+V, Cmd+V)
         if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
             e.preventDefault();
             showCopyProtectionMessage();
             return false;
         }
-
+        
         // Disable select all (Ctrl+A, Cmd+A)
         if ((e.ctrlKey || e.metaKey) && (e.key === 'a' || e.key === 'A')) {
             e.preventDefault();
@@ -3092,39 +3302,39 @@ function disableCopyPaste() {
             return false;
         }
     });
-
+    
     // Disable drag and drop
-    document.addEventListener('dragstart', function (e) {
+    document.addEventListener('dragstart', function(e) {
         e.preventDefault();
         return false;
     });
-
+    
     // Disable text selection via mouse
-    document.addEventListener('mousedown', function (e) {
+    document.addEventListener('mousedown', function(e) {
         if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.hasAttribute('contenteditable')) {
             e.preventDefault();
             return false;
         }
     });
-
+    
     // Disable text selection via touch
-    document.addEventListener('touchstart', function (e) {
+    document.addEventListener('touchstart', function(e) {
         if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.hasAttribute('contenteditable')) {
             e.preventDefault();
             return false;
         }
         return true;
     });
-
+    
     // Show message when user tries to copy
-    document.addEventListener('copy', function (e) {
+    document.addEventListener('copy', function(e) {
         e.preventDefault();
         showCopyProtectionMessage();
         return false;
     });
-
+    
     // Show message when user tries to paste
-    document.addEventListener('paste', function (e) {
+    document.addEventListener('paste', function(e) {
         e.preventDefault();
         showCopyProtectionMessage();
         return false;
@@ -3141,16 +3351,16 @@ function showCopyProtectionMessage() {
             <span>Copying content is not allowed</span>
         </div>
     `;
-
+    
     document.body.appendChild(message);
-
+    
     // Remove message after 3 seconds
     setTimeout(() => {
         if (message.parentNode) {
             message.parentNode.removeChild(message);
         }
     }, 3000);
-
+    
     // Re-render icons
     lucide.createIcons();
 }

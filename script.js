@@ -1,5 +1,5 @@
 // Set the workerSrc for pdf.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
 
 // --- DATA DEFINITIONS ---
 const wellnessTestNames = [
@@ -134,50 +134,50 @@ const traitsTestNames = [
 ];
 
 const monogenicTestNames = [
-    "Alpha-1 Antitrypsin Deficiency", "Familial adenomatous polyposis", 
-    "Hereditary hemochromatosis associated with HFE", "Acute intermittent porphyria", 
-    "Agenesis of the Corpus Callosum with Peripheral Neuropathy (ACCPN)", "Alpha-mannosidosis", 
-    "ARSACS (Autosomal recessive spastic ataxia of Charlevoix-Saguenay)", 
-    "Autosomal recessive polycystic kidney disease", "Beta Thalassemia", "Biotinidase deficiency", 
-    "Birt-Hogg-Dube syndrome", "Bloom syndrome", "Brugada Syndrome", "Canavan Disease", 
-    "cblA Type Methylmalonic aciduria", "cblB Type Methylmalonic aciduria", 
-    "Classical homocystinuria due to CBS deficiency", "Complete achromatopsia (type 2) and Incomplete achromatopsia", 
-    "Congenital disorder of glycosylation type 1a (PMM2-CDG)", 
-    "Congenital muscular alpha-dystroglycanopathy and Walker-Warburg syndrome", 
-    "Congenital myasthenic syndrome", "Congenital stationary night blindness 1C", "Cowden syndrome", 
-    "Cystic fibrosis", "Cystinosis", "D-Bifunctional Protein Deficiency", "Diastrophic dysplasia", 
-    "Dihydrolipoamide Dehydrogenase Deficiency", "Dilated Cardiomyopathy 1A", "Dubin-Johnson syndrome", 
-    "Ehlers-Danlos Syndrome (EDS)", "Familial advanced sleep phase syndrome (FASPS)", 
-    "Familial breast cancer", "Familial dysautonomia (Riley-Day syndrome)", "Familial Hypercholesterolemia", 
-    "Familial Hypertrophic Cardiomyopathy (HCM)", "Familial Mediterranean fever", 
-    "Familial Transthyretin Amyloidosis", "Familiar hyperinsulinism (ABCC8-related)", 
-    "Fanconi Anemia (FANCC-related)", "Gaucher disease", 
-    "Glucose-6-phosphate dehydrogenase deficiency (G6PD deficiency)", "Glutaric Acidemia type 1", 
-    "Glutaric Acidemia type 2", "Glycogen storage disease type 1A (Von Gierke Disease)", 
-    "Glycogen storage disease type 1B", "Glycogen storage disease type 3", "Glycogen storage disease type 5", 
-    "Glycogenosis type 2 or Pompe disease", "GRACILE syndrome", "Hemophilia A", 
-    "Hereditary fructose intolerance", "Homocystinuria due to MTHFR deficiency", 
-    "Hypokalemic Periodic Paralysis", "Hypophosphatasia", "Junctional Epidermolysis Bullosa", 
-    "Leigh Syndrome, French-Canadian type (LSFC)", "Leukoencephalopathy with vanishing white matter", 
-    "Li-Fraumeni Syndrome", "Limb-girdle muscular dystrophy", 
-    "Long-chain 3-hydroxyacyl-CoA dehydrogenase deficiency", "Lynch syndrome", "Malignant Hyperthermia", 
-    "Maple syrup urine disease type 1B", "Medium-chain acyl-CoA dehydrogenase deficiency (MCADD)", 
-    "Metachromatic leukodystrophy", "Methylmalonic aciduria due to methylmalonyl-CoA mutase deficiency", 
-    "Mucolipidosis IV", "Mucolipidosis type II", "Multiple endocrine neoplasia 2B", 
-    "Neurofibromatosis type I", "Neuronal Ceroid-Lipofuscinoses type 1 (associated to PPT1)", 
-    "Neuronal Ceroid-Lipofuscinoses type 3 (associated to CLN3)", 
-    "Neuronal Ceroid-Lipofuscinoses type 5 (associated to CLN5)", 
-    "Neuronal Ceroid-Lipofuscinoses type 6 (associated to CLN6)", 
-    "Neuronal Ceroid-Lipofuscinoses type 7 (associated to MFSD8)", "Niemann-Pick disease type A", 
-    "Non-syndromic mitochondrial hearing loss", "Nonsyndromic Hearing Loss and Deafness, DFNB1", 
-    "Pendred syndrome", "Peters plus syndrome", "Phenylketonuria", "Pontocerebellar hypoplasia", 
-    "Primary hyperoxaluria type 1 (PH1)", "Primary hyperoxaluria type 2 (PH2)", 
-    "Pyridoxine-dependent epilepsy", "Pyruvate kinase deficiency", "Refsum disease", "Retinitis pigmentosa", 
-    "Rhizomelic Chondrodysplasia Punctata Type 1", "Salla Disease", 
-    "Short chain acyl-CoA dehydrogenase deficiency (SCADD)", "Sjögren-Larsson syndrome", 
-    "Tay-Sachs disease", "Type 1 Oculocutaneous albinism (tyrosinase negative)", 
-    "Type 2 oculocutaneous albinism (tyrosinase positive)", "Tyrosinemia type I", "Usher syndrome", 
-    "Very long chain acyl-CoA dehydrogenase deficiency (VLCADD)", "von Willebrand disease", 
+    "Alpha-1 Antitrypsin Deficiency", "Familial adenomatous polyposis",
+    "Hereditary hemochromatosis associated with HFE", "Acute intermittent porphyria",
+    "Agenesis of the Corpus Callosum with Peripheral Neuropathy (ACCPN)", "Alpha-mannosidosis",
+    "ARSACS (Autosomal recessive spastic ataxia of Charlevoix-Saguenay)",
+    "Autosomal recessive polycystic kidney disease", "Beta Thalassemia", "Biotinidase deficiency",
+    "Birt-Hogg-Dube syndrome", "Bloom syndrome", "Brugada Syndrome", "Canavan Disease",
+    "cblA Type Methylmalonic aciduria", "cblB Type Methylmalonic aciduria",
+    "Classical homocystinuria due to CBS deficiency", "Complete achromatopsia (type 2) and Incomplete achromatopsia",
+    "Congenital disorder of glycosylation type 1a (PMM2-CDG)",
+    "Congenital muscular alpha-dystroglycanopathy and Walker-Warburg syndrome",
+    "Congenital myasthenic syndrome", "Congenital stationary night blindness 1C", "Cowden syndrome",
+    "Cystic fibrosis", "Cystinosis", "D-Bifunctional Protein Deficiency", "Diastrophic dysplasia",
+    "Dihydrolipoamide Dehydrogenase Deficiency", "Dilated Cardiomyopathy 1A", "Dubin-Johnson syndrome",
+    "Ehlers-Danlos Syndrome (EDS)", "Familial advanced sleep phase syndrome (FASPS)",
+    "Familial breast cancer", "Familial dysautonomia (Riley-Day syndrome)", "Familial Hypercholesterolemia",
+    "Familial Hypertrophic Cardiomyopathy (HCM)", "Familial Mediterranean fever",
+    "Familial Transthyretin Amyloidosis", "Familiar hyperinsulinism (ABCC8-related)",
+    "Fanconi Anemia (FANCC-related)", "Gaucher disease",
+    "Glucose-6-phosphate dehydrogenase deficiency (G6PD deficiency)", "Glutaric Acidemia type 1",
+    "Glutaric Acidemia type 2", "Glycogen storage disease type 1A (Von Gierke Disease)",
+    "Glycogen storage disease type 1B", "Glycogen storage disease type 3", "Glycogen storage disease type 5",
+    "Glycogenosis type 2 or Pompe disease", "GRACILE syndrome", "Hemophilia A",
+    "Hereditary fructose intolerance", "Homocystinuria due to MTHFR deficiency",
+    "Hypokalemic Periodic Paralysis", "Hypophosphatasia", "Junctional Epidermolysis Bullosa",
+    "Leigh Syndrome, French-Canadian type (LSFC)", "Leukoencephalopathy with vanishing white matter",
+    "Li-Fraumeni Syndrome", "Limb-girdle muscular dystrophy",
+    "Long-chain 3-hydroxyacyl-CoA dehydrogenase deficiency", "Lynch syndrome", "Malignant Hyperthermia",
+    "Maple syrup urine disease type 1B", "Medium-chain acyl-CoA dehydrogenase deficiency (MCADD)",
+    "Metachromatic leukodystrophy", "Methylmalonic aciduria due to methylmalonyl-CoA mutase deficiency",
+    "Mucolipidosis IV", "Mucolipidosis type II", "Multiple endocrine neoplasia 2B",
+    "Neurofibromatosis type I", "Neuronal Ceroid-Lipofuscinoses type 1 (associated to PPT1)",
+    "Neuronal Ceroid-Lipofuscinoses type 3 (associated to CLN3)",
+    "Neuronal Ceroid-Lipofuscinoses type 5 (associated to CLN5)",
+    "Neuronal Ceroid-Lipofuscinoses type 6 (associated to CLN6)",
+    "Neuronal Ceroid-Lipofuscinoses type 7 (associated to MFSD8)", "Niemann-Pick disease type A",
+    "Non-syndromic mitochondrial hearing loss", "Nonsyndromic Hearing Loss and Deafness, DFNB1",
+    "Pendred syndrome", "Peters plus syndrome", "Phenylketonuria", "Pontocerebellar hypoplasia",
+    "Primary hyperoxaluria type 1 (PH1)", "Primary hyperoxaluria type 2 (PH2)",
+    "Pyridoxine-dependent epilepsy", "Pyruvate kinase deficiency", "Refsum disease", "Retinitis pigmentosa",
+    "Rhizomelic Chondrodysplasia Punctata Type 1", "Salla Disease",
+    "Short chain acyl-CoA dehydrogenase deficiency (SCADD)", "Sjögren-Larsson syndrome",
+    "Tay-Sachs disease", "Type 1 Oculocutaneous albinism (tyrosinase negative)",
+    "Type 2 oculocutaneous albinism (tyrosinase positive)", "Tyrosinemia type I", "Usher syndrome",
+    "Very long chain acyl-CoA dehydrogenase deficiency (VLCADD)", "von Willebrand disease",
     "Wilson disease", "Zellweger syndrome"
 ];
 
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStatus('Error: Please fill in all fields and select a PDF file.', true);
             return;
         }
-        
+
         toggleLoading(true);
         updateStatus('Reading PDF file...');
 
@@ -408,18 +408,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 else parameterList = complexTestNames;
                 jsonData = parseText(pdfText, parameterList);
             }
-            
+
             updateStatus('Data parsed successfully. Generating JSON...');
             generateJsonFile(jsonData, userName, userId);
-            
+
             await uploadJsonToServer(userName, userId, testType, jsonData);
-            
+
             // Refresh the patient table after successful upload
             fetchAllPatients();
 
         } catch (error) {
             console.error('Processing failed:', error);
-            updateStatus(`An error occurred: ${error.message}`, true);
+            updateStatus('An error occurred: ${error.message}', true);
         } finally {
             toggleLoading(false);
         }
@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return results;
     }
-    
+
     function parsePharmaText(text, pharmaParameters) {
         const cleanText = text.replace(/\s+/g, ' ').trim();
         const results = [];
@@ -492,24 +492,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(`Server responded with status ${response.status}: ${errorText}`);
+                throw new Error('Server responded with status ${response.status}: ${errorText}');
             }
             const result = await response.json();
             console.log('Server response:', result);
             updateStatus('Upload successful!', false, true);
         } catch (error) {
             console.error('Upload failed:', error);
-            updateStatus(`Upload failed: ${error.message}`, true);
+            updateStatus('Upload failed: ${error.message}', true);
             throw error;
         }
     }
 
     function generateJsonFile(data, name, id) {
         const jsonString = JSON.stringify(data, null, 4);
+
+        // Show JSON inside your output element
         jsonOutput.textContent = jsonString;
+
+        // Create blob for download
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
+
+        // Build filename safely
         const filename = `${name.replace(/\s+/g, '_')}_${id}.json`;
+
+        // Update download link
         downloadLink.href = url;
         downloadLink.download = filename;
         downloadLink.classList.remove('hidden');
@@ -532,105 +540,108 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- ADMIN DASHBOARD LOGIC ---
+    // Fetch all patients and their test counts/types
     async function fetchAllPatients() {
-        const allPatientsApiUrl = 'https://www.codex.somee.com/api/Codex/GetAllPatients';
+        const allPatientsApiUrl = `https://www.codex.somee.com/api/Codex/GetAllPatients`;
+
         try {
             // 1. Fetch the initial list of all patients
             const response = await fetch(allPatientsApiUrl);
             if (!response.ok) {
                 throw new Error(`Server responded with status ${response.status}`);
             }
+
             const patients = await response.json();
             console.log("Initial patient list:", patients);
 
-            // 2. For each patient, fetch their specific test results to get the count and test types
+            // 2. For each patient, fetch their specific test results
             const patientPromises = patients.map(async (patient) => {
                 const resultsApiUrl = `https://www.codex.somee.com/api/Codex/GetAllTestResults/${patient.id}`;
+
                 try {
                     const resultsResponse = await fetch(resultsApiUrl);
+
                     if (resultsResponse.ok) {
                         const resultsData = await resultsResponse.json();
                         console.log(`Patient ${patient.id} results:`, resultsData);
-                        
-                        // Handle different possible API response structures
+
                         let testsArray = null;
-                        
-                        // Check if tests is directly in the response
+
+                        // Handle different possible structures
                         if (resultsData.tests) {
                             testsArray = resultsData.tests;
-                        }
-                        // Check if tests is nested in a different property
-                        else if (resultsData.data && resultsData.data.tests) {
+                        } else if (resultsData.data && resultsData.data.tests) {
                             testsArray = resultsData.data.tests;
-                        }
-                        // Check if the response itself is the tests array
-                        else if (Array.isArray(resultsData)) {
+                        } else if (Array.isArray(resultsData)) {
                             testsArray = resultsData;
                         }
-                        
-                        // Get the count from the tests array
+
+                        // Count of tests
                         patient.reportCount = testsArray ? testsArray.length : 0;
-                        
-                        // Get the test types for display - handle different possible API response formats
+
+                        // Extract test types
                         if (testsArray && testsArray.length > 0) {
                             patient.testTypes = testsArray.map(test => {
-                                console.log('Processing test:', test);
-                                
-                                // Try different possible property names for test type
+                                console.log("Processing test:", test);
+
+                                // Try various property names
                                 if (test.TestType) {
-                                    if (typeof test.TestType === 'string') {
+                                    if (typeof test.TestType === "string") {
                                         return test.TestType;
-                                    } else if (typeof test.TestType === 'object') {
-                                        return test.TestType.name || 'Unknown Test';
+                                    } else if (typeof test.TestType === "object") {
+                                        return test.TestType.name || "Unknown Test";
                                     }
                                 }
-                                
-                                // Alternative property names
                                 if (test.testType) {
-                                    if (typeof test.testType === 'string') {
+                                    if (typeof test.testType === "string") {
                                         return test.testType;
-                                    } else if (typeof test.testType === 'object') {
-                                        return test.testType.name || 'Unknown Test';
+                                    } else if (typeof test.testType === "object") {
+                                        return test.testType.name || "Unknown Test";
                                     }
                                 }
-                                
-                                // If test is just a string
-                                if (typeof test === 'string') {
+                                if (typeof test === "string") {
                                     return test;
                                 }
-                                
-                                // If test has a name property
                                 if (test.name) {
                                     return test.name;
                                 }
-                                
-                                // Fallback - show the test object structure
-                                console.log('Unknown test format:', test);
-                                return 'Unknown Test';
+
+                                console.warn("Unknown test format:", test);
+                                return "Unknown Test";
                             });
                         } else {
                             patient.testTypes = [];
                         }
                     } else {
-                        patient.reportCount = 0; // If there's an error or no results, count is 0
+                        // No results / API error
+                        patient.reportCount = 0;
                         patient.testTypes = [];
                     }
+
                 } catch (e) {
                     console.error(`Error fetching results for patient ${patient.id}:`, e);
                     patient.reportCount = 0;
                     patient.testTypes = [];
                 }
+
                 return patient;
             });
 
-            // 3. Wait for all the individual fetches to complete
+            // 3. Wait for all fetches
             const patientsWithCounts = await Promise.all(patientPromises);
-            
+
+            // 4. Populate the table
             populateTable(patientsWithCounts);
 
         } catch (error) {
             console.error("Failed to fetch patient data:", error);
-            patientTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-red-500">Failed to load patient data.</td></tr>`;
+            patientTableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center p-8 text-red-500">
+                    Failed to load patient data.
+                </td>
+            </tr>
+        `;
         }
     }
 
@@ -638,67 +649,99 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(patients);
         const patientTableBody = document.getElementById('patient-table-body');
         patientTableBody.innerHTML = '';
-        if (patients.length === 0) {
-            patientTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-gray-500">No patients found.</td></tr>`;
+
+        if (!patients || patients.length === 0) {
+            patientTableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center p-8 text-gray-500">
+                    No patients found.
+                </td>
+            </tr>`;
             return;
         }
+
         patients.forEach(patient => {
             const row = document.createElement('tr');
             row.className = 'table-row';
-            row.setAttribute('data-patient-id', patient.id);
-            
+            row.setAttribute('data-patient-id', patient.id || '');
+
             const reportCount = patient.reportCount || 0;
             const testTypes = patient.testTypes || [];
 
             row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${patient.id}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${patient.name}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${patient.phoneNumber}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">
-                    <div class="flex flex-col">
-                        <span class="font-bold">${reportCount}</span>
-                        <span class="text-xs text-gray-400">${testTypes.join(', ') || 'No tests'}</span>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex flex-col space-y-2">
-                        <button onclick="testLocal('${patient.id}')" class="text-purple-600 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
-                            <i data-lucide="test-tube" class="w-4 h-4"></i>
-                            <span>Lanuch Report</span>
-                        </button>
-                        <button onclick="copyUserLink('${patient.id}')" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
-                            <i data-lucide="copy" class="w-4 h-4"></i>
-                            <span>Copy Link</span>
-                        </button>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button 
-                        onclick="deletePatient('${patient.id}', '${patient.name}')" 
-                        data-patient-id="${patient.id}"
-                        class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        <span>Delete</span>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                ${patient.id || 'N/A'}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${patient.name || 'Unknown'}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${patient.phoneNumber || 'N/A'}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">
+                <div class="flex flex-col">
+                    <span class="font-bold">${reportCount}</span>
+                    <span class="text-xs text-gray-400">
+                        ${testTypes.length > 0 ? testTypes.join(', ') : 'No tests'}
+                    </span>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex flex-col space-y-2">
+                    <button onclick="launchReport('${patient.id}')" 
+                        class="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        <span>Launch Report</span>
                     </button>
-                </td>
-            `;
+                    <button onclick="testLocal('${patient.id}')" 
+                        class="text-purple-600 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
+                        <i data-lucide="test-tube" class="w-4 h-4"></i>
+                        <span>Test Local</span>
+                    </button>
+                    <button onclick="copyUserLink('${patient.id}')" 
+                        class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                        <span>Copy Link</span>
+                    </button>
+                    <button onclick="copyLocalLink('${patient.id}')" 
+                        class="text-orange-600 hover:text-orange-900 bg-orange-50 hover:bg-orange-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                        <span>Copy Local Link</span>
+                    </button>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button 
+                    onclick="deletePatient('${patient.id}', '${patient.name || 'Unknown'}')" 
+                    data-patient-id="${patient.id}"
+                    class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    <span>Delete</span>
+                </button>
+            </td>
+        `;
             patientTableBody.appendChild(row);
         });
+
+        // Refresh lucide icons after rendering
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     }
 
     // Search functionality
     searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
         const rows = patientTableBody.querySelectorAll('tr');
-        
+
         rows.forEach(row => {
             const nameCell = row.querySelector('td:nth-child(2)');
             const phoneCell = row.querySelector('td:nth-child(3)');
-            
+
             if (nameCell && phoneCell) {
                 const name = nameCell.textContent.toLowerCase();
                 const phone = phoneCell.textContent.toLowerCase();
-                
+
                 if (name.includes(searchTerm) || phone.includes(searchTerm)) {
                     row.style.display = '';
                 } else {
@@ -711,13 +754,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial fetch and render
     fetchAllPatients();
     lucide.createIcons();
-    
+
     // Add close results functionality
     document.getElementById('close-results').addEventListener('click', () => {
         document.getElementById('results-section').classList.add('hidden');
     });
 });
 
+// Get correct base URL automatically
+function getBaseUrl() {
+    return window.location.origin; 
+}
+
+// Build User_Page URL dynamically
+function getUserPageUrl(patientId) {
+    return `${getBaseUrl()}/user_page/User_Page.html?id=${patientId}`;
+}
+
+// Launch the report page
+// function launchReport(patientId) {
+//     const url = getUserPageUrl(patientId);
+//     console.log("Opening user page:", url);
+//     window.open(url, "_blank");
+// }
+
+// Global function for launching reports (called from HTML onclick)
 async function launchReport(patientId) {
     try {
         // Find patient info from the table
@@ -729,13 +790,11 @@ async function launchReport(patientId) {
         const patientName = patientRow.querySelector('td:nth-child(2)')?.textContent || "";
         const patientPhone = patientRow.querySelector('td:nth-child(3)')?.textContent || "";
 
-        const resultsResponse = await fetch(`https://www.codex.somee.com/api/Codex/GetAllTestResults/${patientId}`);
         // Store patient data in localStorage for the user page to access
         const patientData = {
             id: patientId,
             name: patientName,
-            phone: patientPhone,
-            results: resultsResponse
+            phone: patientPhone
         };
         localStorage.setItem('patientData', JSON.stringify(patientData));
 
@@ -755,7 +814,7 @@ async function launchReport(patientId) {
 }
 
 // Function to test locally by opening User_Page.html with patient data
-async function testLocal(patientId) {
+function testLocal(patientId) {
     console.log(`Testing locally for patient ${patientId}`);
 
     try {
@@ -768,13 +827,11 @@ async function testLocal(patientId) {
         const patientName = patientRow.querySelector('td:nth-child(2)').textContent;
         const patientPhone = patientRow.querySelector('td:nth-child(3)').textContent;
 
-        const resultsResponse = await fetch(`https://www.codex.somee.com/api/Codex/GetAllTestResults/${patientId}`);
         // Store patient data in localStorage for the user page to access
         const patientData = {
             id: patientId,
             name: patientName,
-            phone: patientPhone,
-            results: resultsResponse
+            phone: patientPhone
         };
         localStorage.setItem('patientData', JSON.stringify(patientData));
 
@@ -798,20 +855,69 @@ function openUserPageWithData(patientId, patientName, patientPhone, resultsData)
         phone: patientPhone,
         results: resultsData
     };
-    
+
     // Store the data in localStorage so the user page can access it
     localStorage.setItem('patientData', JSON.stringify(patientData));
-    
+
     // Open the user page in a new window/tab
     const userPageUrl = './user_page/User_Page.html';
     window.open(userPageUrl, '_blank');
 }
 
-// Function to copy user link to clipboard
-async function copyUserLink(patientId) {
+// Function to copy local user page link to clipboard
+async function copyLocalLink(patientId, event) {
     try {
+        // Build local link dynamically from current location
+        const localUserLink = `${window.location.origin}${window.location.pathname.replace('index.html', '')}user_page/User_Page.html?id=${patientId}`;
+
+        // Use modern clipboard API if available
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(localUserLink);
+        } else {
+            // Fallback for older browsers or non-secure contexts
+            const textArea = document.createElement('textarea');
+            textArea.value = localUserLink;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+
+        // Show success feedback
+        const copyBtn = event.target.closest('button');
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Copied!</span>';
+        copyBtn.classList.remove('text-orange-600', 'hover:text-orange-900', 'bg-orange-50', 'hover:bg-orange-100');
+        copyBtn.classList.add('text-green-600', 'bg-green-50');
+
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            copyBtn.innerHTML = originalText;
+            copyBtn.classList.remove('text-green-600', 'bg-green-50');
+            copyBtn.classList.add('text-orange-600', 'hover:text-orange-900', 'bg-orange-50', 'hover:bg-orange-100');
+        }, 2000);
+
+        console.log('Local user link copied to clipboard:', localUserLink);
+
+    } catch (error) {
+        console.error('Error copying local user link:', error);
+        alert(
+            'Failed to copy local link to clipboard. Please copy manually: ' +
+            `${window.location.origin}${window.location.pathname.replace('index.html', '')}user_page/User_Page.html?id=${patientId}`
+        );
+    }
+}
+
+// Function to copy user link to clipboard
+async function copyUserLink(patientId, event) {
+    try {
+        // Build the user link
         const userLink = `https://codex.natixglobal.com/user?id=${patientId}`;
-        
+
         // Use modern clipboard API if available
         if (navigator.clipboard && window.isSecureContext) {
             await navigator.clipboard.writeText(userLink);
@@ -828,26 +934,26 @@ async function copyUserLink(patientId) {
             document.execCommand('copy');
             document.body.removeChild(textArea);
         }
-        
+
         // Show success feedback
         const copyBtn = event.target.closest('button');
         const originalText = copyBtn.innerHTML;
         copyBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Copied!</span>';
         copyBtn.classList.remove('text-blue-600', 'hover:text-blue-900', 'bg-blue-50', 'hover:bg-blue-100');
         copyBtn.classList.add('text-green-600', 'bg-green-50');
-        
+
         // Reset button after 2 seconds
         setTimeout(() => {
             copyBtn.innerHTML = originalText;
             copyBtn.classList.remove('text-green-600', 'bg-green-50');
             copyBtn.classList.add('text-blue-600', 'hover:text-blue-900', 'bg-blue-50', 'hover:bg-blue-100');
         }, 2000);
-        
+
         console.log('User link copied to clipboard:', userLink);
-        
+
     } catch (error) {
         console.error('Error copying user link:', error);
-        alert('Failed to copy link to clipboard. Please copy manually: ' + `https://codex.natixglobal.com/user?id=${patientId}`);
+        alert(`Failed to copy link to clipboard. Please copy manually: https://codex.natixglobal.com/user?id=${patientId}`);
     }
 }
 
@@ -857,15 +963,17 @@ async function deletePatient(patientId, patientName) {
     if (!confirm(`Are you sure you want to delete patient "${patientName}"? This action cannot be undone.`)) {
         return;
     }
-    
+
+    // Select the delete button
+    const deleteBtn = document.querySelector(`button[data-patient-id="${patientId}"]`);
+
     try {
         // Show loading state
-        const deleteBtn = document.querySelector(`button[data-patient-id="${patientId}"]`);
         if (deleteBtn) {
             deleteBtn.disabled = true;
             deleteBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Deleting...';
         }
-        
+
         // Call the delete API
         const deleteUrl = `https://www.codex.somee.com/api/Codex/DeletePatient/${patientId}`;
         const response = await fetch(deleteUrl, {
@@ -874,21 +982,21 @@ async function deletePatient(patientId, patientName) {
                 'Content-Type': 'application/json'
             }
         });
-        
+
         if (!response.ok) {
             throw new Error(`Failed to delete patient: ${response.status}`);
         }
-        
+
         // Show success message
         alert(`Patient "${patientName}" has been successfully deleted.`);
-        
+
         // Refresh the patient table
         await fetchAllPatients();
-        
+
     } catch (error) {
         console.error('Error deleting patient:', error);
         alert(`Error deleting patient: ${error.message}`);
-        
+
         // Reset button state on error
         if (deleteBtn) {
             deleteBtn.disabled = false;
@@ -897,60 +1005,118 @@ async function deletePatient(patientId, patientName) {
     }
 }
 
-// Function to display test results
-async function displayTestResults(resultsData, patientId) {
+// Function to display test content
+function displayTestContent(test, testIndex) {
+    const contentContainer = document.getElementById('test-results-content');
+
     try {
-        // Handle different possible API response structures
-        let testsArray = null;
-        
-        if (resultsData.tests) {
-            testsArray = resultsData.tests;
-        } else if (resultsData.data && resultsData.data.tests) {
-            testsArray = resultsData.data.tests;
-        } else if (Array.isArray(resultsData)) {
-            testsArray = resultsData;
+        let testType = extractTestType(test);
+        let results = null;
+
+        // Extract results from different possible structures
+        if (test.Results) {
+            try {
+                results = JSON.parse(test.Results);
+            } catch (e) {
+                results = test.Results; // If already parsed
+            }
+        } else if (test.results) {
+            try {
+                console.log('Parsing results from:', test.results);
+                results = JSON.parse(test.results);
+                console.log('Parsed results:', results);
+            } catch (e) {
+                console.error('Error parsing results JSON:', e);
+                console.log('Raw results:', test.results);
+                results = test.results; // Use raw if parsing fails
+            }
         }
-        
-        if (!testsArray || testsArray.length === 0) {
-            document.getElementById('test-results-content').innerHTML = 
-                '<div class="text-center p-8 text-gray-500">No test results found for this patient.</div>';
+
+        // Handle empty results
+        if (!results) {
+            contentContainer.innerHTML = `
+                <div class="text-center p-8 text-gray-500">
+                    No results data available for this test.
+                </div>
+            `;
             return;
         }
-        
-        // Generate test tabs
-        generateTestTabs(testsArray);
-        
-        // Display first test results by default
-        if (testsArray.length > 0) {
-            displayTestContent(testsArray[0], 0);
-        }
-        
+
+        // Generate HTML based on test type and results
+        let html = `
+            <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-gray-800">${testType}</h3>
+                ${testType === 'Pharma'
+                    ? generatePharmaResultsHTML(results)
+                    : generateStandardResultsHTML(results)
+                }
+            </div>
+        `;
+
+        contentContainer.innerHTML = html;
+
     } catch (error) {
-        console.error('Error displaying test results:', error);
-        document.getElementById('test-results-content').innerHTML = 
-            '<div class="text-center p-8 text-red-500">Error loading test results.</div>';
+        console.error('Error displaying test content:', error);
+        contentContainer.innerHTML = `
+            <div class="text-center p-8 text-red-500">
+                Error displaying test content.
+            </div>
+        `;
     }
+}
+
+// Function to generate standard results HTML
+function generateStandardResultsHTML(results) {
+    let html = '';
+
+    if (Array.isArray(results)) {
+        results.forEach((result, index) => {
+            html += `
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-2">Result ${index + 1}</h4>
+                    <pre class="text-sm text-gray-600 whitespace-pre-wrap">${JSON.stringify(result, null, 2)}</pre>
+                </div>
+            `;
+        });
+    } else if (typeof results === 'object' && results !== null) {
+        Object.entries(results).forEach(([key, value]) => {
+            html += `
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-2">${key}</h4>
+                    <p class="text-sm text-gray-600">${value}</p>
+                </div>
+            `;
+        });
+    } else {
+        html += `
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-gray-600">${results}</p>
+            </div>
+        `;
+    }
+
+    return html;
 }
 
 // Function to generate test tabs
 function generateTestTabs(testsArray) {
     const tabsContainer = document.getElementById('test-tabs');
     tabsContainer.innerHTML = '';
-    
+
     testsArray.forEach((test, index) => {
         const testType = extractTestType(test);
         const tab = document.createElement('button');
         tab.className = 'py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200';
         tab.textContent = testType;
         tab.dataset.testIndex = index;
-        
+
         // Set active state for first tab
         if (index === 0) {
             tab.classList.add('border-green-500', 'text-green-600');
         } else {
             tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
         }
-        
+
         tab.addEventListener('click', () => {
             // Update active tab
             tabsContainer.querySelectorAll('button').forEach(btn => {
@@ -959,11 +1125,11 @@ function generateTestTabs(testsArray) {
             });
             tab.classList.remove('border-transparent', 'text-gray-500');
             tab.classList.add('border-green-500', 'text-green-600');
-            
+
             // Display test content
             displayTestContent(test, index);
         });
-        
+
         tabsContainer.appendChild(tab);
     });
 }
@@ -974,7 +1140,7 @@ function extractTestType(test) {
     if (test.test_type) {
         return test.test_type;
     }
-    
+
     // Fallback to other possible structures
     if (test.TestType) {
         if (typeof test.TestType === 'string') return test.TestType;
@@ -990,19 +1156,20 @@ function extractTestType(test) {
 }
 
 // Function to display test content
+// Function to display test content
 function displayTestContent(test, testIndex) {
     const contentContainer = document.getElementById('test-results-content');
-    
+
     try {
         let testType = extractTestType(test);
         let results = null;
-        
+
         // Extract results from different possible structures
         if (test.Results) {
             try {
                 results = JSON.parse(test.Results);
             } catch (e) {
-                results = test.Results; // If it's already parsed
+                results = test.Results; // If already parsed
             }
         } else if (test.results) {
             try {
@@ -1015,64 +1182,44 @@ function displayTestContent(test, testIndex) {
                 results = test.results; // Use raw if parsing fails
             }
         }
-        
+
+        // Handle empty results
         if (!results) {
-            contentContainer.innerHTML = '<div class="text-center p-8 text-gray-500">No results data available for this test.</div>';
+            contentContainer.innerHTML = `
+                <div class="text-center p-8 text-gray-500">
+                    No results data available for this test.
+                </div>
+            `;
             return;
         }
-        
+
         // Generate HTML based on test type and results
-        let html = `<div class="space-y-6">`;
-        html += `<h3 class="text-xl font-semibold text-gray-800">${testType}</h3>`;
-        
-        if (testType === 'Pharma') {
-            html += generatePharmaResultsHTML(results);
-        } else {
-            html += generateStandardResultsHTML(results);
-        }
-        
-        html += `</div>`;
+        let html = `
+            <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-gray-800">${testType}</h3>
+                ${testType === 'Pharma'
+                ? generatePharmaResultsHTML(results)
+                : generateStandardResultsHTML(results)
+            }
+            </div>
+        `;
+
         contentContainer.innerHTML = html;
-        
+
     } catch (error) {
         console.error('Error displaying test content:', error);
-        contentContainer.innerHTML = '<div class="text-center p-8 text-red-500">Error displaying test content.</div>';
+        contentContainer.innerHTML = `
+            <div class="text-center p-8 text-red-500">
+                Error displaying test content.
+            </div>
+        `;
     }
-}
-
-// Function to generate standard results HTML
-function generateStandardResultsHTML(results) {
-    let html = '';
-    
-    if (Array.isArray(results)) {
-        results.forEach((result, index) => {
-            html += `
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-semibold text-gray-800 mb-2">Result ${index + 1}</h4>
-                    <pre class="text-sm text-gray-600 whitespace-pre-wrap">${JSON.stringify(result, null, 2)}</pre>
-                </div>
-            `;
-        });
-    } else if (typeof results === 'object') {
-        Object.entries(results).forEach(([key, value]) => {
-            html += `
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-semibold text-gray-800 mb-2">${key}</h4>
-                    <p class="text-sm text-gray-600">${value}</p>
-                </div>
-            `;
-        });
-    } else {
-        html += `<div class="bg-gray-50 p-4 rounded-lg"><p class="text-sm text-gray-600">${results}</p></div>`;
-    }
-    
-    return html;
 }
 
 // Function to generate pharmacogenomics results HTML
 function generatePharmaResultsHTML(results) {
     let html = '';
-    
+
     if (Array.isArray(results)) {
         results.forEach((result, index) => {
             const actionIcon = getActionIcon(result.action);
@@ -1080,17 +1227,23 @@ function generatePharmaResultsHTML(results) {
                 <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-green-500">
                     <div class="flex items-center mb-2">
                         ${actionIcon}
-                        <h4 class="font-semibold text-gray-800 ml-2">${result.name}</h4>
+                        <h4 class="font-semibold text-gray-800 ml-2">${result.name || 'Unnamed Test'}</h4>
                     </div>
-                    <p class="text-sm text-gray-600 mb-2"><strong>Action:</strong> ${result.action}</p>
-                    <p class="text-sm text-gray-600"><strong>Result:</strong> ${result.result}</p>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Action:</strong> ${result.action || 'N/A'}</p>
+                    <p class="text-sm text-gray-600"><strong>Result:</strong> ${result.result || 'N/A'}</p>
                 </div>
             `;
         });
     } else {
-        html += `<div class="bg-gray-50 p-4 rounded-lg"><p class="text-sm text-gray-600">${JSON.stringify(results, null, 2)}</p></div>`;
+        html += `
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-gray-600 whitespace-pre-wrap">
+                    ${typeof results === 'object' ? JSON.stringify(results, null, 2) : results}
+                </p>
+            </div>
+        `;
     }
-    
+
     return html;
 }
 

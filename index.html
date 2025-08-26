@@ -1,198 +1,486 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex Admin Dashboard</title>
-
-    <!-- Tailwind CSS - Production Build -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
-
-    <!-- PDF.js library for reading PDF files in the browser -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
-
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <title>Codex - Your Genetic Health Results</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 25%, #bbf7d0 50%, #86efac 75%, #4ade80 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+        }
+        
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+            to { box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .input-field {
+            border: 1px solid #d1fae5;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .input-field:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 0.8s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 0.8s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .stagger-animation > * {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+        .stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+        .stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+        .stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+        .stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* Simple and Clean Styles */
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        .input-field:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        /* Loading Spinner */
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
+<body class="bg-gray-50 min-h-screen">
 
-<body class="p-4 sm:p-8">
 
-    <div class="max-w-7xl mx-auto space-y-8">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-5xl font-bold theme-text">CODEX</h1>
-            <p class="text-xl text-gray-500 mt-2">Admin Dashboard & Report Uploader</p>
-        </div>
-
-        <!-- Upload Section -->
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">Upload New DNA Report</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Left Column: Inputs -->
-                <div class="space-y-6">
-                    <!-- Patient Information -->
-                    <div>
-                        <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">Patient Name</label>
-                        <input type="text" id="userName"
-                            class="w-full px-4 py-2 border theme-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+    <!-- Hero Section -->
+    <div class="gradient-bg relative overflow-hidden">
+        <div class="relative max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+            <div class="text-center space-y-8">
+                <!-- Main Icon -->
+                <div class="flex justify-center">
+                    <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-green-600 bg-opacity-20 rounded-full">
+                        <i data-lucide="dna" class="w-10 h-10 sm:w-12 sm:h-12 text-green-600"></i>
                     </div>
-                    <div>
-                        <label for="userId" class="block text-sm font-medium text-gray-700 mb-1">Patient Phone</label>
-                        <input type="text" id="userId"
-                            class="w-full px-4 py-2 border theme-border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                    </div>
-
-                    <!-- Test Type Selection -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Test Type</label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <label class="flex items-center space-x-2"><input type="radio" name="testType"
-                                    value="Wellness" class="form-radio text-green-600"
-                                    checked><span>Wellness</span></label>
-                            <label class="flex items-center space-x-2"><input type="radio" name="testType"
-                                    value="Traits" class="form-radio text-green-600"><span>Traits</span></label>
-                            <label class="flex items-center space-x-2"><input type="radio" name="testType"
-                                    value="Monogenic" class="form-radio text-green-600"><span>FAMILIAL GENETIC
-                                    CONDITIONS</span></label>
-                            <label class="flex items-center space-x-2"><input type="radio" name="testType"
-                                    value="Complex" class="form-radio text-green-600"><span>GENETIC SUSCEPTIBILITY TO
-                                    HEALTH DISORDERS</span></label>
-                            <label class="flex items-center space-x-2"><input type="radio" name="testType"
-                                    value="Pharma" class="form-radio text-green-600"><span>Pharma</span></label>
+                </div>
+                
+                <!-- Main Heading -->
+                <div class="space-y-4">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+                        Unlock Your
+                        <span class="block text-green-600 mt-2">Genetic Potential</span>
+                    </h1>
+                    
+                    <p class="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed">
+                        Access your personalized genetic health results and insights instantly
+                    </p>
+                </div>
+                
+                <!-- Form Card -->
+                <div class="max-w-sm sm:max-w-md mx-auto">
+                    <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-xl border border-white/20">
+                        <form id="results-form" class="space-y-5">
+                            <div>
+                                <label for="patient-id" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Patient ID
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="user" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        id="patient-id" 
+                                        name="patient-id"
+                                        placeholder="Enter your patient ID"
+                                        class="input-field block w-full pl-10 pr-4 py-3 sm:py-4 rounded-xl text-base sm:text-lg text-gray-900 placeholder-gray-500 focus:outline-none transition-all duration-200"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                            
+                            <button 
+                                type="submit"
+                                class="btn-primary w-full py-3 sm:py-4 px-6 rounded-xl transform hover:scale-105 flex items-center justify-center space-x-2 text-base sm:text-lg font-semibold"
+                            >
+                                <i data-lucide="eye" class="w-5 h-5"></i>
+                                <span>View My Results</span>
+                            </button>
+                        </form>
+                        
+                        <!-- Simple Trust Indicator -->
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex items-center justify-center space-x-4 text-sm text-gray-500">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-green-500"></i>
+                                    <span>Secure</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="clock" class="w-4 h-4 text-green-500"></i>
+                                    <span>Instant</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- File Upload -->
-                    <div>
-                        <label for="pdfFile" class="block text-sm font-medium text-gray-700 mb-1">Upload PDF
-                            Report</label>
-                        <input type="file" id="pdfFile" accept=".pdf"
-                            class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
-                    </div>
-
-                    <!-- Process Button -->
-                    <button id="processBtn"
-                        class="w-full theme-primary text-black font-bold py-3 px-4 rounded-lg theme-primary-hover transition-colors duration-300 flex items-center justify-center">
-                        <span id="btnText">Process & Upload Report</span>
-                        <div id="spinner"
-                            class="spinner w-5 h-5 rounded-full border-2 border-t-2 border-gray-200 ml-3 hidden"></div>
-                    </button>
                 </div>
-
-                <!-- Right Column: Status & Results -->
-                <div class="bg-gray-50 p-6 rounded-lg border theme-border">
-                    <h3 class="font-semibold text-lg theme-text mb-4">Processing Status</h3>
-                    <div id="status" class="text-sm text-gray-600">Please fill out the form and upload a PDF.</div>
-                    <hr class="my-4 theme-border">
-                    <h3 class="font-semibold text-lg theme-text mb-2">Generated JSON Preview</h3>
-                    <pre id="jsonOutput"
-                        class="w-full h-48 bg-gray-900 text-white text-xs p-4 rounded-lg overflow-auto">No data processed yet.</pre>
-                    <a id="downloadLink"
-                        class="hidden mt-4 inline-block w-full text-center theme-primary text-black font-bold py-2 px-4 rounded-lg theme-primary-hover transition-colors duration-300">Download
-                        JSON File</a>
+                
+                <!-- Success Message -->
+                <div id="success-message" class="hidden">
+                    <div class="inline-flex items-center space-x-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span>Redirecting to your results...</span>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Patient Table Card -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-semibold text-gray-800">All Patient Reports</h2>
-                <div class="relative">
-                    <input type="text" id="search-patients" placeholder="Search patients..."
-                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
-                </div>
-            </div>
-
-            <!-- Table -->
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="table-header">
-                    <tr>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Patient ID</th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Patient Name</th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone
-                            Number</th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Files
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions</th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Delete</th>
-                    </tr>
-                </thead>
-                <tbody id="patient-table-body" class="bg-white divide-y divide-gray-200">
-                    <!-- Rows will be injected here by JavaScript -->
-                    <tr>
-                        <td colspan="7" class="text-center p-8 text-gray-500">Loading patient data...</td>
-                    </tr>
-                </tbody>
-            </table>
+        
+        <!-- Simple Decorative Elements -->
+        <div class="absolute top-10 left-5 opacity-10">
+            <i data-lucide="activity" class="w-8 h-8 sm:w-12 sm:h-12 text-green-600"></i>
         </div>
+        <div class="absolute bottom-10 right-5 opacity-10">
+            <i data-lucide="heart" class="w-8 h-8 sm:w-12 sm:h-12 text-green-600"></i>
+        </div>
+    </div>
 
-        <!-- Results Display Section -->
-        <div id="results-section" class="bg-white rounded-2xl shadow-lg p-6 hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-semibold text-gray-800">Patient Test Results</h2>
-                <button id="close-results" class="text-gray-500 hover:text-gray-700">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+    <!-- Features Section -->
+    <div class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Your Health, Your Data
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Codex provides comprehensive genetic health insights with personalized recommendations
+                </p>
             </div>
-
-            <!-- Patient Info Header -->
-            <div id="patient-info" class="bg-gray-50 p-4 rounded-lg mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <span class="text-sm font-medium text-gray-500">Patient ID:</span>
-                        <span id="result-patient-id" class="ml-2 font-semibold text-gray-900"></span>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-animation">
+                <div class="text-center p-6 group hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4 group-hover:bg-green-200 transition-colors duration-300">
+                        <i data-lucide="shield-check" class="w-8 h-8 text-green-600"></i>
                     </div>
-                    <div>
-                        <span class="text-sm font-medium text-gray-500">Name:</span>
-                        <span id="result-patient-name" class="ml-2 font-semibold text-gray-900"></span>
-                    </div>
-                    <div>
-                        <span class="text-sm font-medium text-gray-500">Phone:</span>
-                        <span id="result-patient-phone" class="ml-2 font-semibold text-gray-900"></span>
-                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Secure & Private</h3>
+                    <p class="text-gray-600">Your genetic data is protected with industry-leading security measures and HIPAA compliance</p>
                 </div>
-            </div>
-
-            <!-- Test Results Tabs -->
-            <div class="mb-6">
-                <div class="border-b border-gray-200">
-                    <nav class="-mb-px flex space-x-8" id="test-tabs">
-                        <!-- Test tabs will be dynamically generated here -->
-                    </nav>
+                
+                <div class="text-center p-6 group hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4 group-hover:bg-green-200 transition-colors duration-300">
+                        <i data-lucide="bar-chart-3" class="w-8 h-8 text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Comprehensive Analysis</h3>
+                    <p class="text-gray-600">Get detailed insights across multiple health parameters and genetic markers</p>
                 </div>
-            </div>
-
-            <!-- Test Results Content -->
-            <div id="test-results-content">
-                <!-- Test results will be displayed here -->
+                
+                <div class="text-center p-6 group hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4 group-hover:bg-green-200 transition-colors duration-300">
+                        <i data-lucide="lightbulb" class="w-8 h-8 text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Personalized Insights</h3>
+                    <p class="text-gray-600">Receive tailored recommendations based on your unique genetic profile</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Custom JavaScript -->
-    <script src="script.js"></script>
+    <!-- How It Works Section -->
+    <div class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    How It Works
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Simple steps to access your genetic health insights
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 stagger-animation">
+                <div class="text-center relative">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6 transition-colors duration-300">
+                        <span class="text-3xl font-bold text-green-600">1</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Enter Your ID</h3>
+                    <p class="text-gray-600">Input your unique Patient ID provided by your healthcare provider</p>
+                </div>
+                
+                <div class="text-center relative">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6 transition-colors duration-300">
+                        <span class="text-3xl font-bold text-green-600">2</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Access Results</h3>
+                    <p class="text-gray-600">View your comprehensive genetic health analysis instantly</p>
+                </div>
+                
+                <div class="text-center relative">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6 transition-colors duration-300">
+                        <span class="text-3xl font-bold text-green-600">3</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Understand Insights</h3>
+                    <p class="text-gray-600">Learn about your genetic predispositions and health markers</p>
+                </div>
+                
+                <div class="text-center relative">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6 transition-colors duration-300">
+                        <span class="text-3xl font-bold text-green-600">4</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Take Action</h3>
+                    <p class="text-gray-600">Use insights to make informed health decisions</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Test Types Section -->
+    <div class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Comprehensive Test Coverage
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Access results from various genetic health assessments
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 hover:border-green-300 transition-all duration-300 hover:transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-4">
+                            <i data-lucide="heart" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Wellness</h3>
+                        <p class="text-sm text-gray-600">Lifestyle & health optimization</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl border border-blue-200 hover:border-blue-300 transition-all duration-300 hover:transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4">
+                            <i data-lucide="user" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Traits</h3>
+                        <p class="text-sm text-gray-600">Personal characteristics</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-purple-50 to-violet-50 p-6 rounded-xl border border-purple-200 hover:border-purple-300 transition-all duration-300 hover:transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mb-4">
+                            <i data-lucide="dna" class="w-6 h-6 text-purple-600"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Familial Genetic Conditions</h3>
+                        <p class="text-sm text-gray-600">Single gene conditions</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-xl border border-orange-200 hover:border-orange-300 transition-all duration-300 hover:transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg mb-4">
+                            <i data-lucide="activity" class="w-6 h-6 text-orange-600"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Genetic Susceptibility to Health Disorders</h3>
+                        <p class="text-sm text-gray-600">Multi-gene disorders</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-red-50 to-pink-50 p-6 rounded-xl border border-red-200 hover:border-red-300 transition-all duration-300 hover:transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg mb-4">
+                            <i data-lucide="pill" class="w-6 h-6 text-red-600"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Pharma</h3>
+                        <p class="text-sm text-gray-600">Medication response</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-400">&copy; 2024 Codex. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // Handle form submission
+            const form = document.getElementById('results-form');
+            const patientIdInput = document.getElementById('patient-id');
+            
+            // Function to handle form submission
+            function handleFormSubmit(patientId) {
+                if (!patientId) {
+                    alert('Please enter your Patient ID');
+                    return;
+                }
+                
+                // Redirect to user page with the patient ID
+                const userPageUrl = `./user_page/User_Page.html?id=${encodeURIComponent(patientId)}`;
+                window.open(userPageUrl, '_blank');
+                
+                return true;
+            }
+            
+            // Main form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const patientId = patientIdInput.value.trim();
+                if (handleFormSubmit(patientId)) {
+                    patientIdInput.value = '';
+                }
+            });
+            
+            // Add interactive effects to input
+            patientIdInput.addEventListener('focus', () => {
+                patientIdInput.parentElement.classList.add('ring-2', 'ring-green-500');
+            });
+            
+            patientIdInput.addEventListener('blur', () => {
+                patientIdInput.parentElement.classList.remove('ring-2', 'ring-green-500');
+            });
+            
+            // Simple form submission with loading state
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const patientId = patientIdInput.value.trim();
+                
+                if (!patientId) {
+                    alert('Please enter your Patient ID');
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Loading...</span>';
+                submitBtn.disabled = true;
+                
+                // Process and redirect
+                setTimeout(() => {
+                    if (handleFormSubmit(patientId)) {
+                        showSuccessMessage();
+                        patientIdInput.value = '';
+                        
+                        // Reset button
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                }, 1000);
+            });
+            
+            // Simple success message
+            function showSuccessMessage() {
+                const successMessage = document.getElementById('success-message');
+                successMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 2000);
+            }
+        });
+    </script>
 </body>
-
 </html>
