@@ -1,0 +1,157 @@
+/* Custom Styles for Codex Admin Dashboard */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7fafc;
+}
+
+.theme-bg { 
+    background-color: #e8f5e9; 
+}
+
+.theme-text { 
+    color: #2e7d32; 
+}
+
+.theme-primary { 
+    background-color: #81c784; 
+}
+
+.theme-primary-hover:hover { 
+    background-color: #66bb6a; 
+}
+
+.theme-border { 
+    border-color: #a5d6a7; 
+}
+
+.spinner {
+    border-top-color: #2e7d32;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { 
+        transform: rotate(360deg); 
+    }
+}
+
+.table-header {
+    background-color: #f1f5f9;
+}
+
+.table-row:hover {
+    background-color: #f8fafc;
+}
+
+/* Additional custom styles */
+.form-radio {
+    accent-color: #2e7d32;
+}
+
+/* File upload button styling */
+input[type="file"]::-webkit-file-upload-button {
+    background-color: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2e7d32;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #c8e6c9;
+}
+
+/* Table styling enhancements */
+.table-row {
+    transition: background-color 0.2s ease;
+}
+
+.table-row td {
+    vertical-align: middle;
+}
+
+/* Button enhancements */
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Search input focus effects */
+#search-patients:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+/* Status message animations */
+#status {
+    transition: color 0.3s ease;
+}
+
+/* JSON output styling */
+#jsonOutput {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    line-height: 1.4;
+}
+
+/* Download link styling */
+#downloadLink {
+    text-decoration: none;
+}
+
+#downloadLink:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .max-w-7xl {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+}
+
+/* Results section styling */
+#results-section {
+    transition: all 0.3s ease;
+}
+
+#test-tabs button {
+    transition: all 0.2s ease;
+}
+
+#test-tabs button:hover {
+    transform: translateY(-1px);
+}
+
+#test-results-content {
+    min-height: 200px;
+}
+
+/* Test result cards */
+.bg-gray-50 {
+    transition: all 0.2s ease;
+}
+
+.bg-gray-50:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Close button styling */
+#close-results {
+    transition: all 0.2s ease;
+}
+
+#close-results:hover {
+    transform: scale(1.1);
+}
