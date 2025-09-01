@@ -703,11 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <i data-lucide="copy" class="w-4 h-4"></i>
                         <span>Copy Link</span>
                     </button>
-                    <button onclick="copyLocalLink('${patient.id}')" 
-                        class="text-orange-600 hover:text-orange-900 bg-orange-50 hover:bg-orange-100 px-3 py-1 rounded-md transition-colors duration-200 flex items-center space-x-1">
-                        <i data-lucide="copy" class="w-4 h-4"></i>
-                        <span>Copy Local Link</span>
-                    </button>
+
                 </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -814,7 +810,7 @@ async function launchReport(patientId) {
 }
 
 // Function to test locally by opening User_Page.html with patient data
-function testLocal(patientId) {
+async function testLocal(patientId) {
     console.log(`Testing locally for patient ${patientId}`);
 
     try {
@@ -827,11 +823,24 @@ function testLocal(patientId) {
         const patientName = patientRow.querySelector('td:nth-child(2)').textContent;
         const patientPhone = patientRow.querySelector('td:nth-child(3)').textContent;
 
-        // Store patient data in localStorage for the user page to access
+        // Fetch patient results from the API
+        const resultsUrl = `https://www.codex.somee.com/api/Codex/GetAllTestResults/${patientId}`;
+        console.log('Fetching patient results from:', resultsUrl);
+        
+        const response = await fetch(resultsUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch patient results: ${response.status}`);
+        }
+        
+        const resultsData = await response.json();
+        console.log('Patient results fetched:', resultsData);
+
+        // Store patient data and results in localStorage for the user page to access
         const patientData = {
             id: patientId,
             name: patientName,
-            phone: patientPhone
+            phone: patientPhone,
+            results: resultsData
         };
         localStorage.setItem('patientData', JSON.stringify(patientData));
 
@@ -864,53 +873,7 @@ function openUserPageWithData(patientId, patientName, patientPhone, resultsData)
     window.open(userPageUrl, '_blank');
 }
 
-// Function to copy local user page link to clipboard
-async function copyLocalLink(patientId, event) {
-    try {
-        // Build local link dynamically from current location
-        const localUserLink = `${window.location.origin}${window.location.pathname.replace('index.html', '')}user_page/User_Page.html?id=${patientId}`;
 
-        // Use modern clipboard API if available
-        if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(localUserLink);
-        } else {
-            // Fallback for older browsers or non-secure contexts
-            const textArea = document.createElement('textarea');
-            textArea.value = localUserLink;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-        }
-
-        // Show success feedback
-        const copyBtn = event.target.closest('button');
-        const originalText = copyBtn.innerHTML;
-        copyBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Copied!</span>';
-        copyBtn.classList.remove('text-orange-600', 'hover:text-orange-900', 'bg-orange-50', 'hover:bg-orange-100');
-        copyBtn.classList.add('text-green-600', 'bg-green-50');
-
-        // Reset button after 2 seconds
-        setTimeout(() => {
-            copyBtn.innerHTML = originalText;
-            copyBtn.classList.remove('text-green-600', 'bg-green-50');
-            copyBtn.classList.add('text-orange-600', 'hover:text-orange-900', 'bg-orange-50', 'hover:bg-orange-100');
-        }, 2000);
-
-        console.log('Local user link copied to clipboard:', localUserLink);
-
-    } catch (error) {
-        console.error('Error copying local user link:', error);
-        alert(
-            'Failed to copy local link to clipboard. Please copy manually: ' +
-            `${window.location.origin}${window.location.pathname.replace('index.html', '')}user_page/User_Page.html?id=${patientId}`
-        );
-    }
-}
 
 // Function to copy user link to clipboard
 async function copyUserLink(patientId, event) {
@@ -975,7 +938,7 @@ async function deletePatient(patientId, patientName) {
         }
 
         // Call the delete API
-        const deleteUrl = `https://www.codex.somee.com/api/Codex/DeletePatient/${patientId}`;
+        const deleteUrl = `https://www.codex.somee.comgetresults/api/Codex/DeletePatient/${patientId}`;
         const response = await fetch(deleteUrl, {
             method: 'DELETE',
             headers: {

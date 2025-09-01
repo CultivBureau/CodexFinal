@@ -602,6 +602,14 @@ function addResultIndicator(item, resultValue, action = null) {
     console.log(`✓ Updated dataset.resultValue:`, item.dataset.resultValue);
     console.log(`=== FINISHED ADDING RESULT INDICATOR ===\n`);
     
+    // Update the lifestyle recommendations tables if they exist
+    if (window.populateTraitsRecommendationsTableWithResults && window.populateWellnessRecommendationsTableWithResults) {
+        setTimeout(() => {
+            window.populateTraitsRecommendationsTableWithResults();
+            window.populateWellnessRecommendationsTableWithResults();
+        }, 500);
+    }
+    
     // Don't add click handler here - let the original main_user_page.js handle it
     // We'll modify the displayDetails function instead
 }
@@ -823,8 +831,31 @@ function setupDownloadButton(patientData) {
     }
 }
 
+// Function to load jsPDF library dynamically
+async function loadJSPDF() {
+    return new Promise((resolve, reject) => {
+        if (window.jspdf) {
+            resolve();
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        script.onload = () => {
+            // Also load autoTable plugin
+            const autoTableScript = document.createElement('script');
+            autoTableScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js';
+            autoTableScript.onload = () => resolve();
+            autoTableScript.onerror = () => reject(new Error('Failed to load autoTable plugin'));
+            document.head.appendChild(autoTableScript);
+        };
+        script.onerror = () => reject(new Error('Failed to load jsPDF library'));
+        document.head.appendChild(script);
+    });
+}
+
 // Function to download patient results as PDF
-function downloadPatientResults(patientData) {
+async function downloadPatientResults(patientData) {
     const downloadBtn = document.getElementById('download-results-btn');
     
     // Show loading state
@@ -834,14 +865,20 @@ function downloadPatientResults(patientData) {
     }
     
     try {
-        // Check if jsPDF is available
+        // Check if jsPDF is available, if not, load it dynamically
         if (typeof window.jspdf === 'undefined') {
-            alert('PDF generation library not loaded. Please refresh the page and try again.');
-            if (downloadBtn) {
-                downloadBtn.disabled = false;
-                downloadBtn.innerHTML = '<i data-lucide="download" class="w-4 h-4"></i><span>Download Results</span>';
+            // Try to load jsPDF dynamically
+            await loadJSPDF();
+            
+            // Check again after loading
+            if (typeof window.jspdf === 'undefined') {
+                alert('PDF generation library could not be loaded. Please refresh the page and try again.');
+                if (downloadBtn) {
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = '<i data-lucide="download" class="w-4 h-4"></i><span>Download Results</span>';
+                }
+                return;
             }
-            return;
         }
 
         const { jsPDF } = window.jspdf;
@@ -857,47 +894,60 @@ function downloadPatientResults(patientData) {
             creator: 'Codex System'
         });
 
-        // Add header with better styling
-        doc.setFillColor(34, 139, 34); // Green background
-        doc.rect(0, 0, 210, 40, 'F');
-        
-        doc.setFontSize(24);
-        doc.setTextColor(255, 255, 255); // White text
-        doc.text('Codex Genetic Analysis Report', 105, 25, { align: 'center' });
-        
-        // Add patient information section with box - two column layout
-        doc.setFillColor(248, 250, 252); // Light gray background
-        doc.rect(20, 50, 170, 30, 'F');
-        doc.setDrawColor(34, 139, 34);
-        doc.rect(20, 50, 170, 30, 'S');
-        
-        doc.setFontSize(14);
-        doc.setTextColor(34, 139, 34);
-        doc.text('Patient Information', 25, 62);
-        
-        doc.setFontSize(10);
+        // Clean, professional header
+        doc.setFillColor(34, 139, 34);
+        doc.rect(0, 0, 210, 25, 'F');
+        doc.setFontSize(20);
+        doc.setTextColor(255, 255, 255);
+        doc.text('Codex Genetic Analysis Report', 105, 17, { align: 'center' });
+
+        let yPosition = 40;
+
+        // Patient Information Section
+        doc.setFontSize(16);
         doc.setTextColor(0, 0, 0);
-        // First row: Name and Phone
-        doc.text(`Name: ${patientData.name}`, 25, 72);
-        doc.text(`Phone: ${patientData.phone}`, 120, 72);
+        doc.text('Patient Information', 20, yPosition);
+        yPosition += 10;
+
+        // Use autoTable for patient info to ensure proper alignment
+        doc.autoTable({
+            startY: yPosition,
+            body: [
+                ['Name:', patientData.name],
+                ['ID:', patientData.id]
+            ],
+            theme: 'plain',
+            styles: {
+                fontSize: 12,
+                cellPadding: 2,
+                lineColor: [255, 255, 255], // Invisible borders
+                lineWidth: 0
+            },
+            columnStyles: {
+                0: { cellWidth: 30, halign: 'left' }, // Label column
+                1: { cellWidth: 140, halign: 'left' }  // Value column
+            }
+        });
         
-        // Second row: ID and Report Date
-        doc.text(`ID: ${patientData.id}`, 25, 79);
-        doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 120, 79);
-        
-        // Add test results section with better spacing
+        yPosition = doc.autoTable.previous.finalY + 10;
+
+        // Test Results Section Header
         doc.setFontSize(16);
         doc.setTextColor(34, 139, 34);
-        doc.text('Test Results Summary', 20, 105);
+        doc.text('Test Results Summary', 20, yPosition);
+        yPosition += 15;
         
-        let yPosition = 120;
-        
-        // Process each test type
-        const testTypes = ['Wellness', 'Traits', 'Familial Genetic Conditions', 'Genetic Susceptibility to Health Disorders', 'Pharma'];
+        // Process each test type with clean, organized tables
+        const testTypes = [
+            { name: 'Wellness', listId: 'wellness-list', color: [34, 197, 94] },
+            { name: 'Traits', listId: 'traits-list', color: [59, 130, 246] },
+            { name: 'Familial Genetic Conditions', listId: 'monogenic-list', color: [147, 51, 234] },
+            { name: 'Genetic Susceptibility to Health Disorders', listId: 'complex-list', color: [239, 68, 68] },
+            { name: 'Pharma', listId: 'pharma-list', color: [245, 158, 11] }
+        ];
         
         testTypes.forEach(testType => {
-            const listId = testType.toLowerCase() + '-list';
-            const listContainer = document.getElementById(listId);
+            const listContainer = document.getElementById(testType.listId);
             
             if (listContainer) {
                 const parameterItems = listContainer.querySelectorAll('.parameter-item');
@@ -906,209 +956,124 @@ function downloadPatientResults(patientData) {
                 );
                 
                 if (itemsWithResults.length > 0) {
-                    // Check if we need a new page (with better spacing)
-                    if (yPosition > 220) {
+                    // Check if we need a new page
+                    if (yPosition > 200) {
                         doc.addPage();
                         yPosition = 30;
                     }
                     
-                    // Add test type header with background
-                    doc.setFillColor(34, 139, 34);
-                    doc.rect(20, yPosition - 5, 170, 8, 'F');
+                    // Add test type header
+                    doc.setFontSize(16);
+                    doc.setTextColor(testType.color[0], testType.color[1], testType.color[2]);
+                    doc.text(`${testType.name} Results`, 20, yPosition);
+                    yPosition += 10;
                     
-                    doc.setFontSize(12);
-                    doc.setTextColor(255, 255, 255);
-                    doc.text(`${testType} Tests`, 25, yPosition);
-                    yPosition += 15;
+                    // Prepare data for autoTable
+                    const tableData = itemsWithResults.map(item => {
+                        let parameterName = item.dataset.originalName;
+                        if (!parameterName) {
+                            parameterName = item.textContent
+                                .replace(/Result Available[\s\S]*/i, '')
+                                .trim();
+                        }
+                        
+                        const resultValue = item.dataset.resultValue || 'N/A';
+                        const action = item.dataset.action || null;
+                        
+                        // Clean up the result value
+                        let cleanResult = resultValue;
+                        if (typeof resultValue === 'string') {
+                            cleanResult = resultValue
+                                .replace(/Result Available/gi, '')
+                                .replace(/Result:\s*/gi, '')
+                                .replace(/\s+/g, ' ')
+                                .trim();
+                        }
+                        
+                        // Add action if available
+                        if (action) {
+                            cleanResult = `${action}: ${cleanResult}`;
+                        }
+                        
+                        return [parameterName, cleanResult];
+                    });
                     
-                    // Add parameters with optimized table format
-                    let currentY = yPosition;
-                    const rowHeight = 12; // Smaller row height for more rows per page
-                    const maxRowsPerPage = 22; // More rows per page
-                    let rowCount = 0;
-                    
-                    // Add table header
-                    doc.setFillColor(34, 139, 34);
-                    doc.rect(20, currentY - 2, 170, 8, 'F');
-                    doc.setFontSize(10);
-                    doc.setTextColor(255, 255, 255);
-                    doc.text('Parameter', 25, currentY + 3);
-                    doc.text('Result', 105, currentY + 3);
-                    currentY += 12;
-                    
-                    // Draw header border
-                    doc.setDrawColor(34, 139, 34);
-                    doc.line(20, currentY - 2, 190, currentY - 2);
-                    doc.line(20, currentY - 2, 20, currentY + 8);
-                    doc.line(190, currentY - 2, 190, currentY + 8);
-                    doc.line(100, currentY - 2, 100, currentY + 8);
-                    
-                    itemsWithResults.forEach((item, index) => {
-                        try {
-                            // Check if we need a new page
-                            if (rowCount > 0 && rowCount % maxRowsPerPage === 0) {
-                                doc.addPage();
-                                currentY = 30;
-                                
-                                // Add test type header on new page
-                                doc.setFillColor(34, 139, 34);
-                                doc.rect(20, currentY - 5, 170, 8, 'F');
-                                doc.setFontSize(10);
-                                doc.setTextColor(255, 255, 255);
-                                doc.text(`${testType} Tests`, 25, currentY);
-                                currentY += 15;
-                                
-                                // Redraw table header
-                                doc.setFillColor(34, 139, 34);
-                                doc.rect(20, currentY - 2, 170, 8, 'F');
-                                doc.setFontSize(10);
-                                doc.setTextColor(255, 255, 255);
-                                doc.text('Parameter', 25, currentY + 3);
-                                doc.text('Result', 105, currentY + 3);
-                                currentY += 12;
-                                
-                                // Draw header border
-                                doc.setDrawColor(34, 139, 34);
-                                doc.line(20, currentY - 2, 190, currentY - 2);
-                                doc.line(20, currentY - 2, 20, currentY + 8);
-                                doc.line(190, currentY - 2, 190, currentY + 8);
-                                doc.line(100, currentY - 2, 100, currentY + 8);
+                    // Use autoTable for clean, professional formatting
+                    doc.autoTable({
+                        startY: yPosition,
+                        head: [['Parameter', 'Result']],
+                        body: tableData,
+                        didDrawPage: (data) => { data.settings.margin.top = 30; },
+                        margin: { top: 30 },
+                        theme: 'grid',
+                        headStyles: { 
+                            fillColor: testType.color, 
+                            textColor: 255,
+                            fontSize: 10
+                        },
+                        alternateRowStyles: { 
+                            fillColor: [248, 250, 252] 
+                        },
+                        didParseCell: (data) => { 
+                            if (data.section === 'head') {
+                                data.cell.styles.fontStyle = 'bold';
                             }
-                            
-                            // Get the original parameter name
-                            let parameterName = item.dataset.originalName;
-                            if (!parameterName) {
-                                parameterName = item.textContent
-                                    .replace(/Result Available[\s\S]*/i, '')
-                                    .trim();
+                            if (data.section === 'body') {
+                                data.cell.styles.fontSize = 9;
+                                data.cell.styles.cellPadding = 3;
                             }
-                            
-                            const resultValue = item.dataset.resultValue || 'N/A';
-                            const action = item.dataset.action || null;
-                            
-                            // Clean up the result value
-                            let cleanResult = resultValue;
-                            if (typeof resultValue === 'string') {
-                                cleanResult = resultValue
-                                    .replace(/Result Available/gi, '')
-                                    .replace(/Result:\s*/gi, '')
-                                    .replace(/\s+/g, ' ')
-                                    .trim();
-                            }
-                            
-                            // Add action if available
-                            if (action) {
-                                cleanResult = `${action}: ${cleanResult}`;
-                            }
-                            
-                            // Handle long text with wrapping - smaller column widths
-                            const maxParamWidth = 65; // Smaller parameter column
-                            const maxResultWidth = 75; // Smaller result column
-                            
-                            let wrappedParamName, wrappedResult;
-                            try {
-                                wrappedParamName = doc.splitTextToSize(parameterName, maxParamWidth);
-                                wrappedResult = doc.splitTextToSize(cleanResult, maxResultWidth);
-                            } catch (e) {
-                                // Fallback if splitTextToSize fails
-                                wrappedParamName = [parameterName.substring(0, 25) + (parameterName.length > 25 ? '...' : '')];
-                                wrappedResult = [cleanResult.substring(0, 35) + (cleanResult.length > 35 ? '...' : '')];
-                            }
-                            
-                            // Calculate row height based on text
-                            const paramLines = Array.isArray(wrappedParamName) ? wrappedParamName.length : 1;
-                            const resultLines = Array.isArray(wrappedResult) ? wrappedResult.length : 1;
-                            const actualRowHeight = Math.max(rowHeight, Math.max(paramLines, resultLines) * 4 + 4);
-                            
-                            // Check if current row fits on page
-                            if (currentY + actualRowHeight > 280) {
-                                doc.addPage();
-                                currentY = 30;
-                                
-                                // Add test type header on new page
-                                doc.setFillColor(34, 139, 34);
-                                doc.rect(20, currentY - 5, 170, 8, 'F');
-                                doc.setFontSize(10);
-                                doc.setTextColor(255, 255, 255);
-                                doc.text(`${testType} Tests`, 25, currentY);
-                                currentY += 15;
-                                
-                                // Redraw table header
-                                doc.setFillColor(34, 139, 34);
-                                doc.rect(20, currentY - 2, 170, 8, 'F');
-                                doc.setFontSize(10);
-                                doc.setTextColor(255, 255, 255);
-                                doc.text('Parameter', 25, currentY + 3);
-                                doc.text('Result', 105, currentY + 3);
-                                currentY += 12;
-                                
-                                // Draw header border
-                                doc.setDrawColor(34, 139, 34);
-                                doc.line(20, currentY - 2, 190, currentY - 2);
-                                doc.line(20, currentY - 2, 20, currentY + 8);
-                                doc.line(190, currentY - 2, 190, currentY + 8);
-                                doc.line(100, currentY - 2, 100, currentY + 8);
-                            }
-                            
-                            // Add light background for alternating rows
-                            if (index % 2 === 0) {
-                                doc.setFillColor(250, 250, 250);
-                                doc.rect(20, currentY - 2, 170, actualRowHeight, 'F');
-                            }
-                            
-                            // Add parameter name (left column)
-                            doc.setFontSize(8);
-                            doc.setTextColor(0, 0, 0);
-                            doc.text(wrappedParamName, 25, currentY + 4);
-                            
-                            // Add result (right column)
-                            doc.setTextColor(100, 100, 100);
-                            doc.text(wrappedResult, 105, currentY + 4);
-                            
-                            // Add row border
-                            doc.setDrawColor(220, 220, 220);
-                            doc.line(20, currentY + actualRowHeight - 2, 190, currentY + actualRowHeight - 2);
-                            doc.line(20, currentY - 2, 20, currentY + actualRowHeight - 2);
-                            doc.line(190, currentY - 2, 190, currentY + actualRowHeight - 2);
-                            doc.line(100, currentY - 2, 100, currentY + actualRowHeight - 2);
-                            
-                            currentY += actualRowHeight;
-                            rowCount++;
-                            
-                        } catch (error) {
-                            console.error('Error processing item:', error);
-                            // Continue with next item
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 100 }, // Parameter column
+                            1: { cellWidth: 70 }   // Result column
                         }
                     });
                     
-                    // Update yPosition for next test type
-                    yPosition = currentY + 15;
+                    yPosition = doc.autoTable.previous.finalY + 15;
                 }
             }
         });
         
 
         
-        // Add professional footer
+        // Clean footer
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
-            
-            // Footer line
-            doc.setDrawColor(200, 200, 200);
-            doc.line(20, 280, 190, 280);
-            
-            // Footer text
-            doc.setFontSize(8);
-            doc.setTextColor(128, 128, 128);
-            doc.text(`Page ${i} of ${pageCount}`, 20, 285);
-            doc.text('Generated by Codex Genetic Analysis System', 105, 285, { align: 'center' });
-            doc.text(new Date().toLocaleString(), 190, 285, { align: 'right' });
+            doc.setFontSize(8).setTextColor(150).text(`Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
         }
         
-        // Save the PDF
+        // Download the intro PDF first
+        console.log('Starting dual PDF download process...');
+        const introDownloaded = await downloadIntroPDF();
+        
+        // Small delay to ensure first download completes
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Download the results PDF
+        console.log('Now downloading results PDF...');
         const fileName = `Codex_Report_${patientData.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
-        doc.save(fileName);
+        
+        // Create blob and download
+        const pdfBytes = doc.output('arraybuffer');
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        console.log('Both PDFs download process completed');
+        
+        // Show success message to user
+        if (introDownloaded) {
+            alert('✅ Both PDFs downloaded successfully!\n\n1. Codex_Intro_Booklet.pdf (Intro)\n2. ' + fileName + ' (Results)');
+        } else {
+            alert('⚠️ Results PDF downloaded successfully!\n\nNote: Intro PDF could not be downloaded. This usually works on live servers.');
+        }
         
         console.log('PDF generated successfully:', fileName);
         
@@ -1129,6 +1094,449 @@ function downloadPatientResults(patientData) {
         }
     }
 }
+
+    // Function to load jsPDF dynamically
+    async function loadJSPDF() {
+        return new Promise((resolve, reject) => {
+            if (window.jspdf) {
+                console.log('jsPDF already loaded');
+                resolve();
+                return;
+            }
+
+            console.log('Loading jsPDF library...');
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script.onload = () => {
+                console.log('jsPDF script loaded, setting up window.jspdf');
+                // Try different ways the library might be exposed
+                if (window.jspdf) {
+                    console.log('window.jspdf already exists');
+                } else if (window.jspdf && window.jspdf.jsPDF) {
+                    console.log('window.jspdf.jsPDF exists');
+                    window.jspdf = window.jspdf.jsPDF;
+                } else if (window.jsPDF) {
+                    console.log('window.jsPDF exists');
+                    window.jspdf = window.jsPDF;
+                } else {
+                    console.log('No jsPDF found, waiting a bit...');
+                    // Sometimes the library needs a moment to initialize
+                    setTimeout(() => {
+                        if (window.jspdf) {
+                            console.log('window.jspdf found after delay');
+                        } else if (window.jsPDF) {
+                            console.log('window.jsPDF found after delay');
+                            window.jspdf = window.jsPDF;
+                        } else {
+                            console.log('Still no jsPDF found');
+                        }
+                        resolve();
+                    }, 100);
+                    return;
+                }
+                console.log('window.jspdf set to:', window.jspdf);
+                resolve();
+            };
+            script.onerror = (error) => {
+                console.error('Failed to load jsPDF script:', error);
+                reject(error);
+            };
+            document.head.appendChild(script);
+        });
+    }
+
+    // Function to load pdf-lib for PDF merging
+    async function loadPDFLib() {
+        return new Promise((resolve, reject) => {
+            if (window.PDFLib) {
+                resolve();
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js';
+            script.onload = () => {
+                resolve();
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    // Function to add intro pages from Codex Booklet 7.pdf
+    async function addIntroPagesToPDF(doc) {
+        try {
+            // Load pdf-lib if not already loaded
+            await loadPDFLib();
+            
+            // Check if PDFLib is actually available
+            if (typeof window.PDFLib === 'undefined') {
+                throw new Error('PDFLib library failed to load');
+            }
+            console.log('PDFLib library loaded successfully');
+            
+            // Try multiple paths to find the intro PDF
+            let response;
+            let introPDFBytes;
+            
+            // Get the current page URL to determine base path
+            const currentUrl = window.location.href;
+            const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+            const rootUrl = baseUrl.substring(0, baseUrl.lastIndexOf('/'));
+            
+            console.log('Current URL:', currentUrl);
+            console.log('Base URL:', baseUrl);
+            console.log('Root URL:', rootUrl);
+            
+            // Try different possible paths - prioritize the actual file location
+            const possiblePaths = [
+                // Try the actual file location first
+                `${window.location.origin}/Codex Booklet 7.pdf`,
+                `${window.location.origin}/Codex%20Booklet%207.pdf`,
+                // Try relative paths from current location
+                '../Codex Booklet 7.pdf',
+                '../Codex%20Booklet%207.pdf',
+                '../../Codex Booklet 7.pdf',
+                '../../Codex%20Booklet%207.pdf',
+                // Try absolute paths
+                '/Codex Booklet 7.pdf',
+                '/Codex%20Booklet%207.pdf',
+                // Try dynamic paths
+                `${rootUrl}/Codex Booklet 7.pdf`,
+                `${rootUrl}/Codex%20Booklet%207.pdf`,
+                `${baseUrl}/Codex Booklet 7.pdf`,
+                `${baseUrl}/Codex%20Booklet%207.pdf`,
+                // Try current directory
+                './Codex Booklet 7.pdf',
+                './Codex%20Booklet%207.pdf',
+                'Codex Booklet 7.pdf',
+                'Codex%20Booklet%207.pdf'
+            ];
+            
+            // Try to fetch the intro PDF from different paths
+            console.log('Testing file accessibility...');
+            for (const path of possiblePaths) {
+                try {
+                    console.log(`Trying to fetch intro PDF from: ${path}`);
+                    response = await fetch(path);
+                    console.log(`Response status for ${path}:`, response.status, response.statusText);
+                    
+                    if (response.ok) {
+                        console.log(`Successfully fetched intro PDF from: ${path}`);
+                        introPDFBytes = await response.arrayBuffer();
+                        console.log(`Intro PDF size: ${introPDFBytes.byteLength} bytes`);
+                        break;
+                    } else {
+                        console.log(`File not found at ${path}: ${response.status} ${response.statusText}`);
+                    }
+                } catch (e) {
+                    console.log(`Error fetching from ${path}:`, e);
+                    continue;
+                }
+            }
+            
+            if (!introPDFBytes) {
+                console.warn('Could not fetch intro PDF from any of the attempted paths. Creating intro pages directly with jsPDF.');
+                console.log('Note: The system will create professional intro pages, but if you want to use the original "Codex Booklet 7.pdf",');
+                console.log('please ensure the file is accessible from your web server at the root directory.');
+                
+                // Create intro pages directly with jsPDF instead of merging
+                return await createIntroPagesWithJSPDF(doc);
+            }
+        
+                    // Load the intro PDF
+            const introPDF = await PDFLib.PDFDocument.load(introPDFBytes);
+            const introPages = introPDF.getPages();
+            console.log(`Loaded intro PDF with ${introPages.length} pages`);
+            
+            // Create a new PDF document for merging
+            const mergedPDF = await PDFLib.PDFDocument.create();
+            
+            // Add all intro pages first
+            for (let i = 0; i < introPages.length; i++) {
+                const [copiedPage] = await mergedPDF.copyPages(introPDF, [i]);
+                mergedPDF.addPage(copiedPage);
+                console.log(`Added intro page ${i + 1}`);
+            }
+        
+                    // Convert jsPDF document to PDF-lib format
+            const jsPDFBytes = doc.output('arraybuffer');
+            const jsPDFDoc = await PDFLib.PDFDocument.load(jsPDFBytes);
+            const jsPDFPages = jsPDFDoc.getPages();
+            console.log(`Loaded jsPDF with ${jsPDFPages.length} pages`);
+            
+            // Add all jsPDF pages
+            for (let i = 0; i < jsPDFPages.length; i++) {
+                const [copiedPage] = await mergedPDF.copyPages(jsPDFDoc, [i]);
+                mergedPDF.addPage(copiedPage);
+                console.log(`Added jsPDF page ${i + 1}`);
+            }
+        
+                    // Save the merged PDF
+            const mergedBytes = await mergedPDF.save();
+            console.log(`Final merged PDF has ${mergedPDF.getPageCount()} pages`);
+            
+            return mergedBytes;
+        
+            } catch (error) {
+            console.error('Error adding intro pages:', error);
+            console.log('Falling back to original PDF without intro pages');
+            // If merging fails, return the original jsPDF document
+            return doc.output('arraybuffer');
+        }
+    }
+
+    // Function to create intro pages directly with jsPDF when external PDF is not available
+    async function createIntroPagesWithJSPDF(doc) {
+        try {
+            console.log('Creating intro pages directly with jsPDF...');
+            console.log('Current window.jspdf:', window.jspdf);
+            console.log('Type of window.jspdf:', typeof window.jspdf);
+            
+            // Ensure jsPDF is available
+            if (typeof window.jspdf === 'undefined') {
+                console.log('jsPDF not available, loading it...');
+                await loadJSPDF();
+            }
+            
+            // Check if jsPDF is now available
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('Failed to load jsPDF library');
+            }
+            
+            console.log('jsPDF loaded successfully, extracting jsPDF constructor...');
+            let jsPDF;
+            try {
+                const { jsPDF: jsPDFConstructor } = window.jspdf;
+                jsPDF = jsPDFConstructor;
+            } catch (e) {
+                console.log('Destructuring failed, trying direct access...');
+                jsPDF = window.jspdf.jsPDF || window.jspdf;
+            }
+            
+            console.log('jsPDF constructor:', jsPDF);
+            console.log('Type of jsPDF constructor:', typeof jsPDF);
+            
+            if (typeof jsPDF !== 'function') {
+                throw new Error(`jsPDF constructor is not a function: ${typeof jsPDF}`);
+            }
+            
+            // Create a new document with intro pages
+            const introDoc = new jsPDF();
+            
+            // Add intro page 1 - Title page
+            introDoc.setFillColor(34, 139, 34); // Green background
+            introDoc.rect(0, 0, 210, 297, 'F');
+            
+            introDoc.setFontSize(36);
+            introDoc.setTextColor(255, 255, 255);
+            introDoc.text('CODEX', 105, 120, { align: 'center' });
+            
+            introDoc.setFontSize(24);
+            introDoc.text('Genetic Analysis System', 105, 150, { align: 'center' });
+            
+            introDoc.setFontSize(16);
+            introDoc.text('Comprehensive Health & Wellness Report', 105, 180, { align: 'center' });
+            
+            introDoc.setFontSize(12);
+            introDoc.text('Powered by Advanced Genetic Technology', 105, 220, { align: 'center' });
+            
+            introDoc.setFontSize(10);
+            introDoc.text(new Date().toLocaleDateString(), 105, 250, { align: 'center' });
+            
+            // Add intro page 2 - Information page
+            introDoc.addPage();
+            introDoc.setFillColor(248, 250, 252); // Light gray background
+            introDoc.rect(0, 0, 210, 297, 'F');
+            
+            introDoc.setFontSize(20);
+            introDoc.setTextColor(34, 139, 34);
+            introDoc.text('About This Report', 105, 40, { align: 'center' });
+            
+            introDoc.setFontSize(12);
+            introDoc.setTextColor(0, 0, 0);
+            
+            const aboutText = [
+                'This comprehensive genetic analysis report provides detailed insights into your:',
+                '',
+                '• Wellness Parameters - Optimize your health and fitness',
+                '• Personal Traits - Understand your genetic characteristics',
+                '• Health Predispositions - Learn about genetic risk factors',
+                '• Medication Response - Discover how your genes affect drug metabolism',
+                '• Lifestyle Recommendations - Personalized advice based on your genetics',
+                '',
+                'All results are based on advanced genetic testing and analysis.',
+                'Please consult with healthcare professionals for medical decisions.'
+            ];
+            
+            let yPos = 80;
+            aboutText.forEach(line => {
+                if (line.trim() === '') {
+                    yPos += 10;
+                } else {
+                    introDoc.text(line, 20, yPos);
+                    yPos += 20;
+                }
+            });
+            
+            // Add intro page 3 - Methodology
+            introDoc.addPage();
+            introDoc.setFillColor(248, 250, 252);
+            introDoc.rect(0, 0, 210, 297, 'F');
+            
+            introDoc.setFontSize(20);
+            introDoc.setTextColor(34, 139, 34);
+            introDoc.text('Methodology & Technology', 105, 40, { align: 'center' });
+            
+            introDoc.setFontSize(12);
+            introDoc.setTextColor(0, 0, 0);
+            
+            const methodText = [
+                'Our genetic analysis utilizes cutting-edge technology:',
+                '',
+                '• Next-Generation Sequencing (NGS)',
+                '• Advanced Bioinformatics Analysis',
+                '• Clinically Validated Genetic Markers',
+                '• Machine Learning Algorithms',
+                '• Continuous Research Updates',
+                '',
+                'Results are processed through multiple validation steps',
+                'to ensure accuracy and reliability.',
+                '',
+                'This report represents the latest in genetic science',
+                'and personalized medicine.'
+            ];
+            
+            yPos = 80;
+            methodText.forEach(line => {
+                if (line.trim() === '') {
+                    yPos += 10;
+                } else {
+                    introDoc.text(line, 20, yPos);
+                    yPos += 20;
+                }
+            });
+            
+            // Now merge the intro pages with the original content
+            const introBytes = introDoc.output('arraybuffer');
+            
+            // Convert both PDFs to PDF-lib format for merging
+            return mergePDFsWithIntro(introBytes, doc.output('arraybuffer'));
+            
+        } catch (error) {
+            console.error('Error creating intro pages with jsPDF:', error);
+            // Fallback to original PDF
+            return doc.output('arraybuffer');
+        }
+    }
+    
+    // Function to download the intro PDF
+    async function downloadIntroPDF() {
+        try {
+            console.log('Downloading intro PDF...');
+            
+            // Try to fetch the intro PDF
+            const possiblePaths = [
+                `${window.location.origin}/Codex Booklet 7.pdf`,
+                `${window.location.origin}/Codex%20Booklet%207.pdf`,
+                '../Codex Booklet 7.pdf',
+                '../Codex%20Booklet%207.pdf',
+                '../../Codex Booklet 7.pdf',
+                '../../Codex%20Booklet%207.pdf',
+                '/Codex Booklet 7.pdf',
+                '/Codex%20Booklet%207.pdf'
+            ];
+            
+            let introPDFBytes = null;
+            let successfulPath = null;
+            
+            for (const path of possiblePaths) {
+                try {
+                    console.log(`Trying to fetch intro PDF from: ${path}`);
+                    const response = await fetch(path);
+                    
+                    if (response.ok) {
+                        console.log(`Successfully fetched intro PDF from: ${path}`);
+                        introPDFBytes = await response.arrayBuffer();
+                        successfulPath = path;
+                        console.log(`Intro PDF size: ${introPDFBytes.byteLength} bytes`);
+                        break;
+                    } else {
+                        console.log(`File not found at ${path}: ${response.status} ${response.statusText}`);
+                    }
+                } catch (e) {
+                    console.log(`Error fetching from ${path}:`, e);
+                    continue;
+                }
+            }
+            
+            if (introPDFBytes) {
+                // Download the intro PDF
+                const blob = new Blob([introPDFBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Codex_Intro_Booklet.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log(`✅ Intro PDF downloaded successfully from: ${successfulPath}`);
+                return true;
+            } else {
+                console.warn('❌ Could not fetch intro PDF from any path, skipping intro download');
+                return false;
+            }
+            
+        } catch (error) {
+            console.error('❌ Error downloading intro PDF:', error);
+            return false;
+        }
+    }
+
+    // Helper function to merge PDFs when we have intro pages
+    async function mergePDFsWithIntro(introBytes, contentBytes) {
+        try {
+            await loadPDFLib();
+            
+            if (typeof window.PDFLib === 'undefined') {
+                throw new Error('PDFLib library failed to load');
+            }
+            
+            // Load both PDFs
+            const introPDF = await PDFLib.PDFDocument.load(introBytes);
+            const contentPDF = await PDFLib.PDFDocument.load(contentBytes);
+            
+            // Create merged PDF
+            const mergedPDF = await PDFLib.PDFDocument.create();
+            
+            // Add intro pages first
+            const introPages = introPDF.getPages();
+            for (let i = 0; i < introPages.length; i++) {
+                const [copiedPage] = await mergedPDF.copyPages(introPDF, [i]);
+                mergedPDF.addPage(copiedPage);
+            }
+            
+            // Add content pages
+            const contentPages = contentPDF.getPages();
+            for (let i = 0; i < contentPages.length; i++) {
+                const [copiedPage] = await mergedPDF.copyPages(contentPDF, [i]);
+                mergedPDF.addPage(copiedPage);
+            }
+            
+            console.log(`Successfully merged PDFs: ${introPages.length} intro pages + ${contentPages.length} content pages`);
+            
+            // Save and return
+            const mergedBytes = await mergedPDF.save();
+            return mergedBytes;
+            
+        } catch (error) {
+            console.error('Error merging PDFs:', error);
+            // Return original content if merging fails
+            return contentBytes;
+        }
+    }
 
 
 

@@ -14,6 +14,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- HTML to Canvas for capturing visual layout -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="User_page.css">
@@ -388,12 +392,9 @@
                         <p class="text-lg text-gray-600">Based on your genetic test results</p>
                     </div>
                     <div id="comprehensive-recommendations" class="space-y-6">
-                        <div class="text-center py-8 bg-white/60 rounded-xl backdrop-blur-sm border border-gray-100">
-                            <i data-lucide="heart" class="w-16 h-16 mx-auto mb-4 text-pink-500"></i>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Analyzing Your Results...</h3>
-                            <p class="text-gray-600 mb-4">Creating your personalized lifestyle plan based on your genetic profile</p>
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600 mx-auto"></div>
-                        </div>
+
+
+
                     </div>
                 </div>
             </div>
@@ -409,10 +410,10 @@
 <script src="Scripts/pharma_data.js"></script>
 <!-- Load Recommendation Engine -->
 <script src="Scripts/recommendation_engine.js"></script>
+<!-- Patient Results Handler (Load BEFORE main logic) -->
+<script src="patient_results_handler.js"></script>
 <!-- Then Load Main Logic -->
 <script src="Scripts/main_user_page.js"></script>
-<!-- Patient Results Handler -->
-<script src="patient_results_handler.js"></script>
 
 <!-- Debug Script -->
 <script>
@@ -422,12 +423,17 @@ console.log('traitsData available:', typeof traitsData !== 'undefined');
 console.log('monogenicData available:', typeof monogenicData !== 'undefined');
 console.log('complexData available:', typeof complexData !== 'undefined');
 console.log('pharmaData available:', typeof pharmaData !== 'undefined');
+console.log('processPatientResults available:', typeof processPatientResults !== 'undefined');
 
 if (typeof wellnessData !== 'undefined') {
     console.log('wellnessData length:', wellnessData.length);
     console.log('First wellness item:', wellnessData[0]);
 }
 
+if (typeof traitsData !== 'undefined') {
+    console.log('traitsData length:', traitsData.length);
+    console.log('First traits item:', traitsData[0]);
+}
 
 </script>
 </body>
