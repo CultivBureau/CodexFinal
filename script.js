@@ -361,7 +361,24 @@ const pharmaData = [
     { name: "Venlafaxine (Dosage)", action: "Antidepressants" },
     { name: "Voriconazole (Dosage)", action: "Antifungals" },
     { name: "Vortioxetine (Dosage)", action: "Antidepressants" },
-    { name: "Zuclopenthixol (Dosage)", action: "Antipsychotics" }
+    { name: "Zuclopenthixol (Dosage)", action: "Antipsychotics" },
+    { name: "Allopurinol (Dosage)", action: "Antigout" },
+    { name: "Cisplatin (Adverse Reactions)", action: "Antineoplastics" },
+    { name: "Daunorubicin, Doxorubicin (Adverse Reactions)", action: "Antineoplastics" },
+    { name: "Eliglustat (Adverse Reactions)", action: "Treatment of metabolic diseases" },
+    { name: "Flucytosine (Adverse Reactions)", action: "Antifungals" },
+    { name: "Fluindione (Adverse Reactions)", action: "Antithrombotics" },
+    { name: "Flurbiprofen (Dosage)", action: "Anti-inflammatory" },
+    { name: "Hydrocodone (Dosage)", action: "Opioid analgesics" },
+    { name: "Lornoxicam (Dosage)", action: "Anti-inflammatory" },
+    { name: "Meloxicam (Dosage)", action: "Anti-inflammatory" },
+    { name: "Mivacurium and succinylcholine (Adverse Reactions)", action: "Muscle relaxants" },
+    { name: "Nilotinib (Adverse Reactions)", action: "Antineoplastics" },
+    { name: "Piroxicam (Dosage)", action: "Anti-inflammatory" },
+    { name: "Pitolisant (Dosage)", action: "Other nervous system drugs" },
+    { name: "Propafenone (Adverse Reactions)", action: "Antiarrhythmics" },
+    { name: "Siponimod (Dosage)", action: "Immunosuppressants" },
+    { name: "Tenoxicam (Dosage)", action: "Anti-inflammatory" }
 ];
 
 // Main application logic
@@ -412,13 +429,25 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStatus('Data parsed successfully. Generating JSON...');
             generateJsonFile(jsonData, userName, userId);
 
-            await uploadJsonToServer(userName, userId, testType, jsonData);
-
-            // Refresh the patient table after successful upload
-            fetchAllPatients();
+            const uploadResult = await uploadJsonToServer(userName, userId, testType, jsonData);
+            
+            // Refresh the patient table after successful upload with a small delay
+            updateStatus('Upload successful! Refreshing patient list...', false, true);
+            setTimeout(() => {
+                fetchAllPatients();
+            }, 2000); // Wait 2 seconds for server to process
+            
+            // Also try a second refresh after 5 seconds as a fallback
+            setTimeout(() => {
+                fetchAllPatients();
+            }, 5000);
+            
+            // Try a third refresh after 10 seconds
+            setTimeout(() => {
+                fetchAllPatients();
+            }, 10000);
 
         } catch (error) {
-            console.error('Processing failed:', error);
             updateStatus('An error occurred: ${error.message}', true);
         } finally {
             toggleLoading(false);
@@ -484,22 +513,26 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStatus('Uploading results to server...');
         const apiUrl = 'https://www.codex.somee.com/api/Codex/AddResults';
         const payload = { PatientName: userName, PhoneNumber: userId, TestType: testType, Results: JSON.stringify(jsonData) };
+        
+        
         try {
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
+            
+            
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error('Server responded with status ${response.status}: ${errorText}');
+                throw new Error(`Server responded with status ${response.status}: ${errorText}`);
             }
+            
             const result = await response.json();
-            console.log('Server response:', result);
             updateStatus('Upload successful!', false, true);
+            return result;
         } catch (error) {
-            console.error('Upload failed:', error);
-            updateStatus('Upload failed: ${error.message}', true);
+            updateStatus(`Upload failed: ${error.message}`, true);
             throw error;
         }
     }
@@ -541,10 +574,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ADMIN DASHBOARD LOGIC ---
     // Fetch all patients and their test counts/types
-    async function fetchAllPatients() {
+    window.fetchAllPatients = async function fetchAllPatients() {
         const allPatientsApiUrl = `https://www.codex.somee.com/api/Codex/GetAllPatients`;
 
         try {
+            
             // 1. Fetch the initial list of all patients
             const response = await fetch(allPatientsApiUrl);
             if (!response.ok) {
@@ -552,7 +586,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const patients = await response.json();
-            console.log("Initial patient list:", patients);
+            
+            // Log all patient IDs for debugging
 
             // 2. For each patient, fetch their specific test results
             const patientPromises = patients.map(async (patient) => {
@@ -563,7 +598,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (resultsResponse.ok) {
                         const resultsData = await resultsResponse.json();
-                        console.log(`Patient ${patient.id} results:`, resultsData);
 
                         let testsArray = null;
 
@@ -582,7 +616,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Extract test types
                         if (testsArray && testsArray.length > 0) {
                             patient.testTypes = testsArray.map(test => {
-                                console.log("Processing test:", test);
 
                                 // Try various property names
                                 if (test.TestType) {
@@ -606,7 +639,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     return test.name;
                                 }
 
-                                console.warn("Unknown test format:", test);
                                 return "Unknown Test";
                             });
                         } else {
@@ -619,7 +651,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                 } catch (e) {
-                    console.error(`Error fetching results for patient ${patient.id}:`, e);
                     patient.reportCount = 0;
                     patient.testTypes = [];
                 }
@@ -634,19 +665,53 @@ document.addEventListener('DOMContentLoaded', () => {
             populateTable(patientsWithCounts);
 
         } catch (error) {
-            console.error("Failed to fetch patient data:", error);
-            patientTableBody.innerHTML = `
-            <tr>
-                <td colspan="7" class="text-center p-8 text-red-500">
+                patientTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center p-8 text-red-500">
                     Failed to load patient data.
-                </td>
-            </tr>
-        `;
+                    </td>
+                </tr>
+            `;
         }
     }
 
     function populateTable(patients) {
-        console.log(patients);
+            const patientTableBody = document.getElementById('patient-table-body');
+        
+        // Force clear the table
+        patientTableBody.innerHTML = '';
+        
+        // Add a small delay to ensure DOM is updated
+        setTimeout(() => {
+            renderPatientRows(patients);
+            
+            // Force refresh Lucide icons after table update
+            setTimeout(() => {
+                lucide.createIcons();
+                
+                // Check if the table is visible and has the right number of rows
+                const tableBody = document.getElementById('patient-table-body');
+                const rows = tableBody.querySelectorAll('tr');
+                
+                // Check if search input has a value that might be hiding patients
+                const searchInput = document.getElementById('search-patients');
+                if (searchInput && searchInput.value) {
+                    searchInput.value = '';
+                    
+                    // Show all rows
+                    const allRows = tableBody.querySelectorAll('tr');
+                    allRows.forEach(row => {
+                        row.style.display = '';
+                    });
+                }
+                
+                // Log the final count of visible rows
+                const visibleRows = tableBody.querySelectorAll('tr:not([style*="display: none"])');
+            }, 200);
+        }, 100);
+    }
+    
+    function renderPatientRows(patients) {
         const patientTableBody = document.getElementById('patient-table-body');
         patientTableBody.innerHTML = '';
 
@@ -660,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        patients.forEach(patient => {
+        patients.forEach((patient, index) => {
             const row = document.createElement('tr');
             row.className = 'table-row';
             row.setAttribute('data-patient-id', patient.id || '');
@@ -670,7 +735,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             row.innerHTML = `
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                ${patient.id || 'N/A'}
+                <div class="flex items-center space-x-2">
+                    <span class="font-mono text-xs">${patient.id || 'N/A'}</span>
+                    <button onclick="copyPatientId('${patient.id}')" 
+                        class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-1 rounded transition-colors duration-200"
+                        title="Copy Patient ID">
+                        <i data-lucide="copy" class="w-3 h-3"></i>
+                    </button>
+                </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 ${patient.name || 'Unknown'}
@@ -747,6 +819,90 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Add refresh button event listener
+    document.getElementById('refresh-patients').addEventListener('click', () => {
+        fetchAllPatients();
+    });
+
+    // Add a function to check if a specific patient exists
+    async function checkPatientExists(patientId) {
+        try {
+            const response = await fetch(`https://www.codex.somee.com/api/Codex/GetAllTestResults/${patientId}`);
+            if (response.ok) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            return false;
+        }
+    }
+
+    // Function to copy patient ID to clipboard
+    window.copyPatientId = function copyPatientId(patientId) {
+        if (!patientId || patientId === 'N/A') {
+            alert('No patient ID to copy');
+            return;
+        }
+
+        // Try modern clipboard API first
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(patientId).then(() => {
+                showCopySuccess();
+            }).catch(() => {
+                // Fallback to legacy method
+                fallbackCopyTextToClipboard(patientId);
+            });
+        } else {
+            // Fallback to legacy method
+            fallbackCopyTextToClipboard(patientId);
+        }
+
+        function showCopySuccess() {
+            const button = event.target.closest('button');
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-green-600"></i>';
+            button.classList.remove('text-blue-600', 'bg-blue-50');
+            button.classList.add('text-green-600', 'bg-green-50');
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.classList.remove('text-green-600', 'bg-green-50');
+                button.classList.add('text-blue-600', 'bg-blue-50');
+                lucide.createIcons();
+            }, 2000);
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // Avoid scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess();
+                } else {
+                    alert('Failed to copy. Please copy manually: ' + patientId);
+                }
+            } catch (err) {
+                alert('Failed to copy. Please copy manually: ' + patientId);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+    }
+
     // Initial fetch and render
     fetchAllPatients();
     lucide.createIcons();
@@ -770,7 +926,6 @@ function getUserPageUrl(patientId) {
 // Launch the report page
 // function launchReport(patientId) {
 //     const url = getUserPageUrl(patientId);
-//     console.log("Opening user page:", url);
 //     window.open(url, "_blank");
 // }
 
@@ -798,20 +953,17 @@ async function launchReport(patientId) {
         const baseUrl = `${window.location.origin}/user_page/User_Page.html`;
         const externalUrl = `${baseUrl}?id=${patientId}`;
 
-        console.log('Opening user page:', externalUrl);
 
         // Open in new tab
         window.open(externalUrl, '_blank');
 
     } catch (error) {
-        console.error('Error launching report:', error);
         alert(`Error launching report: ${error.message}`);
     }
 }
 
 // Function to test locally by opening User_Page.html with patient data
 async function testLocal(patientId) {
-    console.log(`Testing locally for patient ${patientId}`);
 
     try {
         // Find patient info from the table
@@ -825,7 +977,6 @@ async function testLocal(patientId) {
 
         // Fetch patient results from the API
         const resultsUrl = `https://www.codex.somee.com/api/Codex/GetAllTestResults/${patientId}`;
-        console.log('Fetching patient results from:', resultsUrl);
         
         const response = await fetch(resultsUrl);
         if (!response.ok) {
@@ -833,7 +984,6 @@ async function testLocal(patientId) {
         }
         
         const resultsData = await response.json();
-        console.log('Patient results fetched:', resultsData);
 
         // Store patient data and results in localStorage for the user page to access
         const patientData = {
@@ -846,11 +996,9 @@ async function testLocal(patientId) {
 
         // Open local user page with patient ID parameter
         const localUserPageUrl = `./user_page/User_Page.html?id=${patientId}`;
-        console.log('Opening local user page:', localUserPageUrl);
         window.open(localUserPageUrl, '_blank');
 
     } catch (error) {
-        console.error('Error testing locally:', error);
         alert(`Error testing locally: ${error.message}`);
     }
 }
@@ -912,16 +1060,14 @@ async function copyUserLink(patientId, event) {
             copyBtn.classList.add('text-blue-600', 'hover:text-blue-900', 'bg-blue-50', 'hover:bg-blue-100');
         }, 2000);
 
-        console.log('User link copied to clipboard:', userLink);
 
     } catch (error) {
-        console.error('Error copying user link:', error);
         alert(`Failed to copy link to clipboard. Please copy manually: https://codex.natixglobal.com/user?id=${patientId}`);
     }
 }
 
 // Function to delete a patient
-async function deletePatient(patientId, patientName) {
+window.deletePatient = async function deletePatient(patientId, patientName) {
     // Show confirmation dialog
     if (!confirm(`Are you sure you want to delete patient "${patientName}"? This action cannot be undone.`)) {
         return;
@@ -938,7 +1084,8 @@ async function deletePatient(patientId, patientName) {
         }
 
         // Call the delete API
-        const deleteUrl = `https://www.codex.somee.comgetresults/api/Codex/DeletePatient/${patientId}`;
+        const deleteUrl = `https://www.codex.somee.com/api/Codex/DeletePatient/${patientId}`;
+        
         const response = await fetch(deleteUrl, {
             method: 'DELETE',
             headers: {
@@ -946,8 +1093,10 @@ async function deletePatient(patientId, patientName) {
             }
         });
 
+
         if (!response.ok) {
-            throw new Error(`Failed to delete patient: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Failed to delete patient: ${response.status} - ${errorText}`);
         }
 
         // Show success message
@@ -957,7 +1106,6 @@ async function deletePatient(patientId, patientName) {
         await fetchAllPatients();
 
     } catch (error) {
-        console.error('Error deleting patient:', error);
         alert(`Error deleting patient: ${error.message}`);
 
         // Reset button state on error
@@ -985,12 +1133,8 @@ function displayTestContent(test, testIndex) {
             }
         } else if (test.results) {
             try {
-                console.log('Parsing results from:', test.results);
                 results = JSON.parse(test.results);
-                console.log('Parsed results:', results);
             } catch (e) {
-                console.error('Error parsing results JSON:', e);
-                console.log('Raw results:', test.results);
                 results = test.results; // Use raw if parsing fails
             }
         }
@@ -1019,7 +1163,6 @@ function displayTestContent(test, testIndex) {
         contentContainer.innerHTML = html;
 
     } catch (error) {
-        console.error('Error displaying test content:', error);
         contentContainer.innerHTML = `
             <div class="text-center p-8 text-red-500">
                 Error displaying test content.
@@ -1136,12 +1279,8 @@ function displayTestContent(test, testIndex) {
             }
         } else if (test.results) {
             try {
-                console.log('Parsing results from:', test.results);
                 results = JSON.parse(test.results);
-                console.log('Parsed results:', results);
             } catch (e) {
-                console.error('Error parsing results JSON:', e);
-                console.log('Raw results:', test.results);
                 results = test.results; // Use raw if parsing fails
             }
         }
@@ -1170,7 +1309,6 @@ function displayTestContent(test, testIndex) {
         contentContainer.innerHTML = html;
 
     } catch (error) {
-        console.error('Error displaying test content:', error);
         contentContainer.innerHTML = `
             <div class="text-center p-8 text-red-500">
                 Error displaying test content.

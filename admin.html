@@ -94,9 +94,15 @@
     <div class="bg-white rounded-2xl shadow-lg p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold text-gray-800">All Patient Reports</h2>
-            <div class="relative">
-                <input type="text" id="search-patients" placeholder="Search patients..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+            <div class="flex items-center space-x-4">
+                <button id="refresh-patients" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>Refresh</span>
+                </button>
+                <div class="relative">
+                    <input type="text" id="search-patients" placeholder="Search patients..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                </div>
             </div>
         </div>
 

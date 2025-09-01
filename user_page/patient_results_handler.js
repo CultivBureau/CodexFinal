@@ -821,6 +821,44 @@ function getPictureVisualForResults(testType, resultValue) {
     return visualHTML;
 }
 
+// Function to download the Codex manual
+function downloadCodexManual() {
+    try {
+        // Create a link element to trigger download
+        const link = document.createElement('a');
+        link.href = 'intro.pdf';
+        link.download = 'Codex_Manual.pdf';
+        link.style.display = 'none';
+        
+        // Add to DOM, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        const downloadBtn = document.getElementById('download-manual-btn');
+        if (downloadBtn) {
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = `
+                <i data-lucide="check" class="w-6 h-6"></i>
+                <span class="font-semibold text-base">Downloaded!</span>
+            `;
+            downloadBtn.classList.remove('from-blue-600', 'via-blue-700', 'to-indigo-700');
+            downloadBtn.classList.add('from-green-600', 'via-green-700', 'to-emerald-700');
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.classList.remove('from-green-600', 'via-green-700', 'to-emerald-700');
+                downloadBtn.classList.add('from-blue-600', 'via-blue-700', 'to-indigo-700');
+                lucide.createIcons();
+            }, 2000);
+        }
+    } catch (error) {
+        alert('Failed to download manual. Please try again.');
+    }
+}
+
 // Function to setup download button functionality
 function setupDownloadButton(patientData) {
     const downloadBtn = document.getElementById('download-results-btn');
@@ -873,11 +911,11 @@ async function downloadPatientResults(patientData) {
             // Check again after loading
             if (typeof window.jspdf === 'undefined') {
                 alert('PDF generation library could not be loaded. Please refresh the page and try again.');
-                if (downloadBtn) {
-                    downloadBtn.disabled = false;
-                    downloadBtn.innerHTML = '<i data-lucide="download" class="w-4 h-4"></i><span>Download Results</span>';
-                }
-                return;
+            if (downloadBtn) {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '<i data-lucide="download" class="w-4 h-4"></i><span>Download Results</span>';
+            }
+            return;
             }
         }
 
@@ -970,31 +1008,31 @@ async function downloadPatientResults(patientData) {
                     
                     // Prepare data for autoTable
                     const tableData = itemsWithResults.map(item => {
-                        let parameterName = item.dataset.originalName;
-                        if (!parameterName) {
-                            parameterName = item.textContent
-                                .replace(/Result Available[\s\S]*/i, '')
-                                .trim();
-                        }
-                        
-                        const resultValue = item.dataset.resultValue || 'N/A';
-                        const action = item.dataset.action || null;
-                        
-                        // Clean up the result value
-                        let cleanResult = resultValue;
-                        if (typeof resultValue === 'string') {
-                            cleanResult = resultValue
-                                .replace(/Result Available/gi, '')
-                                .replace(/Result:\s*/gi, '')
-                                .replace(/\s+/g, ' ')
-                                .trim();
-                        }
-                        
-                        // Add action if available
-                        if (action) {
-                            cleanResult = `${action}: ${cleanResult}`;
-                        }
-                        
+                            let parameterName = item.dataset.originalName;
+                            if (!parameterName) {
+                                parameterName = item.textContent
+                                    .replace(/Result Available[\s\S]*/i, '')
+                                    .trim();
+                            }
+                            
+                            const resultValue = item.dataset.resultValue || 'N/A';
+                            const action = item.dataset.action || null;
+                            
+                            // Clean up the result value
+                            let cleanResult = resultValue;
+                            if (typeof resultValue === 'string') {
+                                cleanResult = resultValue
+                                    .replace(/Result Available/gi, '')
+                                    .replace(/Result:\s*/gi, '')
+                                    .replace(/\s+/g, ' ')
+                                    .trim();
+                            }
+                            
+                            // Add action if available
+                            if (action) {
+                                cleanResult = `${action}: ${cleanResult}`;
+                            }
+                            
                         return [parameterName, cleanResult];
                     });
                     
@@ -1043,12 +1081,8 @@ async function downloadPatientResults(patientData) {
             doc.setFontSize(8).setTextColor(150).text(`Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
         }
         
-        // Download the intro PDF first
-        console.log('Starting dual PDF download process...');
-        const introDownloaded = await downloadIntroPDF();
-        
-        // Small delay to ensure first download completes
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Download the results PDF
+        console.log('Starting PDF download process...');
         
         // Download the results PDF
         console.log('Now downloading results PDF...');
@@ -1066,14 +1100,10 @@ async function downloadPatientResults(patientData) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        console.log('Both PDFs download process completed');
+        console.log('Results PDF download process completed');
         
         // Show success message to user
-        if (introDownloaded) {
-            alert('✅ Both PDFs downloaded successfully!\n\n1. Codex_Intro_Booklet.pdf (Intro)\n2. ' + fileName + ' (Results)');
-        } else {
-            alert('⚠️ Results PDF downloaded successfully!\n\nNote: Intro PDF could not be downloaded. This usually works on live servers.');
-        }
+        alert('✅ Results PDF downloaded successfully!\n\n' + fileName);
         
         console.log('PDF generated successfully:', fileName);
         
@@ -1430,113 +1460,9 @@ async function downloadPatientResults(patientData) {
         }
     }
     
-    // Function to download the intro PDF
-    async function downloadIntroPDF() {
-        try {
-            console.log('Downloading intro PDF...');
-            
-            // Try to fetch the intro PDF
-            const possiblePaths = [
-                `${window.location.origin}/Codex Booklet 7.pdf`,
-                `${window.location.origin}/Codex%20Booklet%207.pdf`,
-                '../Codex Booklet 7.pdf',
-                '../Codex%20Booklet%207.pdf',
-                '../../Codex Booklet 7.pdf',
-                '../../Codex%20Booklet%207.pdf',
-                '/Codex Booklet 7.pdf',
-                '/Codex%20Booklet%207.pdf'
-            ];
-            
-            let introPDFBytes = null;
-            let successfulPath = null;
-            
-            for (const path of possiblePaths) {
-                try {
-                    console.log(`Trying to fetch intro PDF from: ${path}`);
-                    const response = await fetch(path);
-                    
-                    if (response.ok) {
-                        console.log(`Successfully fetched intro PDF from: ${path}`);
-                        introPDFBytes = await response.arrayBuffer();
-                        successfulPath = path;
-                        console.log(`Intro PDF size: ${introPDFBytes.byteLength} bytes`);
-                        break;
-                    } else {
-                        console.log(`File not found at ${path}: ${response.status} ${response.statusText}`);
-                    }
-                } catch (e) {
-                    console.log(`Error fetching from ${path}:`, e);
-                    continue;
-                }
-            }
-            
-            if (introPDFBytes) {
-                // Download the intro PDF
-                const blob = new Blob([introPDFBytes], { type: 'application/pdf' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'Codex_Intro_Booklet.pdf';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                console.log(`✅ Intro PDF downloaded successfully from: ${successfulPath}`);
-                return true;
-            } else {
-                console.warn('❌ Could not fetch intro PDF from any path, skipping intro download');
-                return false;
-            }
-            
-        } catch (error) {
-            console.error('❌ Error downloading intro PDF:', error);
-            return false;
-        }
-    }
 
-    // Helper function to merge PDFs when we have intro pages
-    async function mergePDFsWithIntro(introBytes, contentBytes) {
-        try {
-            await loadPDFLib();
-            
-            if (typeof window.PDFLib === 'undefined') {
-                throw new Error('PDFLib library failed to load');
-            }
-            
-            // Load both PDFs
-            const introPDF = await PDFLib.PDFDocument.load(introBytes);
-            const contentPDF = await PDFLib.PDFDocument.load(contentBytes);
-            
-            // Create merged PDF
-            const mergedPDF = await PDFLib.PDFDocument.create();
-            
-            // Add intro pages first
-            const introPages = introPDF.getPages();
-            for (let i = 0; i < introPages.length; i++) {
-                const [copiedPage] = await mergedPDF.copyPages(introPDF, [i]);
-                mergedPDF.addPage(copiedPage);
-            }
-            
-            // Add content pages
-            const contentPages = contentPDF.getPages();
-            for (let i = 0; i < contentPages.length; i++) {
-                const [copiedPage] = await mergedPDF.copyPages(contentPDF, [i]);
-                mergedPDF.addPage(copiedPage);
-            }
-            
-            console.log(`Successfully merged PDFs: ${introPages.length} intro pages + ${contentPages.length} content pages`);
-            
-            // Save and return
-            const mergedBytes = await mergedPDF.save();
-            return mergedBytes;
-            
-        } catch (error) {
-            console.error('Error merging PDFs:', error);
-            // Return original content if merging fails
-            return contentBytes;
-        }
-    }
+
+
 
 
 

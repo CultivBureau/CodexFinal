@@ -605,5 +605,107 @@ const pharmaData = [
     
         genes: "CYP2D6",
 
+    },
+    {
+        name: "Allopurinol (Dosage)",
+        action: "Antigout",
+        definition: "Allopurinol is a xanthine oxidase inhibitor used to treat gout and prevent uric acid kidney stones.",
+        genes: "HLA-B*5801",
+    },
+    {
+        name: "Cisplatin (Adverse Reactions)",
+        action: "Antineoplastics",
+        definition: "Cisplatin is a platinum-based chemotherapy drug used to treat various cancers. It can cause ototoxicity and nephrotoxicity.",
+        genes: "Multiple genes",
+    },
+    {
+        name: "Daunorubicin, Doxorubicin (Adverse Reactions)",
+        action: "Antineoplastics",
+        definition: "These anthracycline chemotherapy drugs are used to treat various cancers. They can cause cardiotoxicity.",
+        genes: "Multiple genes",
+    },
+    {
+        name: "Eliglustat (Adverse Reactions)",
+        action: "Treatment of metabolic diseases",
+        definition: "Eliglustat is used to treat Gaucher disease type 1. CYP2D6 variants affect metabolism and dosing.",
+        genes: "CYP2D6",
+    },
+    {
+        name: "Flucytosine (Adverse Reactions)",
+        action: "Antifungals",
+        definition: "Flucytosine is an antifungal medication used to treat serious fungal infections. DPYD variants affect metabolism.",
+        genes: "DPYD",
+    },
+    {
+        name: "Fluindione (Adverse Reactions)",
+        action: "Antithrombotics",
+        definition: "Fluindione is a vitamin K antagonist anticoagulant used to prevent blood clots.",
+        genes: "VKORC1, CYP2C9",
+    },
+    {
+        name: "Flurbiprofen (Dosage)",
+        action: "Anti-inflammatory",
+        definition: "Flurbiprofen is a non-steroidal anti-inflammatory drug used to treat pain and inflammation.",
+        genes: "CYP2C9",
+    },
+    {
+        name: "Hydrocodone (Dosage)",
+        action: "Opioid analgesics",
+        definition: "Hydrocodone is an opioid pain medication and cough suppressant. CYP2D6 variants affect metabolism.",
+        genes: "CYP2D6",
+    },
+    {
+        name: "Lornoxicam (Dosage)",
+        action: "Anti-inflammatory",
+        definition: "Lornoxicam is a non-steroidal anti-inflammatory drug used to treat pain and inflammation.",
+        genes: "CYP2C9",
+    },
+    {
+        name: "Meloxicam (Dosage)",
+        action: "Anti-inflammatory",
+        definition: "Meloxicam is a non-steroidal anti-inflammatory drug used to treat pain and inflammation.",
+        genes: "CYP2C9",
+    },
+    {
+        name: "Mivacurium and succinylcholine (Adverse Reactions)",
+        action: "Muscle relaxants",
+        definition: "These neuromuscular blocking agents are used during anesthesia. Genetic variants can cause prolonged paralysis.",
+        genes: "BCHE",
+    },
+    {
+        name: "Nilotinib (Adverse Reactions)",
+        action: "Antineoplastics",
+        definition: "Nilotinib is a tyrosine kinase inhibitor used to treat chronic myeloid leukemia.",
+        genes: "Multiple genes",
+    },
+    {
+        name: "Piroxicam (Dosage)",
+        action: "Anti-inflammatory",
+        definition: "Piroxicam is a non-steroidal anti-inflammatory drug used to treat pain and inflammation.",
+        genes: "CYP2C9",
+    },
+    {
+        name: "Pitolisant (Dosage)",
+        action: "Other nervous system drugs",
+        definition: "Pitolisant is a histamine H3 receptor antagonist used to treat narcolepsy.",
+        genes: "CYP2D6",
+    },
+    {
+        name: "Propafenone (Adverse Reactions)",
+        action: "Antiarrhythmics",
+        definition: "Propafenone is a class IC antiarrhythmic agent used to treat atrial fibrillation and ventricular arrhythmias.",
+        genes: "CYP2D6",
+    },
+    {
+        name: "Siponimod (Dosage)",
+        action: "Immunosuppressants",
+        definition: "Siponimod is a sphingosine-1-phosphate receptor modulator used to treat multiple sclerosis.",
+        genes: "CYP2C9, CYP3A4",
+    },
+    {
+        name: "Tenoxicam (Dosage)",
+        action: "Anti-inflammatory",
+        definition: "Tenoxicam is a non-steroidal anti-inflammatory drug used to treat pain and inflammation.",
+        genes: "CYP2C9",
     }
 ];
