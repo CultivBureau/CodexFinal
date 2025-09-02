@@ -151,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 2000); // Wait 2 seconds for lists to populate
             
         } catch (error) {
-            console.error('Error processing patient data:', error);
         }
     }
 });
@@ -227,6 +226,9 @@ async function fetchPatientDataFromAPI(patientId) {
             const complexList = document.getElementById('complex-list');
             const pharmaList = document.getElementById('pharma-list');
             
+            // Check if lists exist
+            const isMobile = window.innerWidth <= 768;
+            
             // Process and display the test results
             processPatientResults(patientData.results);
             
@@ -235,7 +237,6 @@ async function fetchPatientDataFromAPI(patientId) {
         }, 2000); // Wait 2 seconds for lists to populate
         
     } catch (error) {
-        console.error('Error fetching patient data from API:', error);
         // Show error message to user
         const mainContent = document.getElementById('main-content');
         if (mainContent) {
@@ -258,8 +259,7 @@ async function fetchPatientDataFromAPI(patientId) {
 // Function to process patient test results
 function processPatientResults(resultsData) {
     try {
-        console.log('Processing patient results:', resultsData);
-        console.log('Full results data structure:', JSON.stringify(resultsData, null, 2));
+        const isMobile = window.innerWidth <= 768;
         
         // Handle different possible API response structures
         let testsArray = null;
@@ -272,21 +272,16 @@ function processPatientResults(resultsData) {
             testsArray = resultsData;
         }
         
-        console.log('Tests array:', testsArray);
         
         if (!testsArray || testsArray.length === 0) {
-            console.log('No test results found');
             return;
         }
         
         // Process each test and update the corresponding parameter lists
         testsArray.forEach((test, index) => {
-            console.log(`Processing test ${index}:`, test);
             const testType = extractTestType(test);
             const results = extractResults(test);
             
-            console.log(`Test type: ${testType}, Results:`, results);
-            console.log(`Results keys for ${testType}:`, results ? Object.keys(results) : 'No results');
             
             if (testType && results) {
                 updateParameterList(testType, results);
@@ -294,13 +289,11 @@ function processPatientResults(resultsData) {
         });
         
     } catch (error) {
-        console.error('Error processing patient results:', error);
     }
 }
 
 // Function to extract test type from test object
 function extractTestType(test) {
-    console.log('Extracting test type from:', test);
     
     // Try different possible structures
     if (test.TestType) {
@@ -321,7 +314,6 @@ function extractTestType(test) {
         const results = extractResults(test);
         if (results && typeof results === 'object') {
             const keys = Object.keys(results);
-            console.log('Result keys for type inference:', keys);
             
             // Check each test type with more flexible matching
             const wellnessMatch = keys.some(key => 
@@ -359,7 +351,6 @@ function extractTestType(test) {
                 )
             );
             
-            console.log('Type matches:', { wellnessMatch, traitsMatch, monogenicMatch, complexMatch, pharmaMatch });
             
             if (wellnessMatch) return 'Wellness';
             if (traitsMatch) return 'Traits';
@@ -369,7 +360,6 @@ function extractTestType(test) {
         }
     }
     
-    console.log('Could not determine test type, defaulting to Wellness');
     return 'Wellness'; // Default fallback
 }
 
@@ -398,7 +388,6 @@ function extractResults(test) {
 
 // Function to update parameter list with patient results
 function updateParameterList(testType, results) {
-    console.log(`Updating ${testType} with results:`, results);
     
     // Map test types to the corresponding parameter lists
     const testTypeMapping = {
@@ -411,13 +400,11 @@ function updateParameterList(testType, results) {
     
     const listId = testTypeMapping[testType];
     if (!listId) {
-        console.log(`Unknown test type: ${testType}`);
         return;
     }
     
     const listContainer = document.getElementById(listId);
     if (!listContainer) {
-        console.log(`List container not found: ${listId}`);
         return;
     }
     
@@ -428,12 +415,9 @@ function updateParameterList(testType, results) {
 // Function to update parameter items with patient results
 function updateParameterItems(listContainer, results, testType) {
     const parameterItems = listContainer.querySelectorAll('.parameter-item');
-    console.log(`Found ${parameterItems.length} parameter items for ${testType}`);
     
     if (parameterItems.length === 0) {
-        console.log('No parameter items found. Checking if lists are populated...');
         // Check if the lists have been populated by main_user_page.js
-        console.log('List container HTML:', listContainer.innerHTML.substring(0, 200) + '...');
     }
     
     if (testType === 'Pharma') {
@@ -447,14 +431,9 @@ function updateParameterItems(listContainer, results, testType) {
 
 // Function to update standard parameters
 function updateStandardParameters(parameterItems, results) {
-    console.log('=== UPDATING STANDARD PARAMETERS ===');
-    console.log('Results object:', results);
-    console.log('Parameter items found:', parameterItems.length);
-    console.log('Available result keys:', Object.keys(results));
     
     parameterItems.forEach((item, index) => {
         const parameterName = item.textContent.trim();
-        console.log(`\n--- Checking parameter ${index}: "${parameterName}" ---`);
         
         // Check if we have results for this parameter
         if (results && typeof results === 'object') {
@@ -462,7 +441,6 @@ function updateStandardParameters(parameterItems, results) {
             let resultValue = results[parameterName];
             let matchedKey = parameterName;
             
-            console.log(`  Exact match attempt: "${parameterName}" -> ${resultValue}`);
             
             // If no exact match, try case-insensitive match
             if (!resultValue) {
@@ -471,7 +449,6 @@ function updateStandardParameters(parameterItems, results) {
                     if (key.toLowerCase() === lowerParamName) {
                         resultValue = results[key];
                         matchedKey = key;
-                        console.log(`  Case-insensitive match found: "${key}" -> ${resultValue}`);
                         break;
                     }
                 }
@@ -485,7 +462,6 @@ function updateStandardParameters(parameterItems, results) {
                         lowerParamName.includes(key.toLowerCase())) {
                         resultValue = results[key];
                         matchedKey = key;
-                        console.log(`  Partial match found: "${key}" -> ${resultValue}`);
                         break;
                     }
                 }
@@ -499,16 +475,13 @@ function updateStandardParameters(parameterItems, results) {
                     if (cleanKey === cleanParamName) {
                         resultValue = results[key];
                         matchedKey = key;
-                        console.log(`  Clean match found: "${key}" -> ${resultValue}`);
                         break;
                     }
                 }
             }
             
-            console.log(`  Final result for "${parameterName}": ${resultValue} (matched with key: "${matchedKey}")`);
             
             if (resultValue) {
-                console.log(`  ✓ Adding result indicator for "${parameterName}"`);
                 // Add result indicator
                 addResultIndicator(item, resultValue);
                 // Add visual styling
@@ -517,14 +490,11 @@ function updateStandardParameters(parameterItems, results) {
                 // Store the result data for later use
                 item.dataset.resultValue = resultValue;
             } else {
-                console.log(`  ✗ No result found for "${parameterName}"`);
             }
         } else {
-            console.log(`  ✗ No results object available for "${parameterName}"`);
         }
     });
     
-    console.log('=== FINISHED UPDATING STANDARD PARAMETERS ===');
 }
 
 // Function to update pharmacogenomics parameters
@@ -547,10 +517,6 @@ function updatePharmaParameters(parameterItems, results) {
 
 // Function to add result indicator to parameter item
 function addResultIndicator(item, resultValue, action = null) {
-    console.log(`\n=== ADDING RESULT INDICATOR ===`);
-    console.log(`Item:`, item);
-    console.log(`Result value:`, resultValue);
-    console.log(`Action:`, action);
     
     // Store the original parameter name BEFORE adding result indicator
     if (!item.dataset.originalName) {
@@ -596,11 +562,6 @@ function addResultIndicator(item, resultValue, action = null) {
     }
     window.patientResultsMap.set(parameterName, { result: resultValue, action: action });
     
-    console.log(`✓ Stored original name: "${parameterName}"`);
-    console.log(`✓ Stored result for "${parameterName}":`, { result: resultValue, action: action });
-    console.log(`✓ Added result indicator to DOM element`);
-    console.log(`✓ Updated dataset.resultValue:`, item.dataset.resultValue);
-    console.log(`=== FINISHED ADDING RESULT INDICATOR ===\n`);
     
     // Update the lifestyle recommendations tables if they exist
     if (window.populateTraitsRecommendationsTableWithResults && window.populateWellnessRecommendationsTableWithResults) {
@@ -787,7 +748,8 @@ function getPictureVisualForResults(testType, resultValue) {
                     Results Distribution
                 </h5>
                 <div class="flex justify-center items-center bg-white rounded-lg border p-4 shadow-sm">
-                    <img src="${imagePath}" alt="${altText}" class="w-full max-w-md mx-auto">
+                    <img src="${imagePath}" alt="${altText}" class="w-full max-w-md mx-auto" 
+                         onerror="this.src='../curves&pics/Not found 2.png';">
                 </div>
             </div>
         `;
@@ -826,16 +788,39 @@ function downloadCodexManual() {
     try {
         // Create a link element to trigger download
         const link = document.createElement('a');
-        link.href = 'intro.pdf';
+        link.href = '../intro.pdf';
         link.download = 'Codex_Manual.pdf';
         link.style.display = 'none';
         
         // Add to DOM, click, and remove
         document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
         
-        // Show success message
+        // Add error handling for the link
+        link.onerror = () => {
+            document.body.removeChild(link);
+            showDownloadError();
+        };
+        
+        link.onload = () => {
+            showDownloadSuccess();
+        };
+        
+        // Try to trigger download
+        link.click();
+        
+        // Remove link after a short delay
+        setTimeout(() => {
+            if (document.body.contains(link)) {
+                document.body.removeChild(link);
+            }
+            showDownloadSuccess();
+        }, 100);
+        
+    } catch (error) {
+        showDownloadError();
+    }
+    
+    function showDownloadSuccess() {
         const downloadBtn = document.getElementById('download-manual-btn');
         if (downloadBtn) {
             const originalText = downloadBtn.innerHTML;
@@ -854,8 +839,28 @@ function downloadCodexManual() {
                 lucide.createIcons();
             }, 2000);
         }
-    } catch (error) {
-        alert('Failed to download manual. Please try again.');
+    }
+    
+    function showDownloadError() {
+        const downloadBtn = document.getElementById('download-manual-btn');
+        if (downloadBtn) {
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = `
+                <i data-lucide="x" class="w-6 h-6"></i>
+                <span class="font-semibold text-base">Failed</span>
+            `;
+            downloadBtn.classList.remove('from-blue-600', 'via-blue-700', 'to-indigo-700');
+            downloadBtn.classList.add('from-red-600', 'via-red-700', 'to-red-800');
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.classList.remove('from-red-600', 'via-red-700', 'to-red-800');
+                downloadBtn.classList.add('from-blue-600', 'via-blue-700', 'to-indigo-700');
+                lucide.createIcons();
+            }, 2000);
+        }
+        alert('Failed to download manual. The file may not be available.');
     }
 }
 
@@ -922,7 +927,6 @@ async function downloadPatientResults(patientData) {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
-        console.log('Starting PDF generation for patient:', patientData.name);
         
         // Set document properties
         doc.setProperties({
@@ -1082,10 +1086,8 @@ async function downloadPatientResults(patientData) {
         }
         
         // Download the results PDF
-        console.log('Starting PDF download process...');
         
         // Download the results PDF
-        console.log('Now downloading results PDF...');
         const fileName = `Codex_Report_${patientData.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
         
         // Create blob and download
@@ -1100,12 +1102,10 @@ async function downloadPatientResults(patientData) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        console.log('Results PDF download process completed');
         
         // Show success message to user
         alert('✅ Results PDF downloaded successfully!\n\n' + fileName);
         
-        console.log('PDF generated successfully:', fileName);
         
         // Reset button state
         if (downloadBtn) {
@@ -1114,7 +1114,6 @@ async function downloadPatientResults(patientData) {
         }
         
     } catch (error) {
-        console.error('Error generating PDF:', error);
         alert('Error generating PDF. Please try again.');
         
         // Reset button state on error
@@ -1129,46 +1128,34 @@ async function downloadPatientResults(patientData) {
     async function loadJSPDF() {
         return new Promise((resolve, reject) => {
             if (window.jspdf) {
-                console.log('jsPDF already loaded');
                 resolve();
                 return;
             }
 
-            console.log('Loading jsPDF library...');
             const script = document.createElement('script');
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
             script.onload = () => {
-                console.log('jsPDF script loaded, setting up window.jspdf');
                 // Try different ways the library might be exposed
                 if (window.jspdf) {
-                    console.log('window.jspdf already exists');
                 } else if (window.jspdf && window.jspdf.jsPDF) {
-                    console.log('window.jspdf.jsPDF exists');
                     window.jspdf = window.jspdf.jsPDF;
                 } else if (window.jsPDF) {
-                    console.log('window.jsPDF exists');
                     window.jspdf = window.jsPDF;
                 } else {
-                    console.log('No jsPDF found, waiting a bit...');
                     // Sometimes the library needs a moment to initialize
                     setTimeout(() => {
                         if (window.jspdf) {
-                            console.log('window.jspdf found after delay');
                         } else if (window.jsPDF) {
-                            console.log('window.jsPDF found after delay');
                             window.jspdf = window.jsPDF;
                         } else {
-                            console.log('Still no jsPDF found');
                         }
                         resolve();
                     }, 100);
                     return;
                 }
-                console.log('window.jspdf set to:', window.jspdf);
                 resolve();
             };
             script.onerror = (error) => {
-                console.error('Failed to load jsPDF script:', error);
                 reject(error);
             };
             document.head.appendChild(script);
@@ -1203,7 +1190,6 @@ async function downloadPatientResults(patientData) {
             if (typeof window.PDFLib === 'undefined') {
                 throw new Error('PDFLib library failed to load');
             }
-            console.log('PDFLib library loaded successfully');
             
             // Try multiple paths to find the intro PDF
             let response;
@@ -1214,9 +1200,6 @@ async function downloadPatientResults(patientData) {
             const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
             const rootUrl = baseUrl.substring(0, baseUrl.lastIndexOf('/'));
             
-            console.log('Current URL:', currentUrl);
-            console.log('Base URL:', baseUrl);
-            console.log('Root URL:', rootUrl);
             
             // Try different possible paths - prioritize the actual file location
             const possiblePaths = [
@@ -1244,31 +1227,21 @@ async function downloadPatientResults(patientData) {
             ];
             
             // Try to fetch the intro PDF from different paths
-            console.log('Testing file accessibility...');
             for (const path of possiblePaths) {
                 try {
-                    console.log(`Trying to fetch intro PDF from: ${path}`);
                     response = await fetch(path);
-                    console.log(`Response status for ${path}:`, response.status, response.statusText);
                     
                     if (response.ok) {
-                        console.log(`Successfully fetched intro PDF from: ${path}`);
                         introPDFBytes = await response.arrayBuffer();
-                        console.log(`Intro PDF size: ${introPDFBytes.byteLength} bytes`);
                         break;
                     } else {
-                        console.log(`File not found at ${path}: ${response.status} ${response.statusText}`);
                     }
                 } catch (e) {
-                    console.log(`Error fetching from ${path}:`, e);
                     continue;
                 }
             }
             
             if (!introPDFBytes) {
-                console.warn('Could not fetch intro PDF from any of the attempted paths. Creating intro pages directly with jsPDF.');
-                console.log('Note: The system will create professional intro pages, but if you want to use the original "Codex Booklet 7.pdf",');
-                console.log('please ensure the file is accessible from your web server at the root directory.');
                 
                 // Create intro pages directly with jsPDF instead of merging
                 return await createIntroPagesWithJSPDF(doc);
@@ -1277,7 +1250,6 @@ async function downloadPatientResults(patientData) {
                     // Load the intro PDF
             const introPDF = await PDFLib.PDFDocument.load(introPDFBytes);
             const introPages = introPDF.getPages();
-            console.log(`Loaded intro PDF with ${introPages.length} pages`);
             
             // Create a new PDF document for merging
             const mergedPDF = await PDFLib.PDFDocument.create();
@@ -1286,31 +1258,25 @@ async function downloadPatientResults(patientData) {
             for (let i = 0; i < introPages.length; i++) {
                 const [copiedPage] = await mergedPDF.copyPages(introPDF, [i]);
                 mergedPDF.addPage(copiedPage);
-                console.log(`Added intro page ${i + 1}`);
             }
         
                     // Convert jsPDF document to PDF-lib format
             const jsPDFBytes = doc.output('arraybuffer');
             const jsPDFDoc = await PDFLib.PDFDocument.load(jsPDFBytes);
             const jsPDFPages = jsPDFDoc.getPages();
-            console.log(`Loaded jsPDF with ${jsPDFPages.length} pages`);
             
             // Add all jsPDF pages
             for (let i = 0; i < jsPDFPages.length; i++) {
                 const [copiedPage] = await mergedPDF.copyPages(jsPDFDoc, [i]);
                 mergedPDF.addPage(copiedPage);
-                console.log(`Added jsPDF page ${i + 1}`);
             }
         
                     // Save the merged PDF
             const mergedBytes = await mergedPDF.save();
-            console.log(`Final merged PDF has ${mergedPDF.getPageCount()} pages`);
             
             return mergedBytes;
         
             } catch (error) {
-            console.error('Error adding intro pages:', error);
-            console.log('Falling back to original PDF without intro pages');
             // If merging fails, return the original jsPDF document
             return doc.output('arraybuffer');
         }
@@ -1319,13 +1285,9 @@ async function downloadPatientResults(patientData) {
     // Function to create intro pages directly with jsPDF when external PDF is not available
     async function createIntroPagesWithJSPDF(doc) {
         try {
-            console.log('Creating intro pages directly with jsPDF...');
-            console.log('Current window.jspdf:', window.jspdf);
-            console.log('Type of window.jspdf:', typeof window.jspdf);
             
             // Ensure jsPDF is available
             if (typeof window.jspdf === 'undefined') {
-                console.log('jsPDF not available, loading it...');
                 await loadJSPDF();
             }
             
@@ -1334,18 +1296,14 @@ async function downloadPatientResults(patientData) {
                 throw new Error('Failed to load jsPDF library');
             }
             
-            console.log('jsPDF loaded successfully, extracting jsPDF constructor...');
             let jsPDF;
             try {
                 const { jsPDF: jsPDFConstructor } = window.jspdf;
                 jsPDF = jsPDFConstructor;
             } catch (e) {
-                console.log('Destructuring failed, trying direct access...');
                 jsPDF = window.jspdf.jsPDF || window.jspdf;
             }
             
-            console.log('jsPDF constructor:', jsPDF);
-            console.log('Type of jsPDF constructor:', typeof jsPDF);
             
             if (typeof jsPDF !== 'function') {
                 throw new Error(`jsPDF constructor is not a function: ${typeof jsPDF}`);
@@ -1454,7 +1412,6 @@ async function downloadPatientResults(patientData) {
             return mergePDFsWithIntro(introBytes, doc.output('arraybuffer'));
             
         } catch (error) {
-            console.error('Error creating intro pages with jsPDF:', error);
             // Fallback to original PDF
             return doc.output('arraybuffer');
         }
